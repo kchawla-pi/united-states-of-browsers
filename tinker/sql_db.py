@@ -3,7 +3,7 @@ import os
 from pprint import pprint
 
 
-def setup_profile_path(path=None, profile_name='default'):
+def _profile_location(path=None):
     """
     (WIll be changed.)
     Accepts path and name for browser profile directory and creates the path to it.
@@ -16,37 +16,56 @@ def setup_profile_path(path=None, profile_name='default'):
     :rtype:
     """
     try:
-        profile_dir_path = os.path.realpath(os.path.expanduser(path))
+        profile_loc = os.path.realpath(os.path.expanduser(path))
     except TypeError:
         path_dirs = ['~', 'AppData', 'Roaming', 'Mozilla', 'Firefox', 'Profiles']
-        profile_dir_path = os.path.expanduser(os.path.join(*path_dirs))
-        profile_dir_path = os.path.realpath(profile_dir_path)
-    
+        profile_loc = os.path.expanduser(os.path.join(*path_dirs))
+        profile_loc = os.path.realpath(profile_loc)
+    return profile_loc
+
+
+def _profile_dir(profile_loc, *, profile_name=None):
+    """
+    Finds the names of all profile directories (default) or for specified profile.
+    :param profile_loc:
+    :type profile_loc:
+    :param profile_name:
+    :type profile_name:
+    :return:
+    :rtype:
+    """
+    if not profile_name:
+        return [dir_.name for dir_ in os.scandir(profile_loc)]
     try:
-        profile_dir = [dir_.name for dir_ in os.scandir(profile_dir_path) if
-                       dir_.name.lower().rfind(profile_name.lower()) == len(dir_.name) - len(
-                                   profile_name)]
+        profile_dir_ = [dir_.name for dir_ in os.scandir(profile_loc) if
+                        dir_.name.lower().rfind(profile_name.lower()) == len(dir_.name) - len(
+                                    profile_name)]
     except (IndexError, FileNotFoundError):
         print(
                     "\nERROR: Profile directory not found. \nCheck the profile directory path (given: {}) and"
-                    " profile name string (given: {}).".format(profile_dir_path, profile_name))
+                    " profile name string (given: {}).".format(profile_loc, profile_name))
     else:
-        return os.path.join(profile_dir_path, *profile_dir)
+        return profile_dir_
 
 
-def setup_paths():
+def _setup_profile_paths(profile_loc, profile_dir_names):
+    return [os.path.join(profile_loc, profile_dir_) for profile_dir_ in profile_dir_names]
+
+
+def _setup_paths(path=None, profile_name='default'):
     """
-    (Deprecated.)
     Sets up the directory path for sqlite database files.
     Returns path to sqlite file's copy stored in project directory.
     :return: root directory
     :rtype: str/path-like object
     """
-    return os.path.realpath(os.path.join(os.path.split(__file__)[0],
-                                         'data', 'firefox_regular_surfing'))
+    profile_loc = _profile_location(path)
+    profile_dir_names = _profile_dir(profile_loc, profile_name)
+    profile_paths = _setup_profile_paths(profile_loc, profile_dir_names)
+    return profile_paths
 
 
-def get_database_files(root, ext='.sqlite'):
+def _db_files(root, ext='.sqlite'):
     """
     Returns a list of file in the specified directory (not subdirectories) with a specified (or no) extension.
     :param root: Path to directory with the files
@@ -69,15 +88,15 @@ def get_database_files(root, ext='.sqlite'):
         return [file_ for file_ in files if file_.rfind(ext) == len(file_) - len(ext)]
 
 
-def filepath(root, filenames=None, ext='sqlite'):
+def _filepath(root, filenames=None, ext='sqlite'):
     """
     Yields the path for the next database file.
     By default, these are sqlite file. (used by browsers to store history, bookmarks etc)
-    
+
     Usage:
-        filepath_generator = filepath(root, filenames, ext)
+        filepath_generator = _filepath(root, filenames, ext)
         next_sqlite_databse_filepath = next(filepath_generator)
-        
+
     :param root: Directory path containing the database files.
         Default: <project_root>/tinker/data/firefox_regular_surfing/
     :type root: str/path-like object
@@ -99,15 +118,15 @@ def filepath(root, filenames=None, ext='sqlite'):
     if isinstance(filenames, str):
         filenames = [filenames]
     elif filenames is None:
-        filenames = get_database_files(root=root, ext=ext)
+        filenames = _db_files(root=root, ext=ext)
     try:
         return [os.path.join(root, ext_joiner.join([file_, ext])) for file_ in filenames]
     except TypeError as excep:
-        print("ERROR: Invalid parameters in function filepath().")
+        print("ERROR: Invalid parameters in function _filepath().")
         print(excep)
-    
 
-def connect_db(db_file):
+
+def _connect_db(db_file):
     """
     Establishes connection to the database file, returns connection, cursor objects and filename.
     :param db_file: Path of the database file.
@@ -127,24 +146,24 @@ def connect_db(db_file):
     return conn, cur, os.path.split(db_file)[1]
 
 
-def database_tables(cursor):
+def _db_tables(cursor):
     """
     Returns names of tables from the cursor object of the database file.
-    :param cursor: Cursor object attached to the database file, from connect_db function.
+    :param cursor: Cursor object attached to the database file, from _connect_db function.
     :type cursor: Connection.Cursor Object
     :return: list of table names in database file.
     :rtype: list['str']
     """
     query = "SELECT name FROM sqlite_master WHERE type = 'table'"
     return [table_[0] for table_ in cursor.execute(query)]
-    
 
-def table_records(cursor, table):
+
+def _table_records(cursor, table):
     """
     Yields one record (row) of the table, whenever called.
-    
+
     Usage:
-        table_records_generator = table_records(cursor, table)
+        table_records_generator = _table_records(cursor, table)
         next_record_in_table = next(table_records_generator)
     :param cursor: Cursor object for current database file
     :type cursor: Connection.Cursor object
@@ -161,8 +180,8 @@ def table_records(cursor, table):
         yield record_
 
 
-def make_records_dict(records: 'iterable', table=None, filepath=None):
-    record_dict = [{'filepath': filepath, 'table': table}]
+def _make_records_dict(records: 'iterable', table=None, filepath=None):
+    record_dict = [{'_filepath': filepath, 'table': table}]
     field_names = next(records)
     for record_ in records:
         record_dict.append(
@@ -172,33 +191,35 @@ def make_records_dict(records: 'iterable', table=None, filepath=None):
 
 
 def firefox():
-    profile_path = setup_profile_path(profile_name='regularSurfing')
-    file_paths = filepath(root=profile_path, filenames='places', ext='sqlite')
+    profile_path = _setup_paths(profile_name='regularSurfing')
+    file_paths = _filepath(root=profile_path, filenames='places', ext='sqlite')
     for idx, file_ in enumerate(file_paths):
         print('\n', '=' * 50, '\n')
-        conn, cur, filename = connect_db(db_file=file_)
-        # tables = database_tables(cursor=cur)
+        conn, cur, filename = _connect_db(db_file=file_)
+        # tables = _db_tables(cursor=cur)
         tables = ['moz_places']
         for table_ in tables:
             print('.' * 8)
-            conn, cur, filename = connect_db(db_file=file_)
-            records = table_records(cursor=cur, table=table_)
-            prepped_records = make_records_dict(records=records, table=table_, filepath=file_)
-            # pprint(prepped_records)
+            conn, cur, filename = _connect_db(db_file=file_)
+            records = _table_records(cursor=cur, table=table_)
+            prepped_records = _make_records_dict(records=records, table=table_, filepath=file_)
+            pprint(prepped_records)
             cur.close()
 
+
 def chrome():
-    file_paths = filepath(root="C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default",
-                          filenames='History', ext=None)
+    file_paths = _filepath(
+        root="C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default",
+        filenames='History', ext=None)
     for idx, file_ in enumerate(file_paths):
         print('\n', '=' * 50, '\n')
-        conn, cur, filename = connect_db(db_file=file_)
-        tables = database_tables(cursor=cur)
+        conn, cur, filename = _connect_db(db_file=file_)
+        tables = _db_tables(cursor=cur)
         for table_ in tables:
             print('.' * 8)
-            conn, cur, filename = connect_db(db_file=file_)
-            records = table_records(cursor=cur, table=table_)
-            prepped_records = make_records_dict(records=records, table=table_, filepath=file_)
+            conn, cur, filename = _connect_db(db_file=file_)
+            records = _table_records(cursor=cur, table=table_)
+            prepped_records = _make_records_dict(records=records, table=table_, filepath=file_)
             pprint(prepped_records)
             cur.close()
     
@@ -207,4 +228,4 @@ def chrome():
 
 if __name__ == '__main__':
     firefox()
-    chrome()
+    # chrome()
