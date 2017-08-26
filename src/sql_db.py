@@ -1,15 +1,9 @@
 import sqlite3
 import os
-from collections import OrderedDict as odict
 from pprint import pprint
 
 from src import browser_setup
-
-
-
-
-
-
+from src import record_fetcher
 
 def _connect_db(db_file):
     """
@@ -40,39 +34,6 @@ def _db_tables(cursor):
     return [table_[0] for table_ in cursor.execute(query)]
 
 
-def _table_records(cursor, table):
-    """
-    Yields one record (row) of the table, whenever called.
-
-    Usage:
-        table_records_generator = _table_records(cursor, table)
-        next_record_in_table = next(table_records_generator)
-    :param cursor: Cursor object for current database file
-    :type cursor: Connection.Cursor object
-    :param table: Name of table
-    :type table: str
-    :return: Yields tuple of record, each column separated by a comma
-    :rtype: tuple[str, *str, ...]
-    """
-    query = '''SELECT * FROM {}'''.format(table)
-    cursor.execute(query)
-    field_names = [desc_[0] for desc_ in cursor.description]
-    yield field_names
-    for record_ in cursor:
-        yield record_
-
-
-def _make_records_dict_generator(records: 'iterable', table=None, filepath=None):
-    record_dict = [odict({'_filepath': filepath, 'table': table})]
-    # pprint(list(records))
-    # quit()
-    field_names = next(records)
-    for record_ in records:
-        yield {field_name_: field_
-                     for field_name_, field_ in zip(field_names, record_)}
-    # return record_dict
-
-
 def firefox():
     profile_paths = browser_setup.setup_profile_paths()
     file_paths = browser_setup.db_filepath(root=profile_paths, filenames='places', ext='sqlite')
@@ -84,9 +45,8 @@ def firefox():
         for table_ in tables:
             print('.' * 8)
             conn, cur, filename = _connect_db(db_file=file_)
-            records = _table_records(cursor=cur, table=table_)
-            prepped_records_generator = _make_records_dict_generator(records=records, table=table_, filepath=file_)
-            prepped_records = list(prepped_records_generator)
+            prepped_records = list(record_fetcher.yield_prepped_records(cursor=cur, table=table_, filepath=file_))
+            
             pprint(prepped_records)
             cur.close()
 
@@ -102,8 +62,8 @@ def chrome():
         for table_ in tables:
             print('.' * 8)
             conn, cur, filename = _connect_db(db_file=file_)
-            records = _table_records(cursor=cur, table=table_)
-            prepped_records = _make_records_dict_generator(records=records, table=table_, filepath=file_)
+            prepped_records = list(record_fetcher.yield_prepped_records(cursor=cur, table=table_, filepath=file_))
+
             pprint(prepped_records)
             cur.close()
     
