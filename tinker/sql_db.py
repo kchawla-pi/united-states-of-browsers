@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from collections import OrderedDict as odict
 from pprint import pprint
 
 
@@ -10,8 +11,6 @@ def _profile_location(path=None):
     Currently, By default uses Firefox's profile path for win10 for a profile named default.
     :param path:
     :type path:
-    :param profile_name:
-    :type profile_name:
     :return:
     :rtype:
     """
@@ -52,7 +51,7 @@ def _setup_profile_paths(profile_loc, profile_dir_names):
     return [os.path.join(profile_loc, profile_dir_) for profile_dir_ in profile_dir_names]
 
 
-def _setup_paths(path=None, profile_name='default'):
+def _setup_paths(path=None):
     """
     Sets up the directory path for sqlite database files.
     Returns path to sqlite file's copy stored in project directory.
@@ -60,7 +59,7 @@ def _setup_paths(path=None, profile_name='default'):
     :rtype: str/path-like object
     """
     profile_loc = _profile_location(path)
-    profile_dir_names = _profile_dir(profile_loc, profile_name)
+    profile_dir_names = _profile_dir(profile_loc, profile_name='regularSurfing')
     profile_paths = _setup_profile_paths(profile_loc, profile_dir_names)
     return profile_paths
 
@@ -120,7 +119,9 @@ def _filepath(root, filenames=None, ext='sqlite'):
     elif filenames is None:
         filenames = _db_files(root=root, ext=ext)
     try:
-        return [os.path.join(root, ext_joiner.join([file_, ext])) for file_ in filenames]
+        # [os.path.join(root_, ext_joiner.join([file_, ext])) for file_ in filenames for root_ in root]
+        file_names = [ext_joiner.join([file_, ext]) for file_ in filenames]
+        return [os.path.join(root_, file_name_) for root_ in root for file_name_ in file_names]
     except TypeError as excep:
         print("ERROR: Invalid parameters in function _filepath().")
         print(excep)
@@ -131,9 +132,6 @@ def _connect_db(db_file):
     Establishes connection to the database file, returns connection, cursor objects and filename.
     :param db_file: Path of the database file.
     :type db_file: str/path-like object
-    :param ext: extension of the database file.
-        Default: sqlite
-    :type ext: str
     :return: conn, cur filename
     :rtype: connection object, cursor object, str
     """
@@ -180,29 +178,31 @@ def _table_records(cursor, table):
         yield record_
 
 
-def _make_records_dict(records: 'iterable', table=None, filepath=None):
-    record_dict = [{'_filepath': filepath, 'table': table}]
+def _make_records_dict_generator(records: 'iterable', table=None, filepath=None):
+    record_dict = [odict({'_filepath': filepath, 'table': table})]
+    # pprint(list(records))
+    # quit()
     field_names = next(records)
     for record_ in records:
-        record_dict.append(
-                    {field_name_: field_
-                     for field_name_, field_ in zip(field_names, record_)})
-    return record_dict
+        yield {field_name_: field_
+                     for field_name_, field_ in zip(field_names, record_)}
+    # return record_dict
 
 
 def firefox():
-    profile_path = _setup_paths(profile_name='regularSurfing')
-    file_paths = _filepath(root=profile_path, filenames='places', ext='sqlite')
+    profile_paths = _setup_paths()
+    file_paths = _filepath(root=profile_paths, filenames='places', ext='sqlite')
     for idx, file_ in enumerate(file_paths):
         print('\n', '=' * 50, '\n')
-        conn, cur, filename = _connect_db(db_file=file_)
+        # conn, cur, filename = _connect_db(db_file=file_)
         # tables = _db_tables(cursor=cur)
         tables = ['moz_places']
         for table_ in tables:
             print('.' * 8)
             conn, cur, filename = _connect_db(db_file=file_)
             records = _table_records(cursor=cur, table=table_)
-            prepped_records = _make_records_dict(records=records, table=table_, filepath=file_)
+            prepped_records_generator = _make_records_dict_generator(records=records, table=table_, filepath=file_)
+            prepped_records = list(prepped_records_generator)
             pprint(prepped_records)
             cur.close()
 
@@ -219,7 +219,7 @@ def chrome():
             print('.' * 8)
             conn, cur, filename = _connect_db(db_file=file_)
             records = _table_records(cursor=cur, table=table_)
-            prepped_records = _make_records_dict(records=records, table=table_, filepath=file_)
+            prepped_records = _make_records_dict_generator(records=records, table=table_, filepath=file_)
             pprint(prepped_records)
             cur.close()
     
