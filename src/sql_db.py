@@ -13,10 +13,10 @@ def _connect_db(db_file):
     :return: conn, cur filename
     :rtype: connection object, cursor object, str
     """
-    if not os.path.exists(db_file):
-        print("ERROR: Invalid path. ({})".format(db_file))
-        print("Quitting...")
-        quit()
+    # if not os.path.exists(db_file):
+    #     print("ERROR: Invalid path. ({})".format(db_file))
+    #     print("Quitting...")
+    #     quit()
     conn = sqlite3.connect(database=db_file)
     cur = conn.cursor()
     return conn, cur, os.path.split(db_file)[1]
@@ -35,7 +35,7 @@ def _db_tables(cursor):
 
 
 def firefox():
-    profile_paths = browser_setup.setup_profile_paths()
+    profile_paths = browser_setup.setup_profile_paths(browser_name_or_path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing')
     file_paths = browser_setup.db_filepath(root=profile_paths, filenames='places', ext='sqlite')
     for idx, file_ in enumerate(file_paths):
         print('\n', '=' * 50, '\n')

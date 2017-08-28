@@ -1,21 +1,30 @@
 import os
 
+debug = 0
 
-def _profile_location(path=None):
+def _choose_browser_paths(browser_name_or_path):
+    path_crumbs = {'firefox': ['~', 'AppData', 'Roaming', 'Mozilla', 'Firefox', 'Profiles'],
+                       'chrome': ['~', 'AppData', 'Local', 'Google', 'Chrome', 'User Data', 'Default','History'],
+                       }
+    
+    return path_crumbs.get(browser_name_or_path, browser_name_or_path)
+        
+    
+def _profile_location(crumbs_or_path=None):
     """
     (WIll be changed.)
     Accepts path and name for browser profile directory and creates the path to it.
     Currently, By default uses Firefox's profile path for win10 for a profile named default.
-    :param path:
-    :type path:
+    :param crumbs_or_path:
+    :type crumbs_or_path:
     :return:
     :rtype:
     """
     try:
-        profile_loc = os.path.realpath(os.path.expanduser(path))
+        profile_loc = os.path.realpath(os.path.expanduser(crumbs_or_path))
     except TypeError:
-        path_dirs = ['~', 'AppData', 'Roaming', 'Mozilla', 'Firefox', 'Profiles']
-        profile_loc = os.path.expanduser(os.path.join(*path_dirs))
+        # path_dirs = ['~', 'AppData', 'Roaming', 'Mozilla', 'Firefox', 'Profiles']
+        profile_loc = os.path.expanduser(os.path.join(*crumbs_or_path))
         profile_loc = os.path.realpath(profile_loc)
     return profile_loc
 
@@ -33,9 +42,10 @@ def _profile_dir(profile_loc, *, profile_name=None):
     if not profile_name:
         return [dir_.name for dir_ in os.scandir(profile_loc)]
     try:
-        profile_dir_ = [dir_.name for dir_ in os.scandir(profile_loc) if
-                        dir_.name.lower().rfind(profile_name.lower()) == len(dir_.name) - len(
-                                    profile_name)]
+        profile_dir_ = [dir_.name for dir_ in os.scandir(profile_loc) if profile_name.lower() in dir_.name.lower()]
+        # profile_dir_ = [dir_.name for dir_ in os.scandir(profile_loc) if
+        #                 dir_.name.lower().rfind(profile_name.lower()) == len(dir_.name) - len(
+        #                             profile_name)]
     except (IndexError, FileNotFoundError):
         print(
                     "\nERROR: Profile directory not found. \nCheck the profile directory path (given: {}) and"
@@ -45,21 +55,32 @@ def _profile_dir(profile_loc, *, profile_name=None):
 
 
 def _setup_profile_paths(profile_loc, profile_dir_names):
-    return [os.path.join(profile_loc, profile_dir_) for profile_dir_ in profile_dir_names]
+    if profile_dir_names == profile_loc:
+        return profile_loc
+    else:
+        return [os.path.join(profile_loc, profile_dir_) for profile_dir_ in profile_dir_names]
 
 
-def setup_profile_paths(path=None):
+def setup_profile_paths(*,browser_name_or_path):
     """
     Sets up the directory path for sqlite database files.
     Returns path to sqlite file's copy stored in project directory.
     :return: root directory
     :rtype: str/path-like object
     """
-    profile_loc = _profile_location(path)
-    profile_dir_names = _profile_dir(profile_loc, profile_name='regularSurfing')
-    profile_paths = _setup_profile_paths(profile_loc, profile_dir_names)
-    return profile_paths
-
+    # if not browser_name and not path:
+    #     print("Valid browser name ('firefox', 'chrome') or profile location path required.")
+    #
+    #     os.sys.exit()
+    crumbs_or_path = _choose_browser_paths(browser_name_or_path=browser_name_or_path)
+    profile_loc = _profile_location(crumbs_or_path)
+    if crumbs_or_path == profile_loc:
+        return [profile_loc]
+    else:
+        profile_dir_names = _profile_dir(profile_loc, profile_name='regularSurfing')
+        profile_paths = _setup_profile_paths(profile_loc, profile_dir_names)
+        return profile_paths
+    
 
 def _db_files(root, ext='.sqlite'):
     """
@@ -116,11 +137,12 @@ def db_filepath(root, filenames=None, ext='sqlite'):
         filenames = [filenames]
     elif filenames is None:
         filenames = _db_files(root=root, ext=ext)
+    file_names = [ext_joiner.join([file_, ext]) for file_ in filenames]
     try:
-        # [os.path.join(root_, ext_joiner.join([file_, ext])) for file_ in filenames for root_ in root]
-        file_names = [ext_joiner.join([file_, ext]) for file_ in filenames]
         return [os.path.join(root_, file_name_) for root_ in root for file_name_ in file_names]
     except TypeError as excep:
-        print("ERROR: Invalid parameters in function _filepath().")
-        print(excep)
+        print('Missing value: browser name or profile path', excep, sep='\n')
+        if debug: raise excep
+        os.sys.exit()
+        
 
