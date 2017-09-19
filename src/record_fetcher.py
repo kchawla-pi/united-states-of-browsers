@@ -1,9 +1,6 @@
 import sqlite3
-import sys
 
 from collections import OrderedDict as odict
-
-import custom_exceptions as ex
 
 
 def _table_records(cursor, table):
