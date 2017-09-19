@@ -65,18 +65,7 @@ def chrome():
 	file_paths = browser_setup.db_filepath(
 				root="C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default",
 				filenames='History', ext=None)
-	for idx, file_ in enumerate(file_paths):
-		print('\n', '=' * 50, '\n')
-		conn, cur, filename = _connect_db(db_file=file_)
-		tables = _db_tables(cursor=cur)
-		for table_ in tables:
-			print('.' * 8)
-			conn, cur, filename = _connect_db(db_file=file_)
-			prepped_records = list(
-				record_fetcher.yield_prepped_records(cursor=cur, table=table_, filepath=file_))
-			
-			pprint(prepped_records)
-			cur.close()
+	
 	
 	"C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History"
 
