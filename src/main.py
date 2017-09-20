@@ -20,8 +20,8 @@ def firefox(profiles=None):
 			# print('.' * 8)
 			try:
 				conn, cur, filename = db_handler.connect_db(db_file=file_)
-			except sqlite3.OperationalError:
-				pass
+			except sqlite3.OperationalError as excep:
+				print(excep)
 			else:
 				prepped_records = (
 					record_fetcher.yield_prepped_records(cursor=cur, table=table_, filepath=file_))
@@ -30,10 +30,11 @@ def firefox(profiles=None):
 					quitter = input()
 					if quitter:
 						break
-					# if prepped_records:
-					# 	print(profiles, len(prepped_records))
+				# if prepped_records:
+				# 	print(profiles, len(prepped_records))
 			finally:
 				cur.close()
+				conn.close()
 
 
 def chrome():
