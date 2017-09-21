@@ -42,40 +42,45 @@ def make_queries(table_name, field_names, values):
 	return queries
 
 
-def create_table(cursor):
+def create_table(cursor, query):
 	try:
-		cursor.execute(queries['create'])
+		cursor.execute(query)
 	except sqlite3.OperationalError as excep:
 		print(excep)
 
 
-def insert_record(cursor, data):
-	cursor.execute(queries['insert'], data)
-	conn.commit()
+def insert_record(connection, cursor, query, data):
+	cursor.execute(query, data)
+	connection.commit()
 
-
-test_record = create_test_data()
-if not safetychecks(test_record):
-	print('Browser Database tables have suspicious characters in field names. Please examine them.',
-	      'As a precaution against an SQL injection attack, only lowercase letters, space and hyphen'
-	      'charaters are permitted in field names.',
-	      'Program halted.', sep='\n')
-	sys.exit()
-else:
-	pass
-field_names, data = preprocess_record(test_record)
-table_name = 'history'
-queries = make_queries(table_name, field_names, values=data)
-
-# print(field_names)
-
-conn, cur, filepath = db_handler.connect_db('test.sqlite')
-
-create_table(cursor=cur)
-insert_record(cursor=cur,data=data)
-record_yielder = record_fetcher.yield_prepped_records(cursor=cur, table=table_name, filepath=filepath)
-
-for record_ in record_yielder:
-	print(len(record_))
+def main():
+	test_record = create_test_data()
+	if not safetychecks(test_record):
+		print('Browser Database tables have suspicious characters in field names. Please examine them.',
+		      'As a precaution against an SQL injection attack, only lowercase letters, space and hyphen'
+		      'charaters are permitted in field names.',
+		      'Program halted.', sep='\n')
+		sys.exit()
+	else:
+		pass
+	field_names, data = preprocess_record(test_record)
+	table_name = 'history'
+	queries = make_queries(table_name, field_names, values=data)
 	
-conn.close()
+	# print(field_names)
+	
+	conn, cur, filepath = db_handler.connect_db('test.sqlite')
+	
+	create_table(cursor=cur, query=queries['create'])
+	insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
+	record_yielder = record_fetcher.yield_prepped_records(cursor=cur, table=table_name, filepath=filepath)
+	
+	for record_ in record_yielder:
+		print(len(record_))
+		
+	conn.close()
+	
+# with  main() as contextobj:
+# 	contextobj()
+if __name__ == '__main__':
+	main()
