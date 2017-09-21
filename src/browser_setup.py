@@ -71,7 +71,6 @@ def _setup_profile_paths(profile_loc, profile_dir_names):
 	if profile_dir_names == profile_loc:
 		return profile_loc
 	else:
-		# decipher_profile_names = profi
 		return [os.path.join(profile_loc, profile_dir_) for profile_dir_ in profile_dir_names]
 
 

@@ -33,7 +33,12 @@ def safetychecks(record):
 	if fields_chars.issubset(safe_chars):
 		return True
 	else:
-		return False
+		print(
+			'Browser Database tables have suspicious characters in field names. Please examine them.',
+			'As a precaution against an SQL injection attack, only lowercase letters, space and hyphen'
+			'charaters are permitted in field names.',
+			'Program halted.', sep='\n')
+		sys.exit()
 
 
 def make_queries(table_name, field_names, values):
@@ -56,12 +61,7 @@ def insert_record(connection, cursor, query, data):
 
 def write_to_db():
 	test_record = create_test_data()
-	if not safetychecks(test_record):
-		print('Browser Database tables have suspicious characters in field names. Please examine them.',
-		      'As a precaution against an SQL injection attack, only lowercase letters, space and hyphen'
-		      'charaters are permitted in field names.',
-		      'Program halted.', sep='\n')
-		sys.exit()
+	
 	field_names, data = preprocess_record(test_record)
 	table_name = 'history'
 	queries = make_queries(table_name, field_names, values=data)

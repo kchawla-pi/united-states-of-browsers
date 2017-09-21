@@ -2,6 +2,7 @@ import sqlite3
 
 from collections import OrderedDict as odict
 
+from write_new_db import safetychecks
 
 def _table_records(cursor, table):
 	"""
@@ -17,6 +18,7 @@ def _table_records(cursor, table):
 	:return: Yields tuple of record, each column separated by a comma
 	:rtype: tuple[str, *str, ...]
 	"""
+	safetychecks(table)
 	query = '''SELECT * FROM {}'''.format(table)
 	try:
 		cursor.execute(query)
@@ -31,13 +33,10 @@ def _table_records(cursor, table):
 
 def _make_records_dict_generator(records: 'iterable', table=None, filepath=None):
 	record_dict = [odict({'_filepath': filepath, 'table': table})]
-	# pprint(list(records))
-	# quit()
 	field_names = next(records)
 	for record_ in records:
 		yield {field_name_: field_
 		       for field_name_, field_ in zip(field_names, record_)}
-	# return record_dict
 
 
 def yield_prepped_records(*, cursor, table, filepath):

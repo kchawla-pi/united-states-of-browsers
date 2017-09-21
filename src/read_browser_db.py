@@ -6,8 +6,6 @@ import browser_setup
 
 
 def firefox(profiles=None):
-	# profile_paths = browser_setup.setup_profile_paths(browser_name_or_path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing')
-	# profile_paths = browser_setup.setup_profile_paths(browser_name_or_path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
 	profile_paths = browser_setup.setup_profile_paths(browser_name_or_path='firefox',
 	                                                  profiles=profiles)
 	file_paths = browser_setup.db_filepath(root=profile_paths, filenames='places', ext='sqlite')

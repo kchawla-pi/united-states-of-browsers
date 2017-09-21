@@ -10,10 +10,6 @@ def connect_db(db_file):
 	:return: conn, cur filename
 	:rtype: connection object, cursor object, str
 	"""
-	# if not os.path.exists(db_file):
-	#     print("ERROR: Invalid path. ({})".format(db_file))
-	#     print("Quitting...")
-	#     quit()
 	conn = sqlite3.connect(database=db_file)
 	cur = conn.cursor()
 	return conn, cur, os.path.split(db_file)[1]
