@@ -18,7 +18,10 @@ def preprocess_record(record):
 def safetychecks(record):
 	safe_chars = set(string.ascii_lowercase)
 	safe_chars.update(['_', ' '])
-	fields_chars = set(''.join([field for field in record.keys()]))
+	try:
+		fields_chars = set(''.join([field for field in record.keys()]))
+	except AttributeError:
+		fields_chars = set(record)
 	if fields_chars.issubset(safe_chars):
 		return True
 	else:
