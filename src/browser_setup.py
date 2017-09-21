@@ -47,26 +47,31 @@ def _profile_dir(profile_loc, *, profiles):
     :return:
     :rtype:
     """
+	get_profile_name = lambda profile_dir: (profile_dir[profile_dir.find('.') + 1:]).lower()
 	if not profiles:
 		return [dir_.name for dir_ in os.scandir(profile_loc)]
 	try:
+		
 		profile_dir_ = [dir_.name for dir_ in os.scandir(profile_loc) if
-		                profiles.lower() in dir_.name.lower()]
-		# profile_dir_ = [dir_.name for dir_ in os.scandir(profile_loc) if
-		#                 dir_.name.lower().rfind(profiles.lower()) == len(dir_.name) - len(
-		#                             profiles)]
+		                profiles.lower() == get_profile_name(dir_.name)]
+	except AttributeError:
+		profiles_list = (profile_name.lower() for profile_name in profiles)
+		profile_dir_ = [dir_.name for profile_ in profiles for dir_ in os.scandir(profile_loc) if
+		                profile_.lower() == get_profile_name(dir_.name)]
 	except (IndexError, FileNotFoundError):
 		print(
 					"\nERROR: Profile directory not found. \nCheck the profile directory path (given: {}) and"
 					" profile name string (given: {}).".format(profile_loc, profiles))
-	else:
-		return profile_dir_
+		os.sys.exit()
+	
+	return profile_dir_
 
 
 def _setup_profile_paths(profile_loc, profile_dir_names):
 	if profile_dir_names == profile_loc:
 		return profile_loc
 	else:
+		# decipher_profile_names = profi
 		return [os.path.join(profile_loc, profile_dir_) for profile_dir_ in profile_dir_names]
 
 
@@ -146,3 +151,12 @@ def db_filepath(root, filenames=None, ext='sqlite'):
 		print('Missing value: browser name or profile path', excep, sep='\n')
 		if debug: raise excep
 		os.sys.exit()
+
+def _test_setup_profile_paths():
+	profiles = ['RegularSurfing', 'default', 'dev-edition-default']
+	print(1, setup_profile_paths(browser_name_or_path='firefox', profiles= ['RegularSurfing', 'default', 'dev-edition-default']))
+	print(2, setup_profile_paths(browser_name_or_path='firefox', profiles='default'))
+	
+
+if __name__ == '__main__':
+	_test_setup_profile_paths()

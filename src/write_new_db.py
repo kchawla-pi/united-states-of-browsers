@@ -53,7 +53,8 @@ def insert_record(connection, cursor, query, data):
 	cursor.execute(query, data)
 	connection.commit()
 
-def main():
+
+def write_to_db():
 	test_record = create_test_data()
 	if not safetychecks(test_record):
 		print('Browser Database tables have suspicious characters in field names. Please examine them.',
@@ -61,14 +62,9 @@ def main():
 		      'charaters are permitted in field names.',
 		      'Program halted.', sep='\n')
 		sys.exit()
-	else:
-		pass
 	field_names, data = preprocess_record(test_record)
 	table_name = 'history'
 	queries = make_queries(table_name, field_names, values=data)
-	
-	# print(field_names)
-	
 	conn, cur, filepath = db_handler.connect_db('test.sqlite')
 	
 	create_table(cursor=cur, query=queries['create'])
@@ -79,8 +75,7 @@ def main():
 		print(len(record_))
 		
 	conn.close()
-	
-# with  main() as contextobj:
-# 	contextobj()
+
+
 if __name__ == '__main__':
-	main()
+	write_to_db()

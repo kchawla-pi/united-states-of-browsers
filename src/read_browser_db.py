@@ -49,3 +49,13 @@ if __name__ == '__main__':
 	profiles = ['RegularSurfing', 'default', 'dev-edition-default']
 	firefox('RegularSurfing')
 	# chrome()
+
+"""
+read db: done
+process records bfeore adding: (pending)
+ - remove duplicates ( hash in a set, membership tests from new db)
+ - give new primary key
+ - update last visited to latest among duplicates
+ - update number of visits for duplicates
+take record and add to new db: done
+"""
