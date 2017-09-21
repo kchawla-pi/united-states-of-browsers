@@ -1,9 +1,12 @@
 import sqlite3
+import string
+import sys
 
 from collections import OrderedDict as odict
 
 import db_handler
 import record_fetcher
+
 
 def create_test_data():
 	test_record = odict(
@@ -21,6 +24,16 @@ def preprocess_record(record):
 	field_names = ', '.join([str(field) for field in record.keys()])
 	data = list(record.values())
 	return field_names, data
+
+
+def safetychecks(record):
+	safe_chars = set(string.ascii_lowercase)
+	safe_chars.update(['_', ' '])
+	fields_chars = set(''.join([field for field in record.keys()]))
+	if fields_chars.issubset(safe_chars):
+		return True
+	else:
+		return False
 
 
 def make_queries(table_name, field_names, values):
@@ -42,11 +55,19 @@ def insert_record(cursor, data):
 
 
 test_record = create_test_data()
+if not safetychecks(test_record):
+	print('Browser Database tables have suspicious characters in field names. Please examine them.',
+	      'As a precaution against an SQL injection attack, only lowercase letters, space and hyphen'
+	      'charaters are permitted in field names.',
+	      'Program halted.', sep='\n')
+	sys.exit()
+else:
+	pass
 field_names, data = preprocess_record(test_record)
 table_name = 'history'
 queries = make_queries(table_name, field_names, values=data)
 
-print(field_names)
+# print(field_names)
 
 conn, cur, filepath = db_handler.connect_db('test.sqlite')
 
@@ -55,6 +76,6 @@ insert_record(cursor=cur,data=data)
 record_yielder = record_fetcher.yield_prepped_records(cursor=cur, table=table_name, filepath=filepath)
 
 for record_ in record_yielder:
-	print(record_)
+	print(len(record_))
 	
 conn.close()
