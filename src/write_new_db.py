@@ -8,17 +8,6 @@ import db_handler
 import record_fetcher
 
 
-def create_test_data():
-	test_record = odict(
-				{'id': 1, 'url': 'https://www.mozilla.org/en-US/firefox/central/', 'title': None,
-				 'rev_host': 'gro.allizom.www.', 'visit_count': 0, 'hidden': 0, 'typed': 0,
-				 'favicon_id': None, 'frecency': 76, 'last_visit_date': None, 'guid': 'NNqZA_f2KHI1',
-				 'foreign_count': 1, 'url_hash': 47356370932282, 'description': None,
-				 'preview_image_url': None
-				 })
-	return test_record
-
-
 def preprocess_record(record):
 	record.update({field: str(value) for field, value in record.items() if value is None})
 	field_names = ', '.join([str(field) for field in record.keys()])
@@ -59,10 +48,9 @@ def insert_record(connection, cursor, query, data):
 	connection.commit()
 
 
-def write_to_db():
-	test_record = create_test_data()
+def write_to_db(record):
 	
-	field_names, data = preprocess_record(test_record)
+	field_names, data = preprocess_record(record)
 	table_name = 'history'
 	queries = make_queries(table_name, field_names, values=data)
 	conn, cur, filepath = db_handler.connect_db('test.sqlite')
@@ -77,5 +65,17 @@ def write_to_db():
 	conn.close()
 
 
+def create_test_data():
+	test_record = odict(
+				{'id': 1, 'url': 'https://www.mozilla.org/en-US/firefox/central/', 'title': None,
+				 'rev_host': 'gro.allizom.www.', 'visit_count': 0, 'hidden': 0, 'typed': 0,
+				 'favicon_id': None, 'frecency': 76, 'last_visit_date': None, 'guid': 'NNqZA_f2KHI1',
+				 'foreign_count': 1, 'url_hash': 47356370932282, 'description': None,
+				 'preview_image_url': None
+				 })
+	return test_record
+
+
 if __name__ == '__main__':
-	write_to_db()
+	test_record = create_test_data()
+	write_to_db(record=test_record)
