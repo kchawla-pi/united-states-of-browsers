@@ -35,8 +35,9 @@ def _make_records_dict_generator(records: 'iterable', table=None, filepath=None)
 	record_dict = [odict({'_filepath': filepath, 'table': table})]
 	field_names = next(records)
 	for record_ in records:
-		yield {field_name_: field_
+		temp = {field_name_: field_
 		       for field_name_, field_ in zip(field_names, record_)}
+		yield {temp['url_hash']: temp}
 
 
 def yield_prepped_records(*, cursor, table, filepath):
