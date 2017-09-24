@@ -30,8 +30,8 @@ def print_records(record_gen, each_time=10, profile_name=None):
 				
 	
 def firefox(profiles=None):
-	profile_paths = browser_setup.setup_profile_paths(browser_name_or_path='firefox',
-													  profiles=profiles)
+	profile_paths = browser_setup.setup_profile_paths(browser_ref='firefox',
+	                                                  profiles=profiles)
 	file_paths = browser_setup.db_filepath(profile_paths=profile_paths, filenames='places', ext='sqlite')
 	for idx, profile_name_ in enumerate(file_paths):
 		tables = ['moz_places']

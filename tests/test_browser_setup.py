@@ -31,7 +31,7 @@ def test_setup_profile_paths():
 	
 	for test_case in range(0, len(test_inputs)):
 		browser_name_or_path, profiles = test_inputs[test_case]
-		returned = bs.setup_profile_paths(browser_name_or_path=browser_name_or_path, profiles=profiles)
+		returned = bs.setup_profile_paths(browser_ref=browser_name_or_path, profiles=profiles)
 		expected = expected_outputs[test_case]
 		
 		assert expected == returned

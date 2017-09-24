@@ -2,8 +2,13 @@ import os
 
 from pprint import pprint
 from pathlib import Path
-from typing import (Union, )
-
+from typing import (Union,
+                    Optional,
+                    Iterable,
+                    AnyStr,
+                    Type,
+                    TypeVar,
+                    )
 
 
 debug = 0
@@ -21,18 +26,16 @@ def _choose_browser_paths(browser_ref: Union[str, Path]) -> Union[str, Path]:
 	return os.path.expanduser(Path(*path_crumbs.get(browser_ref, [browser_ref])))
 
 
-def _profile_dir(profile_loc, *, profiles=None):
-	"""
-	Finds the names of all profile directories (default) or for specified profile.
-	:param profile_loc:
-	:type profile_loc:
-	:param profile_name:
-	:type profile_name:
-	:return:
-	:rtype:
-	"""
+def _profile_dir(profile_loc: Path, *, profiles: Optional[Union[str, Iterable[AnyStr]]]=None) -> Iterable[Path]:
+	'''
+	Creates paths for all profile directories in profile_loc (default), or for specified profiles.
+	
+	profile_loc: Root path of directory with all profile directories
+	profile_name: All profiles are included by default, can accept name of single profile or list of profiles.
+	:return: Profile path or list of profile paths
+	'''
 	get_profile_name = lambda profile_dir: (profile_dir[profile_dir.find('.') + 1:])
-	if profiles is None:
+	if profiles is None:  # Returns all the profile paths if no profiles specified
 		return {get_profile_name(dir_.name): dir_ for dir_ in Path(profile_loc).iterdir() if
 		        dir_.is_dir()}
 	
@@ -43,43 +46,27 @@ def _profile_dir(profile_loc, *, profiles=None):
 	        if get_profile_name(dir_.name) == profile_}
 
 
-def _setup_profile_paths(profile_loc, profile_dir_names):
-	if profile_dir_names == profile_loc:
-		return profile_loc
-	else:
-		return {profile_name_: os.path.join(profile_loc, profile_dir_) for
-				profile_name_, profile_dir_ in profile_dir_names.items()}
-
-
-def setup_profile_paths(*, browser_name_or_path, profiles):
+def setup_profile_paths(*, browser_ref, profiles):
 	"""
 	Sets up the directory path for sqlite database files.
 	Returns path to sqlite file's copy stored in project directory.
 	:return: root directory
 	:rtype: str/path-like object
 	"""
-	profile_loc = _choose_browser_paths(browser_ref=browser_name_or_path)
-	# profile_loc = _profile_location(crumbs_or_path)
+	profile_loc = _choose_browser_paths(browser_ref=browser_ref)
 	
-	profile_dir_names = _profile_dir(profile_loc, profiles=profiles)
-	profile_paths = _setup_profile_paths(profile_loc, profile_dir_names)
+	profile_paths = _profile_dir(profile_loc, profiles=profiles)
 	return profile_paths
 
 
-def _db_files(profile_paths, ext='.sqlite'):
-	"""
+def _db_files(profile_paths: Path, ext: Optional[AnyStr]='.sqlite') -> Iterable[Path]:
+	'''
 	Returns a list of file in the specified directory (not subdirectories) with a specified (or no) extension.
-	:param profile_paths: Path to directory with the files
-	:type profile_paths: str/path-like object
+	
+	profile_paths: Path to directory with the files
 	:param ext: Extension for the file. (Default: .sqlite)
-	:type ext: str | None
 	:return: list of files with the specified extension.
-	:rtype: list[str]
-	"""
-	# if profile_paths is None or os.path.exists(profile_paths) is False:
-	# 	print("ERROR: Path was not found (given: {})".format(profile_paths))
-	# 	return
-	# try:
+	'''
 	try:
 		for curr_dir, subdirs, files in os.walk(profile_paths):
 			break
@@ -132,14 +119,15 @@ def db_filepath(profile_paths, filenames=None, ext='sqlite'):
 		os.sys.exit()
 	
 if __name__ == '__main__':
-	# pprint(setup_profile_paths(browser_name_or_path='firefox', profiles=None))
-	# print('\n' * 3)
-	# pprint(setup_profile_paths(browser_name_or_path='firefox', profiles='RegularSurfing'))
-	# print('\n' * 3)
-	# pprint(setup_profile_paths(browser_name_or_path='firefox', profiles=['default', 'RegularSurfing']))
-	# print('\n' * 3)
-	pprint(setup_profile_paths(browser_name_or_path='firefox', profiles='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing'))
+	pprint(setup_profile_paths(browser_ref='firefox', profiles=None))
 	print('\n' * 3)
-	print(setup_profile_paths(browser_name_or_path='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing', profiles=None))
+	pprint(setup_profile_paths(browser_ref='firefox', profiles='RegularSurfing'))
+	print('\n' * 3)
+	pprint(setup_profile_paths(browser_ref='firefox', profiles=['default', 'RegularSurfing']))
+	print('\n' * 3)
+	pprint(setup_profile_paths(browser_ref='firefox', profiles='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing'))
+	print('\n' * 3)
+	print(setup_profile_paths(
+		browser_ref='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing', profiles=None))
 	
 
