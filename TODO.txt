@@ -1,0 +1,14 @@
+{prologue: File with url_hash: id}
+0. Open URL Archive.
+1. Open Source DB from Profile.
+2. Open Sink DB.
+3. Fetch source record from Profile.
+4. Get url_hash
+5. check if URL hash in archive.
+ - If Yes, Update Last Visited & Visit counts using primary key id, or url_hash.
+ - If No, Change id to next available value, write the record to sink. Add {url_hash: id} to archive.
+6. Commit.
+7. Open next profile.
+8. Repeat.
+Close Source & Sink DBs.
+
