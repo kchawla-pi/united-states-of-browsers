@@ -32,7 +32,7 @@ def _table_records(cursor, table):
 
 
 def _make_records_dict_generator(records: 'iterable', table=None, filepath=None):
-	record_dict = [odict({'_filepath': filepath, 'table': table})]
+	# record_dict = [odict({'_filepath': filepath, 'table': table})]
 	field_names = next(records)
 	for record_ in records:
 		temp = {field_name_: field_

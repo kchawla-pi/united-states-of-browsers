@@ -15,24 +15,38 @@
 Close Source & Sink DBs.
 
 '''
+import write_new_db
 
 
-def open_url_hash_log():
+def manage_url_hash_log(url_hash=None):
 	'''
 	Open the archive, load url_hashes (keys) from it as a set.
 	:return: set of url hashes
 	'''
 	# Open url_hash archive.
-	pass
+	with open('url_hash_log', 'a+') as hash_log_obj:
+		if url_hash:
+			hash_log_obj.write(str(url_hash))
+			return
+		else:
+			url_hashes = hash_log_obj.read()
+			
+	try:
+		url_hashes = [int(url_hash) for url_hash in url_hashes.split(',')]
+	except ValueError:
+		url_hashes = []
+	return url_hashes
 
 
-def redundant_url_hash(record):
+def redundant_url_hash(record, url_hashes):
 	'''
 	Reads the url_hash & id field from record, membership test with archive set.
 	Returns {url_hash: id} or None
 	:param record:
 	'''
-	record.keys()
+	curr_url_hash = list(record.keys())[0]
+	return curr_url_hash in url_hashes
+	
 
 
 def update_record(record, cursor):
@@ -55,41 +69,57 @@ def insert_record(record):
 	:return:
 	:rtype:
 	'''
+	pass
+
 	
 # save/commit changes.
 def deduplicate_records(record):
-	pass
+	url_hashes = manage_url_hash_log()
+	redundant = redundant_url_hash(record, url_hashes)
+	if redundant:
+		update_record(record)
+	else:
+		write_new_db.write_to_db(record, 'moz_places')
+		
+		
 
 
 def test_deduplicate_records():
-	test_data = [
+	test_records = [
 		{47356370932282:
 			 {'id': 1, 'url': 'https://www.mozilla.org/en-US/firefox/central/', 'title': None,
 			  'rev_host': 'gro.allizom.www.', 'visit_count': 10, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 1503579273203000, 'guid': 'NNqZA_f2KHI1',
+			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 1503579273203000,
+			  'guid': 'NNqZA_f2KHI1',
 			  'foreign_count': 1, 'url_hash': 47356370932282, 'description': None,
 			  'preview_image_url': None}
 		 },
 		{47357795150914:
 			 {'id': 2, 'url': 'https://support.mozilla.org/en-US/products/firefox', 'title': None,
 			  'rev_host': 'gro.allizom.troppus.', 'visit_count': 20, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 268505095842199, 'guid': '4xhwpotXndUs',
+			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 268505095842199,
+			  'guid': '4xhwpotXndUs',
 			  'foreign_count': 1, 'url_hash': 47357795150914, 'description': None,
 			  'preview_image_url': None}
 		 },
 		{47357795150914:
-			 {'id': 2, 'url': 'https://support.mozilla.org/en-US/products/firefox', 'title': None,
-			  'rev_host': 'gro.allizom.troppus.', 'visit_count': 2, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 1498227024629000, 'guid': '4xhwpotXndUs',
-			  'foreign_count': 1, 'url_hash': 47357795150914, 'description': None,
-			  'preview_image_url': None}
+			{'id': 2, 'url': 'https://support.mozilla.org/en-US/products/firefox',
+			'title': None,
+			'rev_host': 'gro.allizom.troppus.', 'visit_count': 2, 'hidden': 0,
+			'typed': 0,
+			'favicon_id': None, 'frecency': 76, 'last_visit_date': 1498227024629000,
+			'guid': '4xhwpotXndUs',
+			'foreign_count': 1, 'url_hash': 47357795150914, 'description': None,
+			'preview_image_url': None}
 		 },
 		]
-	expected = [
+
+	expected_database = [
 		{47356370932282:
 			 {'id': 1, 'url': 'https://www.mozilla.org/en-US/firefox/central/', 'title': None,
 			  'rev_host': 'gro.allizom.www.', 'visit_count': 10, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 268505095842199, 'guid': 'NNqZA_f2KHI1',
+			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 268505095842199,
+			  'guid': 'NNqZA_f2KHI1',
 			  'foreign_count': 1, 'url_hash': 47356370932282, 'description': None,
 			  'preview_image_url': None}
 		 },
@@ -102,10 +132,11 @@ def test_deduplicate_records():
 		 },
 		]
 	returned_output = []
-	for test_case in test_data:
+	for test_case in test_records:
 		returned_output.append(deduplicate_records(test_case))
+	print(returned_output)
 	print('last_visit_date not fixed in one of the records. Test result invalid until it is.',
-	      returned_output == expected)
+	      returned_output == expected_database)
 	
 if __name__ == '__main__':
 	test_deduplicate_records()
