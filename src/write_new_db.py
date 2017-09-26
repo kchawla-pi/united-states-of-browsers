@@ -6,36 +6,39 @@ from collections import OrderedDict as odict
 
 import db_handler
 import record_fetcher
+import read_browser_db
 
 
-def preprocess_record(record):
-	record.update({field: str(value) for field, value in record.items() if value is None})
-	field_names = ', '.join([str(field) for field in record.keys()])
-	data = list(record.values())
-	return field_names, data
+def get_record_info(record):
+	# url_hash, record.items()
+	record_data = list(record.values())[0]
+	# record.update({field: str(value) for field, value in record_data.items() if value is None})
+	field_names_string = ', '.join([str(field) for field in record_data.keys()])
+	data = list(record_data.values())
+	return field_names_string, data
 
 
 def safetychecks(record):
 	safe_chars = set(string.ascii_lowercase)
-	safe_chars.update(['_', ' '])
+	safe_chars.update(['_', '_'])
 	try:
 		fields_chars = set(''.join([field for field in record.keys()]))
 	except AttributeError:
-		fields_chars = set(record)
+		fields_chars = set(list(record))
 	if fields_chars.issubset(safe_chars):
 		return True
 	else:
-		print(
+		print(fields_chars, record, '\n',
 			'Browser Database tables have suspicious characters in field names. Please examine them.',
-			'As a precaution against an SQL injection attack, only lowercase letters, space and hyphen'
+			'As a precaution against an SQL injection attack, only lowercase letters and underscore '
 			'charaters are permitted in field names.',
 			'Program halted.', sep='\n')
 		sys.exit()
 
 
-def make_queries(table_name, field_names, values):
-	queries = {'create': '''CREATE TABLE {} ({})'''.format(table_name, field_names)}
-	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table_name)})
+def make_queries(table, field_names, values):
+	queries = {'create': '''CREATE TABLE {} ({})'''.format(table, field_names)}
+	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table)})
 	return queries
 
 
@@ -43,7 +46,7 @@ def create_table(cursor, query):
 	try:
 		cursor.execute(query)
 	except sqlite3.OperationalError as excep:
-		print(excep)
+		pass
 
 
 def insert_record(connection, cursor, query, data):
@@ -51,20 +54,16 @@ def insert_record(connection, cursor, query, data):
 	connection.commit()
 
 
-def write_to_db(record):
+def write_to_db(record, table):
 	
-	field_names, data = preprocess_record(record)
-	table_name = 'history'
-	queries = make_queries(table_name, field_names, values=data)
+	field_names_string, data = get_record_info(record)
+	# table_name = ['moz_places']
+	queries = make_queries(table, field_names_string, values=data)
 	conn, cur, filepath = db_handler.connect_db('test.sqlite')
 	
 	create_table(cursor=cur, query=queries['create'])
 	insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
-	record_yielder = record_fetcher.yield_prepped_records(cursor=cur, table=table_name, filepath=filepath)
 	
-	for record_ in record_yielder:
-		print(len(record_))
-		
 	conn.close()
 
 

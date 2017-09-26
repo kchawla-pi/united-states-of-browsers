@@ -3,6 +3,7 @@ import sqlite3
 import browser_setup
 import db_handler
 import record_fetcher
+import write_new_db
 # import reorganizer
 
 def print_records(record_gen, each_time=10, profile_name=None):
@@ -27,7 +28,24 @@ def print_records(record_gen, each_time=10, profile_name=None):
 				elif quitter:
 					break
 				pass
-				
+			
+def test_print_records(cursor, table, prepped_records):
+	for num1, record in enumerate(prepped_records):
+		query = '''SELECT * FROM {}'''.format('moz_places')
+		cursor.execute(query)
+		for num2, record__ in enumerate(cursor):
+			if num2 == 37:
+				print(num2)
+				print(record__)
+				break
+		
+		print('-')
+		if num1 == 37:
+			print(num1)
+			write_new_db.write_to_db(record=record, table=table)
+			print('wriiten')
+			break
+			
 	
 def firefox(profiles=None):
 	profile_paths = browser_setup.setup_profile_paths(browser_ref='firefox', profiles=profiles)
@@ -40,12 +58,15 @@ def firefox(profiles=None):
 			except sqlite3.OperationalError as excep:
 				print(excep)
 			else:
+
 				prepped_records = record_fetcher.yield_prepped_records(cursor=cur, table=table_,
-				                                                       filepath=file_paths[profile_name_])
-				# yield prepped_records
-				print_records(record_gen=prepped_records, each_time='all', profile_name=profile_name_)
-				# all_url_hashes = reorganizer.deduplicate_sites(prepped_records)
-				# print(len(all_url_hashes))
+				                                                       filepath=file_paths[profile_name_]
+				                                                       )
+				# for num1, record in enumerate(prepped_records):
+				# 	write_new_db.write_to_db(record=record, table=table_)
+				print_records(prepped_records)
+				# test_print_records(cursor=cur, table=table_, prepped_records=prepped_records)
+
 			finally:
 				cur.close()
 				conn.close()
@@ -60,7 +81,16 @@ def chrome():
 
 if __name__ == '__main__':
 	profiles = ['RegularSurfing', 'default', 'dev-edition-default']
+	# firefox(['test_profile0'])
 	firefox()
+	quit()
+	conn = sqlite3.connect('test.sqlite')
+	cur = conn.cursor()
+	query = '''SELECT * FROM {}'''.format('moz_places')
+	cur.execute(query)
+	for record in cur:
+		print(record)
+
 # chrome()
 
 """
