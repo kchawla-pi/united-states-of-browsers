@@ -1,8 +1,8 @@
 import sqlite3
 
 from collections import OrderedDict as odict
-
 from write_new_db import safetychecks
+# from write_new_db import safetychecks
 
 def _table_records(cursor, table):
 	"""
