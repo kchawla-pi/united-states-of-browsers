@@ -5,8 +5,8 @@ import sys
 from collections import OrderedDict as odict
 
 import db_handler
-import record_fetcher
-import read_browser_db
+# import record_fetcher
+# import read_browser_db
 
 
 def get_record_info(record):
