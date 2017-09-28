@@ -52,12 +52,12 @@ def insert_record(connection, cursor, query, data):
 	connection.commit()
 
 
-def write_to_db(record, table):
+def write_to_db(database, record, table):
 	
 	field_names_string, data = get_record_info(record)
 	# table_name = ['moz_places']
 	queries = make_queries(table, field_names_string, values=data)
-	conn, cur, filepath = db_handler.connect_db('test.sqlite')
+	conn, cur, filepath = db_handler.connect_db(database)
 	
 	create_table(cursor=cur, query=queries['create'])
 	insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
@@ -78,4 +78,4 @@ def create_test_data():
 
 if __name__ == '__main__':
 	test_record = create_test_data()
-	write_to_db(record=test_record)
+	write_to_db(database='test.sqlite', record=test_record)

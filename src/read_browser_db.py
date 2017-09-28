@@ -4,7 +4,15 @@ import browser_setup
 import db_handler
 import record_fetcher
 import write_new_db
-# import reorganizer
+
+
+def quick_read_record(database):
+	conn = sqlite3.connect(database)
+	cur = conn.cursor()
+	query = '''SELECT * FROM {}'''.format('moz_places')
+	cur.execute(query)
+	for record in cur:
+		print(record)
 
 def print_records(record_gen, each_time=10, profile_name=None):
 	import time
@@ -29,6 +37,7 @@ def print_records(record_gen, each_time=10, profile_name=None):
 					break
 				pass
 			
+			
 def test_print_records(cursor, table, prepped_records):
 	for num1, record in enumerate(prepped_records):
 		query = '''SELECT * FROM {}'''.format('moz_places')
@@ -42,7 +51,7 @@ def test_print_records(cursor, table, prepped_records):
 		print('-')
 		if num1 == 37:
 			print(num1)
-			write_new_db.write_to_db(record=record, table=table)
+			write_new_db.write_to_db(database='test.sqlite', record=record, table=table)
 			print('wriiten')
 			break
 			
@@ -84,12 +93,7 @@ if __name__ == '__main__':
 	# firefox(['test_profile0'])
 	firefox()
 	quit()
-	conn = sqlite3.connect('test.sqlite')
-	cur = conn.cursor()
-	query = '''SELECT * FROM {}'''.format('moz_places')
-	cur.execute(query)
-	for record in cur:
-		print(record)
+	quick_read_record(database='test.sqlite')
 
 # chrome()
 

@@ -16,6 +16,7 @@ Close Source & Sink DBs.
 
 '''
 import write_new_db
+from read_browser_db import quick_read_record
 
 
 def manage_url_hash_log(url_hash=None):
@@ -24,19 +25,25 @@ def manage_url_hash_log(url_hash=None):
 	:return: set of url hashes
 	'''
 	# Open url_hash archive.
-	with open('url_hash_log', 'a+') as hash_log_obj:
-		if url_hash:
-			hash_log_obj.write(str(url_hash))
-			return
-		else:
-			url_hashes = hash_log_obj.read()
-			
-	try:
-		url_hashes = [int(url_hash) for url_hash in url_hashes.split(',')]
-	except ValueError:
+	if url_hash:
+		write_hash = ''.join([str(url_hash), ', '])
 		url_hashes = []
-	return url_hashes
-
+		try:
+			with open ('url_hash_log.txt', 'a') as hash_log_obj:
+				hash_log_obj.write(write_hash)
+		except FileNotFoundError:
+			with open ('url_hash_log.txt', 'w') as hash_log_obj:
+				hash_log_obj.write(write_hash)
+	else:
+		try:
+			with open('url_hash_log.txt', 'r') as hash_log_obj:
+				url_hashes = hash_log_obj.read()
+			url_hashes = [int(url_hash) for url_hash in url_hashes.split(', ') if url_hash.isnumeric()]
+		except FileNotFoundError:
+			url_hashes = []
+		finally:
+			return url_hashes
+	
 
 def redundant_url_hash(record, url_hashes):
 	'''
@@ -45,11 +52,11 @@ def redundant_url_hash(record, url_hashes):
 	:param record:
 	'''
 	curr_url_hash = list(record.keys())[0]
-	return curr_url_hash in url_hashes
+	return curr_url_hash, curr_url_hash in url_hashes
 	
 
 
-def update_record(record, cursor):
+def update_record(record):
 	'''
 	Finds existing record in Sink DB using hash_val or id.
 	Updates last visited to latest, adds the visit counts.
@@ -74,14 +81,14 @@ def insert_record(record):
 	
 # save/commit changes.
 def deduplicate_records(record):
+	global write_to_database
 	url_hashes = manage_url_hash_log()
-	redundant = redundant_url_hash(record, url_hashes)
+	curr_url_hash, redundant = redundant_url_hash(record, url_hashes)
 	if redundant:
 		update_record(record)
 	else:
-		write_new_db.write_to_db(record, 'moz_places')
-		
-		
+		manage_url_hash_log(url_hash=curr_url_hash)
+		write_new_db.write_to_db(database=write_to_database, record=record, table='moz_places')
 
 
 def test_deduplicate_records():
@@ -137,6 +144,9 @@ def test_deduplicate_records():
 	print(returned_output)
 	print('last_visit_date not fixed in one of the records. Test result invalid until it is.',
 	      returned_output == expected_database)
-	
+
+
+write_to_database = 'test3.sqlite'
 if __name__ == '__main__':
 	test_deduplicate_records()
+	quick_read_record(database=write_to_database)
