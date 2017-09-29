@@ -23,13 +23,12 @@ def read_browser_db(filepaths):
 			except sqlite3.OperationalError as excep:
 				print(excep)
 			else:
-
 				prepped_records = record_fetcher.yield_prepped_records(cursor=cur, table=table_,
 				                                                       filepath=filepaths[profile_name_]
 				                                                       )
-				
-				for num1, record in enumerate(prepped_records):
-					deduplicator.deduplicate_records(record=record)
+				yield prepped_records
+				# for num1, record in enumerate(prepped_records):
+				# 	deduplicator.deduplicate_records(record=record)
 				# 	write_new_db.write_to_db(record=record, table=table_)
 				# print_records(prepped_records)
 				# test_print_records(cursor=cur, table=table_, prepped_records=prepped_records)
