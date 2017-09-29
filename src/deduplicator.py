@@ -16,7 +16,7 @@ Close Source & Sink DBs.
 
 '''
 import write_new_db
-from read_browser_db import quick_read_record
+
 
 
 def manage_url_hash_log(url_hash=None):
@@ -27,7 +27,6 @@ def manage_url_hash_log(url_hash=None):
 	# Open url_hash archive.
 	if url_hash:
 		write_hash = ''.join([str(url_hash), ', '])
-		url_hashes = []
 		try:
 			with open ('url_hash_log.txt', 'a') as hash_log_obj:
 				hash_log_obj.write(write_hash)
@@ -148,5 +147,9 @@ def test_deduplicate_records():
 
 write_to_database = 'test3.sqlite'
 if __name__ == '__main__':
+	from show import quick_read_record
+	
+	
 	test_deduplicate_records()
-	quick_read_record(database=write_to_database)
+	print('*' * 50)
+	# quick_read_record(database=write_to_database)

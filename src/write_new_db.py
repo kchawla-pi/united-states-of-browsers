@@ -44,7 +44,7 @@ def create_table(cursor, query):
 	try:
 		cursor.execute(query)
 	except sqlite3.OperationalError as excep:
-		pass
+		print(excep)
 
 
 def insert_record(connection, cursor, query, data):
@@ -52,7 +52,7 @@ def insert_record(connection, cursor, query, data):
 	connection.commit()
 
 
-def write_to_db(database, record, table):
+def write_to_db(database, record, table='moz_places'):
 	
 	field_names_string, data = get_record_info(record)
 	# table_name = ['moz_places']
