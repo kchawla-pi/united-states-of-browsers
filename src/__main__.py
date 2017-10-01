@@ -8,17 +8,6 @@ import write_new_db
 
 file_paths = read_browser_db.firefox()
 prepped_records = read_browser_db.read_browser_db(filepaths=file_paths)  # gives a generator that yields all the records across all profiles.
-# for profile_count, data_in_profile in enumerate(prepped_records):
-# 	print('\n' * 2)
-# 	print('profile count:', profile_count)
-#
-# 	for record_count, record in enumerate(data_in_profile ):
-# 		print('record_count', record_count)
-# 		print(record)
-# 		record = deduplicator.deduplicate_records(record)
-# 		print(record)
-#
-# 		input('next record')
 
 json_path = os.path.join(os.path.dirname(__file__), 'test.json')
 yield_records = (record for profile_ in prepped_records for record in profile_)

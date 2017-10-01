@@ -33,11 +33,7 @@ def read_browser_db(filepaths):
 				                                                       filepath=filepaths[profile_name_]
 				                                                       )
 				yield prepped_records
-				# for num1, record in enumerate(prepped_records):
-				# 	deduplicator.deduplicate_records(record=record)
-				# 	write_new_db.write_to_db(record=record, table=table_)
-				# print_records(prepped_records)
-				# test_print_records(cursor=cur, table=table_, prepped_records=prepped_records)
+				
 
 			finally:
 				cur.close()
@@ -50,9 +46,6 @@ def chrome():
 				filenames='History', ext=None)
 	
 
-
-	
-	
 if __name__ == '__main__':
 	profiles = ['RegularSurfing', 'default', 'dev-edition-default']
 	# firefox(['test_profile0'])

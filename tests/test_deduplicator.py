@@ -1,3 +1,6 @@
+from deduplicator import deduplicate_records
+
+
 def test_deduplicate_records():
 	test_records = [
 		{47356370932282:

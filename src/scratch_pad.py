@@ -48,3 +48,19 @@ if __name__ == '__main__':
 	# 	print(entry)
 
 
+'''
+file_paths = read_browser_db.firefox()
+prepped_records = read_browser_db.read_browser_db(filepaths=file_paths)  # gives a generator that yields all the records across all profiles.
+# for profile_count, data_in_profile in enumerate(prepped_records):
+# 	print('\n' * 2)
+# 	print('profile count:', profile_count)
+#
+# 	for record_count, record in enumerate(data_in_profile ):
+# 		print('record_count', record_count)
+# 		print(record)
+# 		record = deduplicator.deduplicate_records(record)
+# 		print(record)
+#
+# 		input('next record')
+
+'''
