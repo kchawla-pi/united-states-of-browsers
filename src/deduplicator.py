@@ -15,18 +15,24 @@
 Close Source & Sink DBs.
 
 '''
+import jsonlines
+import os
+
 import write_new_db
 
 
+filepath_from_another = lambda filepath, filename: os.path.join(os.path.dirname(filepath), filename)
 
-def manage_url_hash_log(url_hash=None):
+def manage_url_hash_log(record=None):
 	'''
 	Open the archive, load url_hashes (keys) from it as a set.
 	:return: set of url hashes
 	'''
 	# Open url_hash archive.
-	if url_hash:
-		write_hash = ''.join([str(url_hash), ', '])
+	if record:
+		curr_url_hash = list(record.keys())[0]
+		record_id = record[curr_url_hash ]['id']
+		write_hash = ''.join([str(curr_url_hash), ': ', str(record_id), ', '])
 		try:
 			with open ('url_hash_log.txt', 'a') as hash_log_obj:
 				hash_log_obj.write(write_hash)
@@ -54,8 +60,7 @@ def redundant_url_hash(record, url_hashes):
 	return curr_url_hash, curr_url_hash in url_hashes
 	
 
-
-def update_record(record):
+def update_record(record, url_hash, json_db):
 	'''
 	Finds existing record in Sink DB using hash_val or id.
 	Updates last visited to latest, adds the visit counts.
@@ -64,7 +69,14 @@ def update_record(record):
 	:return:
 	:rtype:
 	'''
-	pass
+	update_fields = ['last_visit_date', 'visit_count']
+	with jsonlines.open('json_db', 'r') as json_read_obj:
+		edit_record = [json_db_record for json_db_record in json_read_obj if json_db_record == url_hash]
+		print(edit_record)
+		for field in update_fields:
+			print('new rocrd', record[url_hash][field])
+	input('ENTER to continue.')
+	print('update record not implemented.')
 
 
 def insert_record(record):
@@ -79,77 +91,25 @@ def insert_record(record):
 
 	
 # save/commit changes.
-def deduplicate_records(record):
-	global write_to_database
+def deduplicate_records(database_records, json_path, new_record):
+	# global write_to_database
 	url_hashes = manage_url_hash_log()
-	curr_url_hash, redundant = redundant_url_hash(record, url_hashes)
+	curr_url_hash, redundant = redundant_url_hash(new_record, url_hashes)
 	if redundant:
-		update_record(record)
+		update_record(new_record, database_records)
 	else:
-		manage_url_hash_log(url_hash=curr_url_hash)
-		write_new_db.write_to_db(database=write_to_database, record=record, table='moz_places')
+		manage_url_hash_log(record=new_record)
+		write_new_db.write_to_json(json_path, record_yielder=database_records)
+		
+		return new_record
+		# write_new_db.write_to_db(database=write_to_database, new_record=new_record, table='moz_places')
 
 
-def test_deduplicate_records():
-	test_records = [
-		{47356370932282:
-			 {'id': 1, 'url': 'https://www.mozilla.org/en-US/firefox/central/', 'title': None,
-			  'rev_host': 'gro.allizom.www.', 'visit_count': 10, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 1503579273203000,
-			  'guid': 'NNqZA_f2KHI1',
-			  'foreign_count': 1, 'url_hash': 47356370932282, 'description': None,
-			  'preview_image_url': None}
-		 },
-		{47357795150914:
-			 {'id': 2, 'url': 'https://support.mozilla.org/en-US/products/firefox', 'title': None,
-			  'rev_host': 'gro.allizom.troppus.', 'visit_count': 20, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 268505095842199,
-			  'guid': '4xhwpotXndUs',
-			  'foreign_count': 1, 'url_hash': 47357795150914, 'description': None,
-			  'preview_image_url': None}
-		 },
-		{47357795150914:
-			{'id': 2, 'url': 'https://support.mozilla.org/en-US/products/firefox',
-			'title': None,
-			'rev_host': 'gro.allizom.troppus.', 'visit_count': 2, 'hidden': 0,
-			'typed': 0,
-			'favicon_id': None, 'frecency': 76, 'last_visit_date': 1498227024629000,
-			'guid': '4xhwpotXndUs',
-			'foreign_count': 1, 'url_hash': 47357795150914, 'description': None,
-			'preview_image_url': None}
-		 },
-		]
-
-	expected_database = [
-		{47356370932282:
-			 {'id': 1, 'url': 'https://www.mozilla.org/en-US/firefox/central/', 'title': None,
-			  'rev_host': 'gro.allizom.www.', 'visit_count': 10, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': 268505095842199,
-			  'guid': 'NNqZA_f2KHI1',
-			  'foreign_count': 1, 'url_hash': 47356370932282, 'description': None,
-			  'preview_image_url': None}
-		 },
-		{47357795150914:
-			 {'id': 2, 'url': 'https://support.mozilla.org/en-US/products/firefox', 'title': None,
-			  'rev_host': 'gro.allizom.troppus.', 'visit_count': 22, 'hidden': 0, 'typed': 0,
-			  'favicon_id': None, 'frecency': 76, 'last_visit_date': None, 'guid': '4xhwpotXndUs',
-			  'foreign_count': 1, 'url_hash': 47357795150914, 'description': None,
-			  'preview_image_url': None}
-		 },
-		]
-	returned_output = []
-	for test_case in test_records:
-		returned_output.append(deduplicate_records(test_case))
-	print(returned_output)
-	print('last_visit_date not fixed in one of the records. Test result invalid until it is.',
-	      returned_output == expected_database)
-
-
-write_to_database = 'test3.sqlite'
+# write_to_database = filepath_from_another(__file__, 'test.sqlite')
 if __name__ == '__main__':
 	from show import quick_read_record
-	
-	
-	test_deduplicate_records()
+	# test_deduplicate_records()
 	print('*' * 50)
+	
+	print(os.getcwd())
 	# quick_read_record(database=write_to_database)

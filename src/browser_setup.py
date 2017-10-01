@@ -6,8 +6,6 @@ from typing import (Union,
                     Optional,
                     Iterable,
                     AnyStr,
-                    Type,
-                    TypeVar,
                     )
 
 

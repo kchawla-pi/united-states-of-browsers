@@ -1,3 +1,4 @@
+import jsonlines
 import sqlite3
 import string
 import sys
@@ -63,6 +64,12 @@ def write_to_db(database, record, table='moz_places'):
 	insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
 	
 	conn.close()
+	
+
+def write_to_json(json_path, record_yielder):
+	with jsonlines.open(json_path, 'w') as json_records_obj:
+		for record in record_yielder:
+			json_records_obj.write(record)
 
 
 def create_test_data():
