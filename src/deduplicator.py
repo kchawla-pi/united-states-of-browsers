@@ -15,13 +15,12 @@
 Close Source & Sink DBs.
 
 '''
-import jsonlines
 import os
+
+import jsonlines
 
 import write_new_db
 
-
-filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
 
 def manage_url_hash_log(record=None):
 	'''
@@ -111,7 +110,6 @@ def deduplicate_records(new_record, json_path):
 
 # write_to_database = filepath_from_another(__file__, 'test.sqlite')
 if __name__ == '__main__':
-	from show import quick_read_record
 	# test_deduplicate_records()
 	print('*' * 50)
 	

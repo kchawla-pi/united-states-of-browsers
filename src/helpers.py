@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import string
 import sys
@@ -46,3 +47,6 @@ def create_table(cursor, query, counter=0):
 def insert_record(connection, cursor, query, data):
 	cursor.execute(query, data)
 	connection.commit()
+
+
+filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
