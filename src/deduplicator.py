@@ -1,9 +1,9 @@
 #:TODO: Algorithm.
 '''
 {prologue: File with url_hash: id}
-0. Open Source DB from Profile. - Done in read_browser_db()
+0. Open Source DB from Profile. - Done in read_browser_database()
 1. Open Sink DB. - Done in write_new_db()
-2. Fetch source record from Profile. - Done in read_browser_db()
+2. Fetch source record from Profile. - Done in read_browser_database()
 3. Open URL Archive.
 4. Get url_hash
 5. check if URL hash in archive.
@@ -21,7 +21,7 @@ import os
 import write_new_db
 
 
-filepath_from_another = lambda filepath, filename: os.path.join(os.path.dirname(filepath), filename)
+filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
 
 def manage_url_hash_log(record=None):
 	'''
@@ -32,17 +32,21 @@ def manage_url_hash_log(record=None):
 	if record:
 		curr_url_hash = list(record.keys())[0]
 		record_id = record[curr_url_hash ]['id']
-		write_hash = ''.join([str(curr_url_hash), ': ', str(record_id), ', '])
+		write_hash = ''.join([str(curr_url_hash), ': ', str(record_id), '\n'])
 		try:
-			with open ('url_hash_log.txt', 'a') as hash_log_obj:
+			with open ('url_hash_log.json', 'a') as hash_log_obj:
 				hash_log_obj.write(write_hash)
 		except FileNotFoundError:
-			with open ('url_hash_log.txt', 'w') as hash_log_obj:
+			with open ('url_hash_log.json', 'w') as hash_log_obj:
 				hash_log_obj.write(write_hash)
 	else:
 		try:
-			with open('url_hash_log.txt', 'r') as hash_log_obj:
+			with open('url_hash_log.json', 'r') as hash_log_obj:
 				url_hashes = hash_log_obj.read()
+			url_hashes = url_hashes[:-2]
+			url_hash_items = (item for item in url_hashes.split(','))
+			url_hash_id = {hash: id for hash, id in url_hash_items}
+			
 			url_hashes = [int(url_hash) for url_hash in url_hashes.split(', ') if url_hash.isnumeric()]
 		except FileNotFoundError:
 			url_hashes = []
@@ -50,13 +54,13 @@ def manage_url_hash_log(record=None):
 			return url_hashes
 	
 
-def redundant_url_hash(record, url_hashes):
+def redundant_url_hash(new_record, url_hashes):
 	'''
 	Reads the url_hash & id field from record, membership test with archive set.
 	Returns {url_hash: id} or None
-	:param record:
+	:param new_record:
 	'''
-	curr_url_hash = list(record.keys())[0]
+	curr_url_hash = list(new_record.keys())[0]
 	return curr_url_hash, curr_url_hash in url_hashes
 	
 
@@ -91,7 +95,7 @@ def insert_record(record):
 
 	
 # save/commit changes.
-def deduplicate_records(database_records, json_path, new_record):
+def deduplicate_records(new_record, json_path):
 	# global write_to_database
 	url_hashes = manage_url_hash_log()
 	curr_url_hash, redundant = redundant_url_hash(new_record, url_hashes)
