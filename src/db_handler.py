@@ -12,7 +12,11 @@ def connect_db(db_file):
 	"""
 	conn = sqlite3.connect(database=db_file)
 	cur = conn.cursor()
-	return conn, cur, os.path.split(db_file)[1]
+	db_connection_info = {'connection': conn,
+	                      'cursor': cur,
+	                      'dbfile': os.path.split(db_file)[1],
+	                      }
+	return db_connection_info
 
 
 def _db_tables(cursor):
