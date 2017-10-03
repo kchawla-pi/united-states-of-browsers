@@ -41,6 +41,32 @@ def print_records(record_gen, each_time=10, profile_name=None):
 				pass
 
 
+def show_record_(record, record_count, each_time=100, profile_name=None):
+	if each_time:
+		import time
+		prev_iter_profile_name = ''
+		if profile_name and profile_name == prev_iter_profile_name:
+			print('\n' * 2, profile_name, '\n' * 2)
+			time.sleep(2)
+		
+		print(record_count, record)
+		try:
+			cond = record_count % each_time == 0 and record_count > 0
+		except TypeError:
+			pass
+		except ZeroDivisionError:
+			pass
+		else:
+			if cond:
+				quitter = input('\nPress ENTER key for the next set of records, c for number of records so far, any other to exit.\n\n')
+				if quitter in {'c', 'C'}:
+					print(record_count)
+					time.sleep(1)
+				elif quitter:
+					quit()
+				pass
+		prev_iter_profile_name = profile_name
+
 def test_print_records(cursor, table, prepped_records):
 	for num1, record in enumerate(prepped_records):
 		query = '''SELECT * FROM {}'''.format('moz_places')
