@@ -1,72 +1,56 @@
-import jsonlines
-import sqlite3
-import string
-import sys
-
-from collections import OrderedDict as odict
+from array import array
+from bisect import insort
 
 import db_handler
+import show
+import helpers
 
 
-def get_record_info(record):
-	# url_hash, record.items()
-	record_data = list(record.values())[0]
-	# record.update({field: str(value) for field, value in record_data.items() if value is None})
-	field_names_string = ', '.join([str(field) for field in record_data.keys()])
-	data = list(record_data.values())
-	return field_names_string, data
-
-
-def safetychecks(record):
-	safe_chars = set(string.ascii_lowercase)
-	safe_chars.update(['_', '_'])
-	try:
-		fields_chars = set(''.join([field for field in record.keys()]))
-	except AttributeError:
-		fields_chars = set(list(record))
-	if fields_chars.issubset(safe_chars):
-		return True
-	else:
-		print(fields_chars, record, '\n',
-			'Browser Database tables have suspicious characters in field names. Please examine them.',
-			'As a precaution against an SQL injection attack, only lowercase letters and underscore '
-			'charaters are permitted in field names.',
-			'Program halted.', sep='\n')
-		sys.exit()
-
-
-def make_queries(table, field_names, values):
-	queries = {'create': '''CREATE TABLE {} ({})'''.format(table, field_names)}
-	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table)})
-	return queries
-
-
-def create_table(cursor, query):
-	try:
-		cursor.execute(query)
-	except sqlite3.OperationalError as excep:
-		print(excep)
-
-
-def insert_record(connection, cursor, query, data):
-	cursor.execute(query, data)
-	connection.commit()
+def merge_databases(source_record_yielder, sink_db_info, start_from=0, print_records=False):
+	each_time = int(print_records)
+	url_hashes = array('Q')
+	for count, record in enumerate(source_record_yielder):
+		if count < start_from and start_from:
+			continue
+		curr_record_hash = list(record.keys())[0]
+		
+		if curr_record_hash not in set(url_hashes):
+			insort(url_hashes, curr_record_hash)
+			try:
+				field_names_string
+			except NameError:
+				field_names_string, data = helpers.get_record_info(record)
+				queries = helpers.make_queries(table='moz_places',
+				                                    field_names=field_names_string)
+				helpers.create_table(cursor=sink_db_info['cursor'], query=queries['create'])
+			finally:
+				data = list(record[curr_record_hash].values())
+				helpers.insert_record(connection=sink_db_info['connection'],
+				                           cursor=sink_db_info['cursor'],
+				                           query=queries['insert'],
+				                           data=data)
+			
+			show.show_record_(record=record, record_count=count, each_time=each_time)
+	return url_hashes
 
 
 def write_to_db(database, record, table='moz_places'):
 	
-	field_names_string, data = get_record_info(record)
+	field_names_string, data = helpers.get_record_info(record)
 	# table_name = ['moz_places']
-	queries = make_queries(table, field_names_string, values=data)
+	queries = helpers.make_queries(table, field_names_string)
 	conn, cur, filepath = db_handler.connect_db(database)
 	
-	create_table(cursor=cur, query=queries['create'])
-	insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
+	helpers.create_table(cursor=cur, query=queries['create'])
+	helpers.insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
 	
 	conn.close()
 	
+	
 
 def write_to_json(json_path, record_yielder):
+	import jsonlines
+	
 	with jsonlines.open(json_path, 'w') as json_records_obj:
 		for record in record_yielder:
 			json_records_obj.write(record)
