@@ -21,18 +21,3 @@ filemodes = {True: 'ab', False: 'wb'}
 filemode_ = filemodes[os.path.exists(url_hash_log_file)]
 with open(url_hash_log_file, filemode_) as write_obj:
 	write_obj.write(url_hashes)
-	
-	# write_url_hash_to_log(url_hash_log_file, new_record=record)
-	
-
-	# url_hash_log = read_url_hash_from_log(url_hash_log_file)
-	# url_hash_ids = url_hash_log
-	
-	# redundant = bool(url_hash_ids.get(curr_url_hash, None))
-	
-	# deduplicator.deduplicate_records(new_record=record, sink_db_path=sink_db_path)
-# write_new_db.write_to_json(sink_db_path, record_yielder=yield_source_records)
-# for record in yield_source_records:
-# 	unique_record = deduplicator.deduplicate_records(record)
-# 	print(unique_record)
-'CREATE TABLE moz_places (id, url, title, rev_host, visit_count, hidden, typed, favicon_id, frecency, last_visit_date, guid, foreign_count, url_hash, description, preview_image_url)'
