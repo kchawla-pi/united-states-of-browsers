@@ -1,7 +1,8 @@
 import sqlite3
 
-from collections import OrderedDict as odict
-from write_new_db import safetychecks
+from helpers import safetychecks
+
+
 # from write_new_db import safetychecks
 
 def _table_records(cursor, table):
@@ -31,20 +32,21 @@ def _table_records(cursor, table):
 			yield record_
 
 
-def _make_records_dict_generator(records: 'iterable', table=None, filepath=None):
+def _make_records_dict_generator(records: 'iterable', record_template):
 	# record_dict = [odict({'_filepath': filepath, 'table': table})]
-	field_names = next(records)
+	fieldnames = next(records)
 	for record_ in records:
-		temp = {field_name_: field_
-		       for field_name_, field_ in zip(field_names, record_)}
-		yield {temp['url_hash']: temp}
+		record_template.update({fieldname_: field_
+		       for fieldname_, field_ in zip(fieldnames, record_)})
+		yield {record_template['url_hash']: record_template}
 
 
-def yield_prepped_records(*, cursor, table, filepath):
+def yield_prepped_records(*, cursor, table, filepath, record_template):
 	records = _table_records(cursor=cursor, table=table)
 	try:
 		raise records  # if records is exception, rest mustn't happen
 	except TypeError:
-		prepped_records_generator = _make_records_dict_generator(records=records, table=table,
-		                                                         filepath=filepath)
+		# field_names = next(records)
+		prepped_records_generator = _make_records_dict_generator(records=records,
+		                                                         record_template=record_template)
 		return prepped_records_generator
