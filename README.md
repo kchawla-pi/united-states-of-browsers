@@ -26,3 +26,12 @@ Whenever I wish to search something, I have to go through them all until I find 
 Initial idea is to read the broswer's sqlite3 database files and copy and combine the data in one place, maybe a json. More features for searching and organization and maybe an ML algo to recommend from within the combined history and the web will be implemented.
 
 Note: PLay with it, I haven't made it Demo-ready yet.
+
+Future Plans:
+
+ - Update duplicate entries.
+ - CLI, then GUI. (Front End JS?)
+ - Search. (Elastic Search?)
+ - Scraping the URL and getting the text back.
+ - ML to pick out keywords from text and title.
+ - Use that to tag and categorize the history entries
