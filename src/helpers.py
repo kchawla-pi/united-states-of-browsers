@@ -42,7 +42,7 @@ def safetychecks(record: dict) -> True:
 		sys.exit()
 
 
-def make_queries(table: str, field_names) -> dict[str: str]:
+def make_queries(table: str, field_names: str) -> Dict:
 	'''
 	Constructs the queries necessary for specific pruposes.
 	Returns them as dict['purpose': 'query']
@@ -65,7 +65,7 @@ def create_table(cursor: sqlite3.Connection.cursor, query: str, counter: int=0) 
 		print(excep)
 
 
-def insert_record(connection: sqlite3.Connection, cursor: sqlite3.Connection.cursor, query: str, data: Sequence[str, int]) -> None:
+def insert_record(connection: sqlite3.Connection, cursor: sqlite3.Connection.cursor, query: str, data: Sequence) -> None:
 	'''
 	Commits a new record in to the database.
 	Accepts connection object and cursor, insertion query and data.

@@ -72,7 +72,7 @@ def _db_files(profile_paths: Path, ext: Optional[AnyStr]='.sqlite') -> Iterable[
 		return [file_ for file_ in files if file_.rfind(ext) == len(file_) - len(ext)]
 
 
-def db_filepath(profile_paths, filenames=None, ext='sqlite') -> dict[str: Path]:
+def db_filepath(profile_paths, filenames=None, ext='sqlite') -> Dict:
 	"""
 	Yields the path for the next database file.
 	Exits program if browser info or profile directory path are invalid.

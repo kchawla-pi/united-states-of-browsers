@@ -9,7 +9,7 @@ from typing import (AnyStr,
                     Optional,
                     Sequence,
                     SupportsInt,
-                    Tuple, Type, TypeVar,
+                    Text, Tuple, Type, TypeVar,
                     Union,
                     NewType,
                     )

@@ -5,7 +5,7 @@ from helpers import safetychecks
 from annotations import *
 
 
-def _table_records(cursor, table: [str, Sequence[str]]) -> Generator(Tuple):
+def _table_records(cursor, table: [str, Sequence[str]]) -> Generator:
 	"""
 	Yields one record (row) of the table, whenever called.
 	Accepts the db connection cursor and table name
@@ -24,7 +24,7 @@ def _table_records(cursor, table: [str, Sequence[str]]) -> Generator(Tuple):
 			yield record_
 
 
-def _make_records_dict_generator(records: Iterable, record_template: dict[str: None]) -> Generator[dict]:
+def _make_records_dict_generator(records: Iterable, record_template: Dict) -> Generator:
 	'''
 	Yields a dict with field names: field data as key: value pairs
 	Accepts record yielding generator and a dict with field names as keys.
@@ -36,7 +36,7 @@ def _make_records_dict_generator(records: Iterable, record_template: dict[str: N
 		yield {record_template['url_hash']: record_template}
 
 
-def yield_prepped_records(*, cursor, table: str, record_template: dict[str: None]) -> Generator:
+def yield_prepped_records(*, cursor, table: str, record_template: Dict) -> Generator:
 	'''
 	Returns a generator of of generator of database records. (i know I know. Working on it.)
 	Accepts connection cursor, table name and record template ({fieldnames: None})

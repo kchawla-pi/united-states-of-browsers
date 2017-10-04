@@ -44,7 +44,7 @@ def make_record_dict_template(cursor: sqlite3.Connection.cursor, table: Union[st
 	return record_template
 	
 	
-def read_browser_database(filepaths: Union[str, Sequence[str]], fieldnames: Sequence[str]) -> Generator[Generator]:
+def read_browser_database(filepaths: Union[Text, Sequence[Text]], fieldnames: Sequence[Text]) -> Generator:
 	'''
 	Yields a generator of generator of records from all the profile databases.
 	Accepts a single path or a sequence of paths to each database file, and list of field names of records.
