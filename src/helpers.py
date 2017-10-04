@@ -4,8 +4,14 @@ import sqlite3
 import string
 import sys
 
+from annotations import *
 
-def get_record_info(record):
+
+def get_record_info(record: Dict) -> Tuple[str, Sequence]:
+	'''
+	Accepts dict of field name, field values.
+	Returns str of comma-separated key names and data.
+	'''
 
 	record_data = list(record.values())[0]
 	field_names_string = ', '.join([str(field) for field in record_data.keys()])
@@ -13,7 +19,12 @@ def get_record_info(record):
 	return field_names_string, data
 
 
-def safetychecks(record):
+def safetychecks(record: dict) -> True:
+	'''
+	Checks the names being inserted using string formatting for suspicious characters.
+	Prevents SQL injection attacks.
+	Returns True or Exits the program.
+	'''
 	safe_chars = set(string.ascii_lowercase)
 	safe_chars.update(['_', '_'])
 	try:
@@ -31,13 +42,22 @@ def safetychecks(record):
 		sys.exit()
 
 
-def make_queries(table, field_names):
+def make_queries(table: str, field_names) -> dict[str: str]:
+	'''
+	Constructs the queries necessary for specific pruposes.
+	Returns them as dict['purpose': 'query']
+	'''
 	queries = {'create': '''CREATE TABLE {} ({})'''.format(table, field_names)}
 	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table)})
 	return queries
 
 
-def create_table(cursor, query, counter=0):
+def create_table(cursor: sqlite3.Connection.cursor, query: str, counter: int=0) -> True:
+	'''
+	Creates a table in the connected to database.
+	Accepts the connection.cursor object, creation query.
+	Returns True or prints exception.
+	'''
 	try:
 		cursor.execute(query)
 		return True
@@ -45,7 +65,11 @@ def create_table(cursor, query, counter=0):
 		print(excep)
 
 
-def insert_record(connection, cursor, query, data):
+def insert_record(connection: sqlite3.Connection, cursor: sqlite3.Connection.cursor, query: str, data: Sequence[str, int]) -> None:
+	'''
+	Commits a new record in to the database.
+	Accepts connection object and cursor, insertion query and data.
+	'''
 	cursor.execute(query, data)
 	connection.commit()
 

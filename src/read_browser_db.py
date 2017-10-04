@@ -2,22 +2,13 @@
 import sqlite3
 
 from collections import OrderedDict as odict
-from typing import (Dict,
-                    Generator,
-                    List,
-                    Optional,
-                    Sequence,
-                    Tuple, Type, TypeVar,
-                    Union,
-                    )
 
 import browser_setup
 import db_handler
 import helpers
 import record_fetcher
 
-OrderedDict = TypeVar('OrderedDict')
-# Path = TypeVar('Path')
+from annotations import *
 
 
 def firefox(profiles: Optional[Union[str, Sequence[str]]]=None) -> Tuple[List[str], List[str]]:
@@ -57,7 +48,6 @@ def read_browser_database(filepaths: Union[str, Sequence[str]], fieldnames: Sequ
 	'''
 	Yields a generator of generator of records from all the profile databases.
 	Accepts a single path or a sequence of paths to each database file, and list of field names of records.
-	
 	'''
 	
 	record_template = odict.fromkeys(fieldnames, None)

@@ -2,14 +2,13 @@
 import sqlite3
 import os
 
+from annotations import *
 
-def connect_db(db_file):
+
+def connect_db(db_file: Path) -> dict:
 	"""
 	Establishes connection to the database file, returns connection, cursor objects and filename.
-	:param db_file: Path of the database file.
-	:type db_file: str/path-like object
-	:return: conn, cur filename
-	:rtype: connection object, cursor object, str
+	Accepts path of the database file.
 	"""
 	conn = sqlite3.connect(database=db_file)
 	cur = conn.cursor()
@@ -20,13 +19,10 @@ def connect_db(db_file):
 	return db_connection_info
 
 
-def _db_tables(cursor):
+def _db_tables(cursor: sqlite3.Connection.cursor) -> List[str]:
 	"""
-	Returns names of tables from the cursor object of the database file.
-	:param cursor: Cursor object attached to the database file, from connect_db function.
-	:type cursor: Connection.Cursor Object
-	:return: list of table names in database file.
-	:rtype: list['str']
+	Returns names of tables in database.
+	Accepts cursor object of the database file.
 	"""
 	query = "SELECT name FROM sqlite_master WHERE type = 'table'"
 	return [table_[0] for table_ in cursor.execute(query)]

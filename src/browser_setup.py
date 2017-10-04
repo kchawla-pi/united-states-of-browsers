@@ -3,12 +3,8 @@ import os
 
 from pprint import pprint
 from pathlib import Path
-from typing import (Union,
-                    Optional,
-                    Iterable,
-                    AnyStr,
-                    )
 
+from annotations import *
 
 debug = 0
 
@@ -76,9 +72,10 @@ def _db_files(profile_paths: Path, ext: Optional[AnyStr]='.sqlite') -> Iterable[
 		return [file_ for file_ in files if file_.rfind(ext) == len(file_) - len(ext)]
 
 
-def db_filepath(profile_paths, filenames=None, ext='sqlite'):
+def db_filepath(profile_paths, filenames=None, ext='sqlite') -> dict[str: Path]:
 	"""
 	Yields the path for the next database file.
+	Exits program if browser info or profile directory path are invalid.
 	Accepts profile directory path.
 	Optional: file name(s), extensions (default is sqlite)
 	"""

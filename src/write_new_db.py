@@ -6,8 +6,20 @@ import db_handler
 import show
 import helpers
 
+from annotations import *
 
-def merge_databases(source_record_yielder, sink_db_info, start_from=0, print_records=False):
+
+def merge_databases(source_record_yielder: Generator,
+                    sink_db_info: Dict,
+                    start_from: int=0,
+                    print_records: Union[bool, int]=False
+                    ) -> Sequence[int]:
+	'''
+	Creates a new database by merging data from multiple databases.
+	Accepts a geneator to yield source databases records, dict of info for target database.
+	Optional: Accepts the number of initial records to skip, and to print the records as they are processed.
+	Returns array of url_hashes of website addresses.
+	'''
 	each_time = int(print_records)
 	url_hashes = array('Q')
 	for count, record in enumerate(source_record_yielder):
@@ -35,10 +47,9 @@ def merge_databases(source_record_yielder, sink_db_info, start_from=0, print_rec
 	return url_hashes
 
 
-def write_to_db(database, record, table='moz_places'):
-	
+def write_to_db(database: Path, record, table: str='moz_places'):
+	'''Deprecated'''
 	field_names_string, data = helpers.get_record_info(record)
-	# table_name = ['moz_places']
 	queries = helpers.make_queries(table, field_names_string)
 	conn, cur, filepath = db_handler.connect_db(database)
 	
@@ -50,6 +61,7 @@ def write_to_db(database, record, table='moz_places'):
 	
 
 def write_to_json(json_path, record_yielder):
+	'''Deprecated'''
 	import jsonlines
 	
 	with jsonlines.open(json_path, 'w') as json_records_obj:

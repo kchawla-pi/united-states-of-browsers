@@ -2,11 +2,10 @@
 import sqlite3
 
 from helpers import safetychecks
+from annotations import *
 
 
-# from write_new_db import safetychecks
-
-def _table_records(cursor, table):
+def _table_records(cursor, table: [str, Sequence[str]]) -> Generator(Tuple):
 	"""
 	Yields one record (row) of the table, whenever called.
 	Accepts the db connection cursor and table name
@@ -25,7 +24,7 @@ def _table_records(cursor, table):
 			yield record_
 
 
-def _make_records_dict_generator(records: 'iterable', record_template):
+def _make_records_dict_generator(records: Iterable, record_template: dict[str: None]) -> Generator[dict]:
 	'''
 	Yields a dict with field names: field data as key: value pairs
 	Accepts record yielding generator and a dict with field names as keys.
@@ -37,7 +36,7 @@ def _make_records_dict_generator(records: 'iterable', record_template):
 		yield {record_template['url_hash']: record_template}
 
 
-def yield_prepped_records(*, cursor, table, record_template):
+def yield_prepped_records(*, cursor, table: str, record_template: dict[str: None]) -> Generator:
 	'''
 	Returns a generator of of generator of database records. (i know I know. Working on it.)
 	Accepts connection cursor, table name and record template ({fieldnames: None})
