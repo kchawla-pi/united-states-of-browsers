@@ -20,7 +20,7 @@ def main():
 	# gives a generator that yields all the records across all profiles.
 	yield_source_records = (record for profile_ in prepped_records for record in profile_)
 	
-	sink_db_path = helpers.filepath_from_another('newtest_not_atomized.sqlite')
+	sink_db_path = helpers.filepath_from_another('merged_fx_db.sqlite')
 	url_hash_log_file = helpers.filepath_from_another('url_hash_log.bin')
 	
 	# target database connection object
