@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import os
 
 from pprint import pprint
@@ -78,24 +79,8 @@ def _db_files(profile_paths: Path, ext: Optional[AnyStr]='.sqlite') -> Iterable[
 def db_filepath(profile_paths, filenames=None, ext='sqlite'):
 	"""
 	Yields the path for the next database file.
-	By default, these are sqlite file. (used by browsers to store history, bookmarks etc)
-
-	Usage:
-		filepath_generator = _filepath(root, filenames, ext)
-		next_sqlite_databse_filepath = next(filepath_generator)
-
-	:param profile_paths: Directory path containing the database files.
-		Default: <project_root>/tinker/data/firefox_regular_surfing/
-	:type profile_paths: str/path-like object
-	:param filenames: List of database filenames in the root directory.
-		Default: ['places', 'storage']
-	:type filenames: list[str]
-	:param ext: Extension of the databse file.
-		Default: sqlite
-	:type ext: str
-		Default: sqlite
-	:return: yields path of the database file.
-	:rtype: str/path-like object
+	Accepts profile directory path.
+	Optional: file name(s), extensions (default is sqlite)
 	"""
 	try:
 		ext_joiner = '' if ext[0] in {os.extsep,

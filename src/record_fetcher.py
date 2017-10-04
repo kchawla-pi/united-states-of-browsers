@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import sqlite3
 
 from helpers import safetychecks
@@ -8,16 +9,8 @@ from helpers import safetychecks
 def _table_records(cursor, table):
 	"""
 	Yields one record (row) of the table, whenever called.
+	Accepts the db connection cursor and table name
 
-	Usage:
-		table_records_generator = _table_records(cursor, table)
-		next_record_in_table = next(table_records_generator)
-	:param cursor: Cursor object for current database file
-	:type cursor: Connection.Cursor object
-	:param table: Name of table
-	:type table: str
-	:return: Yields tuple of record, each column separated by a comma
-	:rtype: tuple[str, *str, ...]
 	"""
 	safetychecks(table)
 	query = '''SELECT * FROM {}'''.format(table)
@@ -33,7 +26,10 @@ def _table_records(cursor, table):
 
 
 def _make_records_dict_generator(records: 'iterable', record_template):
-	# record_dict = [odict({'_filepath': filepath, 'table': table})]
+	'''
+	Yields a dict with field names: field data as key: value pairs
+	Accepts record yielding generator and a dict with field names as keys.
+	'''
 	fieldnames = next(records)
 	for record_ in records:
 		record_template.update({fieldname_: field_
@@ -41,12 +37,15 @@ def _make_records_dict_generator(records: 'iterable', record_template):
 		yield {record_template['url_hash']: record_template}
 
 
-def yield_prepped_records(*, cursor, table, filepath, record_template):
+def yield_prepped_records(*, cursor, table, record_template):
+	'''
+	Returns a generator of of generator of database records. (i know I know. Working on it.)
+	Accepts connection cursor, table name and record template ({fieldnames: None})
+	'''
 	records = _table_records(cursor=cursor, table=table)
 	try:
 		raise records  # if records is exception, rest mustn't happen
 	except TypeError:
-		# field_names = next(records)
 		prepped_records_generator = _make_records_dict_generator(records=records,
 		                                                         record_template=record_template)
 		return prepped_records_generator

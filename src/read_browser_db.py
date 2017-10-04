@@ -1,30 +1,48 @@
+# -*- encoding: utf-8 -*-
 import sqlite3
 
 from collections import OrderedDict as odict
+from typing import (Dict,
+                    Generator,
+                    List,
+                    Optional,
+                    Sequence,
+                    Tuple, Type, TypeVar,
+                    Union,
+                    )
 
 import browser_setup
 import db_handler
 import helpers
 import record_fetcher
-import write_new_db
-from show import quick_read_record
+
+OrderedDict = TypeVar('OrderedDict')
+# Path = TypeVar('Path')
 
 
-def firefox(profiles=None):
+def firefox(profiles: Optional[Union[str, Sequence[str]]]=None) -> Tuple[List[str], List[str]]:
 	'''
-	Setups
-	:param profiles:
-	:type profiles:
-	:return:
-	:rtype:
+	Setups path & field names of places.sqlite file for Firefox browser profiles in Windows x64.
+	Returns all profiles by default.
+	Optionally, Accepts profile name (str) or list of profile names.
+	Returns tuple(list[path(s)] to Firefox profile database(s), list[field names])
 	'''
+	firefox_fieldnames = ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed',
+	                       'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
+	                       'url_hash', 'description', 'preview_image_url',
+	                       ]
 	profile_paths = browser_setup.setup_profile_paths(browser_ref='firefox', profiles=profiles)
 	file_paths = browser_setup.db_filepath(profile_paths=profile_paths, filenames='places', ext='sqlite')
-	return file_paths
+	return file_paths, firefox_fieldnames
 
 
-def make_record_dict_template(cursor, table):
-	helpers.safetychecks(table)
+def make_record_dict_template(cursor: sqlite3.Connection.cursor, table: Union[str, Sequence[str]]) -> [Dict, Exception] :
+	'''
+	Retrieves fieldnames from database table.
+	Returns Ordered dictionary with field names as keys and None values.
+	args: connection.cursor(), table name (str)
+	'''
+	helpers.safetychecks(table)  # Guards against SQL injection attacks
 	query = '''SELECT * FROM {}'''.format(table)
 	try:
 		cursor.execute(query)
@@ -35,12 +53,15 @@ def make_record_dict_template(cursor, table):
 	return record_template
 	
 	
-def read_browser_database(filepaths):
-	fieldnames_template = ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed',
-	                       'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
-	                       'url_hash', 'description', 'preview_image_url',
-	                       ]
-	record_template = odict.fromkeys(fieldnames_template, None)
+def read_browser_database(filepaths: Union[str, Sequence[str]], fieldnames: Sequence[str]) -> Generator[Generator]:
+	'''
+	Yields a generator of generator of records from all the profile databases.
+	Accepts a single path or a sequence of paths to each database file, and list of field names of records.
+	
+	'''
+	
+	record_template = odict.fromkeys(fieldnames, None)
+	helpers.safetychecks(record_template)
 	for idx, profile_name_ in enumerate(filepaths):
 		tables = ['moz_places']
 		for table_ in tables:
@@ -50,7 +71,6 @@ def read_browser_database(filepaths):
 				print(excep)
 			else:
 				prepped_records = record_fetcher.yield_prepped_records(cursor=source_db_info['cursor'], table=table_,
-				                                                       filepath=filepaths[profile_name_],
 				                                                       record_template=record_template,
 				                                                       )
 				yield prepped_records
