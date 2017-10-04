@@ -3,11 +3,11 @@ A project to combine &amp; organize history and bookmarks across multiple browse
 
 Not ready for demo.
 
-Built with python3.6
-using Pycharm 2017.2.3 CE
-On Windows 10 x64 Creators Update
-For Mozilla Firefox.
-May work with other Windows versions.
+ - Built with python3.6
+ - using Pycharm 2017.2.3 CE
+ - On Windows 10 x64 Creators Update
+ - For Mozilla Firefox.
+ - May work with other Windows versions.
 
 Does not support other OS and browsers.
 Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
