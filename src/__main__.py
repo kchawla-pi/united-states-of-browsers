@@ -13,7 +13,7 @@ import helpers
 import read_browser_db
 import write_new_db
 
-def main()
+def main():
 	source_db_paths, field_names = read_browser_db.firefox()
 	
 	prepped_records = read_browser_db.read_browser_database(filepaths=source_db_paths, fieldnames=field_names)
