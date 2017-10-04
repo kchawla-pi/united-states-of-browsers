@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+"""
+Setups the path to browser Database
+"""
 import os
 
 from pprint import pprint
