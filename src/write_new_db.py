@@ -35,8 +35,12 @@ def merge_databases(source_record_yielder: Generator,
 	return url_hashes
 
 
-def write_to_db(record, sink_db_info, table: str='moz_places'):
-	'''Accepts a record, target database info, and database table name.'''
+def write_to_db(record: Dict[Dict], sink_db_info: Dict, table: Text='moz_places') -> int:
+	'''
+	Writes a record to a database.
+	Accepts a record and target database info
+	Optional: database table name else uses default 'moz_places'.
+	Returns the url_hash of the written record.'''
 	curr_record_hash = list(record.keys())[0]
 	try:
 		field_names_string
