@@ -46,16 +46,13 @@ def write_to_db(record: Dict[Dict], sink_db_info: Dict, table: Text='moz_places'
 		field_names_string
 	except NameError:
 		field_names_string, data = helpers.get_record_info(record)
-		queries = helpers.make_queries(table=table,
-		                                    field_names=field_names_string)
+		queries = helpers.make_queries(table=table, field_names=field_names_string)
 		helpers.create_table(cursor=sink_db_info['cursor'], query=queries['create'])
 	
 	data = list(record[curr_record_hash].values())
 	try:
-		helpers.insert_record(connection=sink_db_info['connection'],
-		                           cursor=sink_db_info['cursor'],
-		                           query=queries['insert'],
-		                           data=data)
+		helpers.insert_record(connection=sink_db_info['connection'], cursor=sink_db_info['cursor'],
+		                           query=queries['insert'], data=data)
 	except Exception as excep:
 		raise excep
 	else:
