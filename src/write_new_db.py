@@ -16,7 +16,7 @@ def merge_databases(source_record_yielder: Generator,
                     ) -> Sequence[int]:
 	'''
 	Creates a new database by merging data from multiple databases.
-	Accepts a geneator to yield source databases records, dict of info for target database.
+	Accepts a generator to yield source databases records, dict of info for target database.
 	Optional: Accepts the number of initial records to skip, and to print the records as they are processed.
 	Returns array of url_hashes of website addresses.
 	'''
@@ -28,35 +28,35 @@ def merge_databases(source_record_yielder: Generator,
 		curr_record_hash = list(record.keys())[0]
 		
 		if curr_record_hash not in set(url_hashes):
-			insort(url_hashes, curr_record_hash)
-			try:
-				field_names_string
-			except NameError:
-				field_names_string, data = helpers.get_record_info(record)
-				queries = helpers.make_queries(table='moz_places',
-				                                    field_names=field_names_string)
-				helpers.create_table(cursor=sink_db_info['cursor'], query=queries['create'])
-			finally:
-				data = list(record[curr_record_hash].values())
-				helpers.insert_record(connection=sink_db_info['connection'],
-				                           cursor=sink_db_info['cursor'],
-				                           query=queries['insert'],
-				                           data=data)
+			written_url_hash = write_to_db(record=record, sink_db_info=sink_db_info, table='moz_places')
+			insort(url_hashes, written_url_hash)
 			
 			show.show_record_(record=record, record_count=count, each_time=each_time)
 	return url_hashes
 
 
-def write_to_db(database: Path, record, table: str='moz_places'):
-	'''Deprecated'''
-	field_names_string, data = helpers.get_record_info(record)
-	queries = helpers.make_queries(table, field_names_string)
-	conn, cur, filepath = db_handler.connect_db(database)
+def write_to_db(record, sink_db_info, table: str='moz_places'):
+	'''Accepts a record, target database info, and database table name.'''
+	curr_record_hash = list(record.keys())[0]
+	try:
+		field_names_string
+	except NameError:
+		field_names_string, data = helpers.get_record_info(record)
+		queries = helpers.make_queries(table=table,
+		                                    field_names=field_names_string)
+		helpers.create_table(cursor=sink_db_info['cursor'], query=queries['create'])
 	
-	helpers.create_table(cursor=cur, query=queries['create'])
-	helpers.insert_record(connection=conn, cursor=cur, query=queries['insert'], data=data)
-	
-	conn.close()
+	data = list(record[curr_record_hash].values())
+	try:
+		helpers.insert_record(connection=sink_db_info['connection'],
+		                           cursor=sink_db_info['cursor'],
+		                           query=queries['insert'],
+		                           data=data)
+	except Exception as excep:
+		raise excep
+	else:
+		return curr_record_hash
+		
 	
 	
 
