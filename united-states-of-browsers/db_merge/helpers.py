@@ -4,7 +4,7 @@ import sqlite3
 import string
 import sys
 
-from annotations import *
+from db_merge.annotations import *
 
 
 def get_record_info(record: Dict) -> Tuple[str, Sequence]:

@@ -19,7 +19,7 @@ import os
 
 import jsonlines
 
-import write_new_db
+from db_merge import write_new_db
 
 
 def manage_url_hash_log(record=None):

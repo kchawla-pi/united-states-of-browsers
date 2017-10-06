@@ -1,7 +1,5 @@
-import sqlite3
+from db_merge import read_browser_db
 
-import browser_setup
-import read_browser_db
 
 # db_paths = browser_setup.setup_profile_paths(browser_ref='firefox', profiles=None)
 db_paths = read_browser_db.firefox()

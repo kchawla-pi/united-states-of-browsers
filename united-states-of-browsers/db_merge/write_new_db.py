@@ -4,9 +4,9 @@ from bisect import insort
 from collections import OrderedDict as odict
 
 import show
-import helpers
-
 from annotations import *
+
+from db_merge import helpers
 
 
 def merge_databases(source_record_yielder: Generator,
@@ -52,7 +52,7 @@ def write_to_db(record: Dict, sink_db_info: Dict, table: Text='moz_places') -> i
 	data = list(record[curr_record_hash].values())
 	try:
 		helpers.insert_record(connection=sink_db_info['connection'], cursor=sink_db_info['cursor'],
-		                           query=queries['insert'], data=data)
+		                      query=queries['insert'], data=data)
 	except Exception as excep:
 		raise excep
 	else:

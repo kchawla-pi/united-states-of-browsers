@@ -1,7 +1,6 @@
 from collections import OrderedDict as odict
 
-import write_new_db
-
+from db_merge import write_new_db
 
 
 def create_test_data():

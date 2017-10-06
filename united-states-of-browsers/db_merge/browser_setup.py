@@ -3,11 +3,10 @@
 Setups the path to browser Database
 """
 import os
-
 from pprint import pprint
-from pathlib import Path
 
-from annotations import *
+from db_merge.annotations import *
+
 
 debug = 0
 

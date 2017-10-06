@@ -1,4 +1,4 @@
-from deduplicator import deduplicate_records
+from db_merge.deduplicator import deduplicate_records
 
 
 def test_deduplicate_records():

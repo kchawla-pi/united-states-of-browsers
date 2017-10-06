@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 import sqlite3
 
-from helpers import safetychecks
 from annotations import *
+
+from db_merge.helpers import safetychecks
 
 
 def _table_records(cursor, table: [str, Sequence[str]]) -> Generator:
