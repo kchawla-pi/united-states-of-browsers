@@ -13,7 +13,7 @@ Does not support other OS and browsers YET. Easy to make it work for other OSes.
 Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
 
 To Run:
-Clone this repo and run \src\\\_\_main\_\_.py
+Clone this repo and run \united-states-of-browsers\db_merge\\\_\_main\_\_.py
 
 It will generate an sqlite file in the \src directory, 'merged_fx_db.sqlite' .
 A url_hash_log.bin might also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
