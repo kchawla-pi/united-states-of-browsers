@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 from array import array
 from bisect import insort
+from collections import OrderedDict as odict
 
-import db_handler
 import show
 import helpers
 
@@ -35,7 +35,7 @@ def merge_databases(source_record_yielder: Generator,
 	return url_hashes
 
 
-def write_to_db(record: Dict[Dict], sink_db_info: Dict, table: Text='moz_places') -> int:
+def write_to_db(record: Dict, sink_db_info: Dict, table: Text='moz_places') -> int:
 	'''
 	Writes a record to a database.
 	Accepts a record and target database info
@@ -74,4 +74,23 @@ def write_to_json(json_path, record_yielder):
 
 
 if __name__ == '__main__':
-	pass
+	test_records = (
+		{47356370932282: odict(
+				[('id', 1), ('url', 'https://www.mozilla.org/en-US/firefox/central/'),
+				 ('title', None), ('rev_host', 'gro.allizom.www.'), ('visit_count', 0),
+				 ('hidden', 0), ('typed', 0), ('favicon_id', None), ('frecency', 74),
+				 ('last_visit_date', None), ('guid', 'NNqZA_f2KHI1'), ('foreign_count', 1),
+				 ('url_hash', 47356370932282), ('description', None), ('preview_image_url', None)])},
+		{47357795150914: dict(odict(
+				[('id', 2), ('url', 'https://support.mozilla.org/en-US/products/firefox'),
+				 ('title', None), ('rev_host', 'gro.allizom.troppus.'), ('visit_count', 0),
+				 ('hidden', 0), ('typed', 0), ('favicon_id', None), ('frecency', 74),
+				 ('last_visit_date', None), ('guid', '4xhwpotXndUs'), ('foreign_count', 1),
+				 ('url_hash', 47357795150914), ('description', None), ('preview_image_url', None)]))},
+		)
+	import jsonlines
+	# for record in test_records:
+		# write_to_json('example_json.jsonl', record)
+	with jsonlines.open('example_json.jsonl', 'w') as json_records_obj:
+		for record in test_records:
+			json_records_obj.write(record)

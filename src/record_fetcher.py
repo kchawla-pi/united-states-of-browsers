@@ -12,7 +12,8 @@ def _table_records(cursor, table: [str, Sequence[str]]) -> Generator:
 
 	"""
 	safetychecks(table)
-	query = '''SELECT * FROM {}'''.format(table)
+	sort_key = "url_hash"
+	query = '''SELECT * FROM {} ORDER BY {}'''  .format(table, sort_key)
 	try:
 		cursor.execute(query)
 	except sqlite3.OperationalError:
