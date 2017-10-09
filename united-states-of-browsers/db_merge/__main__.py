@@ -28,7 +28,8 @@ def main():
 	# target database connection object
 	sink_db_info = db_handler.connect_db(db_file=sink_db_path)
 	
-	processed_url_hashes = write_new_db.merge_databases(source_record_yielder=yield_source_records, sink_db_info=sink_db_info, print_records=4000)
+	processed_url_hashes = write_new_db.merge_databases(source_record_yielder=yield_source_records,
+	                                                    sink_db_info=sink_db_info, print_records=4000)
 	
 	filemodes = {True: 'ab', False: 'wb'}
 	filemode_ = filemodes[os.path.exists(url_hash_log_file)]
