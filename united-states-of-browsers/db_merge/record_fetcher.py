@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*-
 import sqlite3
 
-from annotations import *
-
+from db_merge.annotations import *
 from db_merge.helpers import safetychecks
 
 
