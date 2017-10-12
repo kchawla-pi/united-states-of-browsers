@@ -2,6 +2,7 @@
 import sqlite3
 from collections import OrderedDict as odict
 
+
 from db_merge import (browser_setup,
                       db_handler,
                       helpers,
