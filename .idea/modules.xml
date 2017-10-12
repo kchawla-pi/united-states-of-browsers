@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../united-states-of-browsers/.idea/united-states-of-browsers.iml" filepath="$PROJECT_DIR$/../united-states-of-browsers/.idea/united-states-of-browsers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/united_states_of_browsers.iml" filepath="$PROJECT_DIR$/.idea/united_states_of_browsers.iml" />
     </modules>
   </component>
 </project>

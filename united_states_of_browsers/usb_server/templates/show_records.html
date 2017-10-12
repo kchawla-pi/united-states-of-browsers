@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Firefox History Entries</title>
+</head>
+<body>
+<hr>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>url</th>
+            <th>title</th>
+            <th>rev_host</th>
+            <th>visit_count</th>
+            <th>hidden</th>
+            <th>typed</th>
+            <th>favicon_id</th>
+            <th>frecency</th>
+            <th>last_visit_date</th>
+            <th>guid</th>
+            <th>foreign_count</th>
+            <th>url_hash</th>
+            <th>description</th>
+            <th>preview_image_url</th>
+        </tr>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry['id'] }}</td>
+            <td>{{ entry['url'] }}</td>
+            <td>{{ entry['title'] }}</td>
+            <td>{{ entry['rev_host'] }}</td>
+            <td>{{ entry['visit_count'] }}</td>
+            <td>{{ entry['hidden'] }}</td>
+            <td>{{ entry['typed'] }}</td>
+            <td>{{ entry['favicon_id'] }}</td>
+            <td>{{ entry['frecency'] }}</td>
+            <td>{{ entry['last_visit_date'] }}</td>
+            <td>{{ entry['guid'] }}</td>
+            <td>{{ entry['foreign_count'] }}</td>
+            <td>{{ entry['url_hash'] }}</td>
+            <td>{{ entry['description'] }}</td>
+            <td>{{ entry['preview_image_url'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

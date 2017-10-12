@@ -1,6 +1,6 @@
 import pytest
 
-from src import browser_setup as bs
+from united_states_of_browsers import browser_setup as bs
 
 
 def test_setup_profile_paths():
