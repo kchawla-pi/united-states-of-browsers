@@ -3,13 +3,12 @@ import sqlite3
 from collections import OrderedDict as odict
 
 
-from db_merge import (browser_setup,
-                      db_handler,
-                      helpers,
-                      record_fetcher,
-                      )
+import browser_setup
+import db_handler
+import helpers
+import record_fetcher
 
-from db_merge.annotations import *
+from imported_annotations import *
 
 
 def firefox(profiles: Optional[Union[str, Sequence[str]]]=None) -> Tuple[List[str], List[str]]:

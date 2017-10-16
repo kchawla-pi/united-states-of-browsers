@@ -9,10 +9,10 @@ Branch: Nightly-Dev
 import os
 
 import db_handler
+import helpers
 import read_browser_db
 import write_new_db
 
-from db_merge import helpers
 
 
 def main():

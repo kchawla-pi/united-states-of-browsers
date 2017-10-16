@@ -2,7 +2,8 @@
 import sqlite3
 import os
 
-from db_merge.annotations import *
+
+from imported_annotations import *
 
 
 def connect_db(db_file: Path) -> dict:

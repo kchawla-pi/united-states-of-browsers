@@ -4,9 +4,9 @@ from bisect import insort
 from collections import OrderedDict as odict
 
 import show
-from annotations import *
+import helpers
 
-from db_merge import helpers
+from imported_annotations import *
 
 
 def merge_databases(source_record_yielder: Generator,

@@ -17,9 +17,12 @@ Close Source & Sink DBs.
 '''
 import os
 
-import jsonlines
+# import jsonlines
 
-from db_merge import write_new_db
+# try:
+# 	from db_merge import write_new_db
+# except (ImportError, ModuleNotFoundError):
+# 	from . import write_new_db
 
 
 def manage_url_hash_log(record=None):
@@ -102,7 +105,7 @@ def deduplicate_records(new_record, json_path):
 		update_record(new_record, database_records)
 	else:
 		manage_url_hash_log(record=new_record)
-		write_new_db.write_to_json(json_path, record_yielder=database_records)
+		# write_new_db.write_to_json(json_path, record_yielder=database_records)
 		
 		return new_record
 		# write_new_db.write_to_db(database=write_to_database, new_record=new_record, table='moz_places')

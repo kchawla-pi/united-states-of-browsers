@@ -4,7 +4,12 @@ import sqlite3
 import string
 import sys
 
-from db_merge.annotations import *
+from imported_annotations import *
+
+# try:
+# 	from imported_annotations import *
+# except (ImportError, ModuleNotFoundError):
+# 	from.imported_annotations import *
 
 
 def get_record_info(record: Dict) -> Tuple[str, Sequence]:
