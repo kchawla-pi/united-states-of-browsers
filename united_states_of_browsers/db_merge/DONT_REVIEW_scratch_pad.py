@@ -1,6 +1,7 @@
 '''
 A place for experimentation and playing with new concepts and ideas. Not included in the actual finished code.
 '''
+"""
 keys = {
 	8470: ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed', 'favicon_id',
 	       'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash', 'description',
@@ -75,6 +76,12 @@ def scratch_pad2():
 	
 	for record in cur:
 		print(record)
+"""
+import os
+import setuptools
 
+packages_dir={'':'united_states_of_browsers'}
 
-
+print(os.getcwd())
+package_list = setuptools.find_packages('./united_states_of_browsers')
+print(package_list)

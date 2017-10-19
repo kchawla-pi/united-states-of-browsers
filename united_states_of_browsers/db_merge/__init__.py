@@ -13,6 +13,7 @@ from . import read_browser_db
 from . import record_fetcher
 from . import write_new_db
 from . import imported_annotations
+from . import merge_browser_databases
 # from .write_new_db import safetychecks
 
 
