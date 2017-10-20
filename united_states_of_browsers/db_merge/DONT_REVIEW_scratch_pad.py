@@ -77,6 +77,7 @@ def scratch_pad2():
 	for record in cur:
 		print(record)
 """
+"""
 import os
 import setuptools
 
@@ -85,3 +86,16 @@ packages_dir={'':'united_states_of_browsers'}
 print(os.getcwd())
 package_list = setuptools.find_packages('./united_states_of_browsers')
 print(package_list)
+"""
+
+from db_merge.browser_setup import setup_profile_paths
+
+# test_args = [('', ''), ('somegibberish', 'somemoregibberish'), ('somegibberish', None), (123, 321)]
+test_args = [('Firefox', ['regular_surfing', 'default'])]
+for browser_ref, profiles in test_args:
+	try:
+		actual_output = (setup_profile_paths(browser_ref=browser_ref, profiles=profiles))
+	except Exception as excep:
+		actual_output = str(excep)
+	print('input:', browser_ref, profiles, 'output:', actual_output, type(actual_output))
+	
