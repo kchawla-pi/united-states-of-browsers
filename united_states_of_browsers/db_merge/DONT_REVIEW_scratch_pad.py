@@ -87,7 +87,7 @@ print(os.getcwd())
 package_list = setuptools.find_packages('./united_states_of_browsers')
 print(package_list)
 """
-
+"""
 from db_merge.browser_setup import setup_profile_paths
 
 # test_args = [('', ''), ('somegibberish', 'somemoregibberish'), ('somegibberish', None), (123, 321)]
@@ -98,4 +98,18 @@ for browser_ref, profiles in test_args:
 	except Exception as excep:
 		actual_output = str(excep)
 	print('input:', browser_ref, profiles, 'output:', actual_output, type(actual_output))
-	
+"""
+
+import types
+
+proxy_map = types.MappingProxyType({'a': 1, 'b': 2})
+print(proxy_map)
+
+
+from collections import namedtuple
+
+ReplaceDict = namedtuple('ReplaceDict', 'input expected')
+
+replaced_dict = ReplaceDict(input='a', expected={})
+print(replaced_dict)
+# for item1, item2 in replaced_dict.items():

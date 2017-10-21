@@ -6,7 +6,7 @@ import os
 from imported_annotations import *
 
 
-def connect_db(db_file: Path) -> dict:
+def connect_db(db_file: PathLike) -> dict:
 	"""
 	Establishes connection to the database file, returns connection, cursor objects and filename.
 	Accepts path of the database file.

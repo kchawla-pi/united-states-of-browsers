@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 
 from pathlib import Path
+from os import PathLike
 from typing import (AnyStr,
+                    ByteString,
                     Dict,
                     Generator,
                     Iterable,
@@ -13,3 +15,4 @@ from typing import (AnyStr,
                     Union,
                     NewType,
                     )
+# PathLike = NewType('PathLike', Union[Path, str, ByteString])

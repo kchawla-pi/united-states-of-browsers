@@ -17,7 +17,7 @@ from imported_annotations import *
 debug = 0
 
 
-def _choose_browser_paths(browser_ref: Union[str, Path]) -> Union[str, Path]:
+def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, Dict[str, PathLike]]:
 	'''
 	Accepts a browser name or a directory path pointing to the profile location of the browser.
 	Returns the browser profile location.
@@ -26,16 +26,14 @@ def _choose_browser_paths(browser_ref: Union[str, Path]) -> Union[str, Path]:
 					'chrome': ['~', 'AppData', 'Local', 'Google', 'Chrome', 'User Data', 'Default',
 								'History'],
 					}
+	# if browser_ref not in path_crumbs, returns browser_ref as list of profile path.
 	return os.path.expanduser(Path(*path_crumbs.get(browser_ref, [browser_ref])))
 
 
-def _profile_dir(profile_loc: Path, *, profiles: Optional[Union[str, Iterable[AnyStr]]]=None) -> Iterable[Path]:
+def _profile_dir(profile_loc: PathLike, *, profiles: Optional[Union[str, Iterable[AnyStr]]]=None) -> Iterable[PathLike]:
 	'''
-	Creates paths for all profile directories in profile_loc (default), or for specified profiles.
-	
-	profile_loc: Root path of directory with all profile directories
-	profile_name: All profiles are included by default, can accept name of single profile or list of profiles.
-	:return: Profile path or list of profile paths
+	Returns paths for all profile directories in profile_loc (default),
+	or for the profile name specified in profiles.
 	'''
 	get_profile_name = lambda profile_dir: (profile_dir[profile_dir.find('.') + 1:])
 	if profiles is None:  # Returns all the profile paths if no profiles specified
@@ -51,10 +49,7 @@ def _profile_dir(profile_loc: Path, *, profiles: Optional[Union[str, Iterable[An
 
 def setup_profile_paths(*, browser_ref, profiles):
 	"""
-	Sets up the directory path for sqlite database files.
-	Returns path to sqlite file's copy stored in project directory.
-	:return: root directory
-	:rtype: str/path-like object
+	Returns up the directory path for sqlite database files for each profile.
 	"""
 	profile_loc = _choose_browser_paths(browser_ref=browser_ref)
 	
@@ -62,7 +57,7 @@ def setup_profile_paths(*, browser_ref, profiles):
 	return profile_paths
 
 
-def _db_files(profile_paths: Path, ext: Optional[AnyStr]='.sqlite') -> Iterable[Path]:
+def _db_files(profile_paths: PathLike, ext: Optional[AnyStr]='.sqlite') -> Iterable[PathLike]:
 	'''
 	Returns a list of file in the specified directory (not subdirectories) with a specified (or no) extension.
 	
