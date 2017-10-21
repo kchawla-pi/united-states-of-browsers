@@ -21,18 +21,22 @@ from united_states_of_browsers.db_merge import browser_setup
 from tests.data import test_browser_setup_data as bs_data
 
 
-@pytest.mark.parametrize(('test_input', 'expected_output'), [(input_data, expected_output)
-                                                             for input_data, expected_output
-                                                             in bs_data.setup_profile_paths.items()
-                                                             ])
-def test_setup_profile_paths(test_input, expected_output ):
+collected_tests = []
+
+@pytest.mark.parametrize(('test_case'), [test_case for test_case in bs_data.setup_profile_paths])
+def test_setup_profile_paths(test_case):
+	global collected_tests
 	try:
-		actual_output = browser_setup.setup_profile_paths(browser_ref=test_input.browser_ref, profiles=test_input.profiles)
+		actual_output = browser_setup.setup_profile_paths(browser_ref=test_case.browser_ref, profiles=test_case.profiles)
 	except Exception as excep:
 		actual_output = str(excep)
-	assert expected_output == actual_output
+	assert test_case.expected == actual_output
+	collected_tests.append((test_case),)
 
 
+# def test_db_filepath(test_input):
+# 	try:
+# 		actual_output = browser_setup.db_filepath(
 	
 if __name__ == '__main__':
 	pytest.main()
