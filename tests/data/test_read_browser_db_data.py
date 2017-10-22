@@ -15,9 +15,20 @@ def data_for_firefox():
 			         ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed', 'favicon_id',
 			          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash', 'description',
 			          'preview_image_url',]
-			         ),
+			         )
 		         ),
+	
+	TestCase(profiles='gibberishprofile',
+	         expected=(
+		         {},
+		         ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed', 'favicon_id',
+		          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash', 'description',
+		          'preview_image_url',]
+		         )
+	         ),
+		
 		)
+	
 	
 	return firefox_values_testdata
 
