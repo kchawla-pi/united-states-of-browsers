@@ -99,7 +99,7 @@ for browser_ref, profiles in test_args:
 		actual_output = str(excep)
 	print('input:', browser_ref, profiles, 'output:', actual_output, type(actual_output))
 """
-
+"""
 import types
 
 proxy_map = types.MappingProxyType({'a': 1, 'b': 2})
@@ -113,3 +113,18 @@ ReplaceDict = namedtuple('ReplaceDict', 'input expected')
 replaced_dict = ReplaceDict(input='a', expected={})
 print(replaced_dict)
 # for item1, item2 in replaced_dict.items():
+"""
+import pytest
+
+from pathlib import Path
+from pprint import pprint
+from db_merge import browser_setup
+
+home_dir = Path.home()
+with pytest.raises(AttributeError) as excinfo:
+	actual = browser_setup.db_filepath(
+			profile_paths=123,
+			filenames='places', ext='.sqlite')
+
+	pprint(actual)
+

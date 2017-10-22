@@ -47,7 +47,7 @@ def _profile_dir(profile_loc: PathLike, *, profiles: Optional[Union[str, Iterabl
 	        if get_profile_name(dir_.name) == profile_}
 
 
-def setup_profile_paths(*, browser_ref, profiles):
+def setup_profile_paths(*, browser_ref: Union[str, PathLike], profiles: Optional[str]):
 	"""
 	Returns up the directory path for sqlite database files for each profile.
 	"""
@@ -75,7 +75,7 @@ def _db_files(profile_paths: PathLike, ext: Optional[AnyStr]='.sqlite') -> Itera
 		return [file_ for file_ in files if file_.rfind(ext) == len(file_) - len(ext)]
 
 
-def db_filepath(profile_paths, filenames=None, ext='sqlite') -> Dict:
+def db_filepath(profile_paths: Dict[str, PathLike], filenames: str='places', ext='sqlite') -> Dict[str, PathLike]:
 	"""
 	Yields the path for the next database file.
 	Exits program if browser info or profile directory path are invalid.

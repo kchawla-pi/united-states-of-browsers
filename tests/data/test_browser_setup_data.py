@@ -1,5 +1,3 @@
-import types
-
 from collections import namedtuple
 from pathlib import Path
 
@@ -8,7 +6,8 @@ home_dir = Path.home()
 
 def data_for_setup_profile_paths():
 	TestCase = namedtuple('TestCase', 'browser_ref profiles expected')
-	setup_profile_paths = (
+	
+	setup_profile_paths_values_testdata = (
 		TestCase(browser_ref='firefox', profiles=None,
 		         expected=
 			{
@@ -31,23 +30,7 @@ def data_for_setup_profile_paths():
 		TestCase(browser_ref='', profiles='',
 		         expected={}
 		         ),
-		
-		TestCase(browser_ref='somegibberish', profiles='somemoregibberish',
-		         expected="[WinError 3] The system cannot find the path specified: 'somegibberish'"
-		         ),
-		
-		TestCase(browser_ref=123, profiles=321,
-		         expected="expected str, bytes or os.PathLike object, not int"
-		         ),
-		
-		TestCase(browser_ref=123.123, profiles=321.321,
-		         expected="expected str, bytes or os.PathLike object, not float"
-		         ),
-		
-		TestCase(browser_ref='rubbishpath', profiles=None,
-		         expected="[WinError 3] The system cannot find the path specified: 'rubbishpath'"
-		         ),
-		
+				
 		TestCase(browser_ref='C:\\Users\\default\\Desktop', profiles=None,
 		         expected={}
 		         ),
@@ -72,10 +55,6 @@ def data_for_setup_profile_paths():
 			         }
 		         ),
 		
-		TestCase(browser_ref='Firefox', profiles=None, # 'Firefox' instead of 'firefox'
-		         expected="[WinError 3] The system cannot find the path specified: 'Firefox'"
-		         ),
-		
 		TestCase(browser_ref='firefox',
 		         profiles=('regular_surfing', 'default', None, 'programming'),
 		         expected={'default':
@@ -91,37 +70,266 @@ def data_for_setup_profile_paths():
 		         ),
 		
 		)
-	return setup_profile_paths
-
-
-setup_profile_paths = data_for_setup_profile_paths()
-
-"""
-def data_for_db_filepaths():
-	InputForTesting = namedtuple('InputForTesting', 'profilepaths files ext')
-	db_filepaths = {
-		InputForTesting(files=None, ext='sqlite',
-		                profilepaths=types.MappingProxyType({
-			                'RegularSurfing': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
-			                'default': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
-			                'dev-edition-default': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
-			                'kc.qubit': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
-			                'test_profile0': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
-			                'test_profile1': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
-			                'test_profile2': Path(
-				                f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2')
-			                })
-		                ):
-			{},
-		}
 	
-	return db_filepaths
+	setup_profile_paths_excep_testdata = (
+		TestCase(browser_ref='somegibberish', profiles='somemoregibberish',
+		         expected=FileNotFoundError
+		         ),
+		
+		TestCase(browser_ref=123, profiles=321,
+		         expected=TypeError
+		         ),
+		
+		TestCase(browser_ref=123.123, profiles=321.321,
+		         expected=TypeError
+		         ),
+		
+		TestCase(browser_ref='rubbishpath', profiles=None,
+		         expected=FileNotFoundError
+		         ),
+		
+		TestCase(browser_ref='Firefox', profiles=None, # 'Firefox' instead of 'firefox'
+		         expected=FileNotFoundError
+		         ),
+		
+		)
+	return setup_profile_paths_values_testdata, setup_profile_paths_excep_testdata
 
-db_filepaths = data_for_db_filepaths()
-"""
+
+setup_profile_paths_values_testdata, setup_profile_paths_excep_testdata = data_for_setup_profile_paths()
+
+# """
+def data_for_db_filepaths():
+	TestCase = namedtuple('TestCase', 'profile_paths filenames ext expected')
+	
+	db_filepaths_values_testdata = (
+		TestCase(
+				profile_paths={
+			'RegularSurfing': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+			'default': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+			'dev-edition-default': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+			'kc.qubit': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+			'test_profile0': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+			'test_profile1': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+			'test_profile2': Path(
+					f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+			},
+				filenames='places', ext='sqlite',
+				expected={
+					'RegularSurfing':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
+					'default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite',
+					'dev-edition-default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.sqlite',
+					'kc.qubit':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\qllr6o0m.kc.qubit\\places.sqlite',
+					'test_profile0':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
+					'test_profile1':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
+					'test_profile2':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+					}
+				),
+		
+		TestCase(
+				profile_paths={
+					'RegularSurfing': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+					'default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					'dev-edition-default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+					'kc.qubit': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+					'test_profile0': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+					'test_profile1': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+					'test_profile2': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+					},
+				filenames='somegibberish', ext='sqlite',
+				expected={
+					'RegularSurfing':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\somegibberish.sqlite',
+					'default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\somegibberish.sqlite',
+					'dev-edition-default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\somegibberish.sqlite',
+					'kc.qubit':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\qllr6o0m.kc.qubit\\somegibberish.sqlite',
+					'test_profile0':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\somegibberish.sqlite',
+					'test_profile1':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\somegibberish.sqlite',
+					'test_profile2':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\somegibberish.sqlite',
+					}
+				),
+		
+		TestCase(
+				profile_paths={
+					'RegularSurfing': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+					'default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					'dev-edition-default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+					'kc.qubit': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+					'test_profile0': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+					'test_profile1': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+					'test_profile2': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+					},
+				filenames='places', ext='gibberishext',
+				expected={
+					'RegularSurfing':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.gibberishext',
+					'default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.gibberishext',
+					'dev-edition-default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.gibberishext',
+					'kc.qubit':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\qllr6o0m.kc.qubit\\places.gibberishext',
+					'test_profile0':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.gibberishext',
+					'test_profile1':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.gibberishext',
+					'test_profile2':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.gibberishext',
+					}
+				),
+		
+		TestCase(
+				profile_paths={
+					'RegularSurfing': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+					'default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					'dev-edition-default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+					'kc.qubit': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+					'test_profile0': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+					'test_profile1': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+					'test_profile2': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+					},
+				filenames='', ext='.sqlite',
+				expected={
+					'RegularSurfing':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\.sqlite',
+					'default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\.sqlite',
+					'dev-edition-default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\.sqlite',
+					'kc.qubit':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\qllr6o0m.kc.qubit\\.sqlite',
+					'test_profile0':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\.sqlite',
+					'test_profile1':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\.sqlite',
+					'test_profile2':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\.sqlite',
+					}
+				),
+		
+		TestCase(
+				profile_paths={'RegularSurfing':
+					Path(f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing')
+				               },
+				filenames='places', ext='sqlite',
+				expected={'RegularSurfing':
+					          f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite'
+				          }
+				),
+				
+		TestCase(
+				profile_paths={'someprofile': 'gibberish'},
+				filenames='places', ext='sqlite',
+				expected={'someprofile': 'gibberish\\places.sqlite'}
+				),
+		
+		)
+	
+	db_filepaths_excep_testdata = (
+		
+		TestCase(
+				profile_paths={
+					'RegularSurfing': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+					'default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					'dev-edition-default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+					'kc.qubit': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+					'test_profile0': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+					'test_profile1': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+					'test_profile2': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+					},
+				filenames=None, ext='sqlite',
+				expected=TypeError
+				),
+		
+		TestCase(
+				profile_paths={
+					'RegularSurfing': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+					'default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					'dev-edition-default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+					'kc.qubit': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+					'test_profile0': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+					'test_profile1': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+					'test_profile2': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+					},
+				filenames=[None], ext='sqlite',
+				expected=TypeError
+				),
+		
+		TestCase(
+				profile_paths=123,
+				filenames='places', ext='sqlite',
+				expected=AttributeError
+				),
+		
+		TestCase(
+				profile_paths={f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'},
+				filenames='places', ext='sqlite',
+				expected=AttributeError
+				),
+		
+		TestCase(
+				profile_paths=123,
+				filenames='places', ext='sqlite',
+				expected=AttributeError
+				),
+		)
+	
+	return db_filepaths_values_testdata, db_filepaths_excep_testdata
+
+
+db_filepaths_values_testdata, db_filepaths_excep_testdata = data_for_db_filepaths()
+# """
