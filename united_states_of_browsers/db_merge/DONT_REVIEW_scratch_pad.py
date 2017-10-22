@@ -114,6 +114,7 @@ replaced_dict = ReplaceDict(input='a', expected={})
 print(replaced_dict)
 # for item1, item2 in replaced_dict.items():
 """
+"""
 import pytest
 
 from pathlib import Path
@@ -127,4 +128,21 @@ with pytest.raises(AttributeError) as excinfo:
 			filenames='places', ext='.sqlite')
 
 	pprint(actual)
+"""
 
+"""
+import pytest
+
+from pathlib import Path
+from pprint import pprint
+from db_merge import read_browser_db
+
+home_dir = Path.home()
+with pytest.raises(AttributeError) as excinfo:
+	actual = read_browser_db.firefox(profiles=[])
+	pprint(actual)
+"""
+
+from pprint import pprint
+from db_merge import read_browser_db
+pprint(read_browser_db.firefox(profiles={}))
