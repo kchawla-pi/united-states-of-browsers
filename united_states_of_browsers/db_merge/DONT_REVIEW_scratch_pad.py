@@ -145,4 +145,4 @@ with pytest.raises(AttributeError) as excinfo:
 
 from pprint import pprint
 from db_merge import read_browser_db
-pprint(read_browser_db.firefox(profiles={}))
+pprint(read_browser_db.firefox(profiles=None))

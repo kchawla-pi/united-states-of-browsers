@@ -6,9 +6,10 @@ home_dir = Path.home()
 
 
 def data_for_setup_profile_paths():
+	setup_profile_paths_testdata = dict.fromkeys(['values', 'exceps'])
 	TestCase = namedtuple('TestCase', 'browser_ref profiles expected')
 	
-	setup_profile_paths_values_testdata = (
+	setup_profile_paths_testdata['values'] = (
 		TestCase(browser_ref='firefox', profiles=None,
 		         expected={
 			         'RegularSurfing': Path(
@@ -74,7 +75,7 @@ def data_for_setup_profile_paths():
 		         ),
 		)
 	
-	setup_profile_paths_excep_testdata = (
+	setup_profile_paths_testdata['exceps'] = (
 		TestCase(browser_ref='somegibberish', profiles='somemoregibberish',
 		         expected=FileNotFoundError
 		         ),
@@ -92,17 +93,65 @@ def data_for_setup_profile_paths():
 		         ),
 		)
 	
-	return setup_profile_paths_values_testdata, setup_profile_paths_excep_testdata
+	return setup_profile_paths_testdata
 
 
-setup_profile_paths_values_testdata, setup_profile_paths_excep_testdata = data_for_setup_profile_paths()
+setup_profile_paths_testdata = data_for_setup_profile_paths()
 
 
 # """
 def data_for_db_filepaths():
+	db_filepaths_testdata = dict.fromkeys(['defaults', 'values', 'exceps'])
 	TestCase = namedtuple('TestCase', 'profile_paths filenames ext expected')
+	TestCaseDefault = namedtuple('TestCaseDefault', 'profile_paths expected')
 	
-	db_filepaths_values_testdata = (
+	db_filepaths_testdata['defaults'] = (
+		TestCaseDefault(
+				profile_paths={
+					'RegularSurfing': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
+					'default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					'dev-edition-default': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
+					'kc.qubit': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/qllr6o0m.kc.qubit'),
+					'test_profile0': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0'),
+					'test_profile1': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/kceyj748.test_profile1'),
+					'test_profile2': Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/udd5sttq.test_profile2'),
+					},
+				expected={
+					'RegularSurfing':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
+					'default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite',
+					'dev-edition-default':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.sqlite',
+					'kc.qubit':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\qllr6o0m.kc.qubit\\places.sqlite',
+					'test_profile0':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
+					'test_profile1':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
+					'test_profile2':
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+					}
+				),
+		TestCaseDefault(
+				profile_paths={'RegularSurfing':
+					Path(
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing')
+					},
+				expected={'RegularSurfing':
+					          f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite'
+				          }
+				),
+		)
+	
+	db_filepaths_testdata['values'] = (
 		TestCase(
 				profile_paths={
 					'RegularSurfing': Path(
@@ -260,7 +309,7 @@ def data_for_db_filepaths():
 				),
 		)
 	
-	db_filepaths_excep_testdata = (
+	db_filepaths_testdata['exceps'] = (
 		TestCase(
 				profile_paths={
 					'RegularSurfing': Path(
@@ -319,8 +368,8 @@ def data_for_db_filepaths():
 				),
 		)
 	
-	return db_filepaths_values_testdata, db_filepaths_excep_testdata
+	return db_filepaths_testdata
 
 
-db_filepaths_values_testdata, db_filepaths_excep_testdata = data_for_db_filepaths()
+db_filepaths_testdata = data_for_db_filepaths()
 # """
