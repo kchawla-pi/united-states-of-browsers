@@ -114,3 +114,8 @@ def data_for_firefox():
 
 
 firefox_testdata = data_for_firefox()
+
+
+
+def data_for_read_browser_database():
+	TestCase = namedtuple('TestCase', 'filepaths fieldnames')
