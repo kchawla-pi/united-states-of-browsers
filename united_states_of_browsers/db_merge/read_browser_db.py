@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 import sqlite3
+
 from collections import OrderedDict as odict
 
+from united_states_of_browsers.db_merge import browser_setup
+from united_states_of_browsers.db_merge import db_handler
+from united_states_of_browsers.db_merge import helpers
+from united_states_of_browsers.db_merge import record_fetcher
 
-import browser_setup
-import db_handler
-import helpers
-import record_fetcher
-
-from imported_annotations import *
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 def firefox(profiles: Optional[Union[str, Sequence[str]]]=None) -> Tuple[List[str], List[str]]:

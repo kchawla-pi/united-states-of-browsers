@@ -3,10 +3,10 @@ from array import array
 from bisect import insort
 from collections import OrderedDict as odict
 
-import show
-import helpers
+from united_states_of_browsers.db_merge import show
+from united_states_of_browsers.db_merge import helpers
 
-from imported_annotations import *
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 def merge_databases(source_record_yielder: Generator,

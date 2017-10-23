@@ -1,15 +1,8 @@
 # -*- encoding: utf-8 -*-
 import sqlite3
 
-
-from imported_annotations import *
-from helpers import safetychecks
-# try:
-# 	from imported_annotations import *
-# 	from helpers import safetychecks
-# except (ImportError, ModuleNotFoundError):
-# 	from .imported_annotations import *
-# 	from .helpers import safetychecks
+from united_states_of_browsers.db_merge.imported_annotations import *
+from united_states_of_browsers.db_merge.helpers import safetychecks
 
 
 def _table_records(cursor, table: [str, Sequence[str]]) -> Generator:
