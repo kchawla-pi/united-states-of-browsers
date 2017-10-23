@@ -10,29 +10,34 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 def merge_databases(source_record_yielder: Generator,
-                    sink_db_info: Dict,
+                    sink_db_info: Union[Dict, bool],
                     start_from: int=0,
-                    print_records: Union[bool, int]=False
-                    ) -> Sequence[int]:
+                    show_records: Union[bool, int]=False
+                    ) -> [Sequence[int], [Sequence[int], Dict[int, Dict]]]:
 	'''
 	Creates a new database by merging data from multiple databases.
 	Accepts a generator to yield source databases records, dict of info for target database.
 	Optional: Accepts the number of initial records to skip, and to print the records as they are processed.
 	Returns array of url_hashes of website addresses.
 	'''
-	each_time = int(print_records)
-	url_hashes = array('Q')
-	for count, record in enumerate(source_record_yielder):
-		if count < start_from and start_from:
-			continue
-		curr_record_hash = list(record.keys())[0]
-		
-		if curr_record_hash not in set(url_hashes):
-			written_url_hash = write_to_db(record=record, sink_db_info=sink_db_info, table='moz_places')
-			insort(url_hashes, written_url_hash)
+	if sink_db_info is False:
+		all_records = odict(source_record_yielder)
+		url_hashes = array('Q', list(all_records.keys()))
+	else:
+		all_records = None
+		url_hashes = array('Q')
+		each_time = int(show_records)
+		for count, record in enumerate(source_record_yielder):
+			if count < start_from and start_from:
+				continue
+			curr_record_hash = list(record.keys())[0]
 			
-			show.show_record_(record=record, record_count=count, each_time=each_time)
-	return url_hashes
+			if curr_record_hash not in set(url_hashes):
+				written_url_hash = write_to_db(record=record, sink_db_info=sink_db_info, table='moz_places')
+				show.show_record_(record=record, record_count=count, each_time=each_time)
+				insort(url_hashes, written_url_hash)
+			
+	return url_hashes, all_records
 
 
 def write_to_db(record: Dict, sink_db_info: Dict, table: Text='moz_places') -> int:
