@@ -16,5 +16,4 @@ from typing import (AnyStr,
                     NewType,
                     )
 
-PathLike = NewType('PathLike', Union[Path, PathLike, Text, ByteString])
-# False = NewType('False', bool)
+PathInfo = NewType('PathInfo', Union[Path, PathLike, Text, ByteString])

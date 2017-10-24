@@ -4,7 +4,7 @@ import sqlite3
 import string
 import sys
 
-from imported_annotations import *
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 # try:
 # 	from imported_annotations import *
@@ -67,7 +67,7 @@ def create_table(cursor: sqlite3.Connection.cursor, query: str, counter: int=0) 
 		cursor.execute(query)
 		return True
 	except sqlite3.OperationalError as excep:
-		print(excep)
+		return excep
 
 
 def insert_record(connection: sqlite3.Connection, cursor: sqlite3.Connection.cursor, query: str, data: Sequence) -> None:
@@ -75,8 +75,17 @@ def insert_record(connection: sqlite3.Connection, cursor: sqlite3.Connection.cur
 	Commits a new record in to the database.
 	Accepts connection object and cursor, insertion query and data.
 	'''
-	cursor.execute(query, data)
-	connection.commit()
-
-
+	# cursor.execute(query, data)
+	# connection.commit()
+	try:
+		# helpers.insert_record(connection=sink_db_info['connection'], cursor=sink_db_info['cursor'],
+		#                       query=queries['insert'], data=data)
+		cursor.execute(query, data)
+	except Exception as excep:
+		connection.commit()
+		raise excep
+	else:
+		connection.commit()
+		
+		
 filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
