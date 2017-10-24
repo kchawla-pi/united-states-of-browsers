@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+import os
+
 from array import array
 from bisect import insort
 from collections import OrderedDict as odict
@@ -20,24 +22,50 @@ def merge_databases(source_record_yielder: Generator,
 	Optional: Accepts the number of initial records to skip, and to print the records as they are processed.
 	Returns array of url_hashes of website addresses.
 	'''
-	if sink_db_info is False:
-		all_records = odict(source_record_yielder)
-		url_hashes = array('Q', list(all_records.keys()))
-	else:
-		all_records = None
-		url_hashes = array('Q')
-		each_time = int(show_records)
-		for count, record in enumerate(source_record_yielder):
-			if count < start_from and start_from:
-				continue
-			curr_record_hash = list(record.keys())[0]
-			
-			if curr_record_hash not in set(url_hashes):
-				written_url_hash = write_to_db(record=record, sink_db_info=sink_db_info, table='moz_places')
+	all_records = odict()
+	url_hashes = array('Q')
+	each_time = int(show_records)
+	for count, record in enumerate(source_record_yielder):
+		if count < start_from and start_from:
+			continue
+		curr_record_hash = list(record.keys())[0]
+		
+		if curr_record_hash not in set(url_hashes):
+			if sink_db_info:
+				curr_record_hash = write_to_db(record=record, sink_db_info=sink_db_info, table='moz_places')
 				show.show_record_(record=record, record_count=count, each_time=each_time)
-				insort(url_hashes, written_url_hash)
-			
-	return url_hashes, all_records
+				insort(url_hashes, curr_record_hash)
+				all_records = None
+			else:
+				curr_record_hash = list(record.keys())[0]
+				all_records.update(record)
+				insort(url_hashes, curr_record_hash)
+	
+	hash_key_mismatches = [hash_in_key
+	                         for hash_in_key, record in all_records.items()
+	                         if hash_in_key != record['url_hash']
+	                         ]
+	try:
+		if hash_key_mismatches:
+			raise Exception("In variable all_records(dict), url_hash_in_key != record['url_hash']\n"
+			                "URL hash in key does not match URL hash in record.")
+	except:
+		return hash_key_mismatches
+	else:
+		return url_hashes, all_records
+
+
+def setup_output_db_paths(output_db):
+	try:
+		output_db, output_ext = output_db.split(os.extsep)
+	except ValueError:
+		output_ext = 'sqlite'
+		
+	sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
+	
+	url_hash_log_filename = '_'.join([os.path.splitext(output_db)[0], 'url_hash_log.bin'])
+	url_hash_log_file = helpers.filepath_from_another(url_hash_log_filename)
+	return sink_db_path, url_hash_log_file
 
 
 def write_to_db(record: Dict, sink_db_info: Dict, table: Text='moz_places') -> int:
@@ -55,17 +83,14 @@ def write_to_db(record: Dict, sink_db_info: Dict, table: Text='moz_places') -> i
 		helpers.create_table(cursor=sink_db_info['cursor'], query=queries['create'])
 	
 	data = list(record[curr_record_hash].values())
-	try:
-		helpers.insert_record(connection=sink_db_info['connection'], cursor=sink_db_info['cursor'],
-		                      query=queries['insert'], data=data)
-	except Exception as excep:
-		raise excep
-	else:
-		return curr_record_hash
-		
-	
-	
+	helpers.insert_record(connection=sink_db_info['connection'],
+	                      cursor=sink_db_info['cursor'],
+	                      query=queries['insert'],
+	                      data=data
+	                      )
+	return curr_record_hash
 
+	
 def write_to_json(json_path, record_yielder):
 	'''Deprecated'''
 	import jsonlines
@@ -73,9 +98,6 @@ def write_to_json(json_path, record_yielder):
 	with jsonlines.open(json_path, 'w') as json_records_obj:
 		for record in record_yielder:
 			json_records_obj.write(record)
-
-
-
 
 
 if __name__ == '__main__':
