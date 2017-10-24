@@ -142,7 +142,27 @@ with pytest.raises(AttributeError) as excinfo:
 	actual = read_browser_db.firefox(profiles=[])
 	pprint(actual)
 """
-
+"""
 from pprint import pprint
 from db_merge import read_browser_db
 pprint(read_browser_db.firefox(profiles=None))
+"""
+"""
+import os
+
+output_ext = None
+output_db = None
+try:
+	output_db, output_ext = output_db.split(os.extsep)
+except (ValueError, AttributeError):
+	pass
+print(output_db, output_ext)
+"""
+"""
+a_dict_gen = ({str(key): {value: None}} for key, value in zip(range(0, 5), range(0, 5)))
+a_dict = dict()
+a_try = [a_dict.update(item) for item in a_dict_gen]
+print(a_try, a_dict)
+"""
+from united_states_of_browsers.db_merge import merge_browser_databases
+url_hashes, all_records = merge_browser_databases.merge(output_db='test', profiles='test_profile0', )

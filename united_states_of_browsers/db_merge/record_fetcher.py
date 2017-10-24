@@ -34,7 +34,7 @@ def _make_records_dict_generator(records: Iterable, record_template: Dict) -> Ge
 	for record_ in records:
 		record_template.update({fieldname_: field_
 		       for fieldname_, field_ in zip(fieldnames, record_)})
-		yield {record_template['url_hash']: record_template}
+		yield {record_template['url_hash']: record_template.copy()}
 
 
 def yield_prepped_records(*, cursor, table: str, record_template: Dict) -> Generator:
