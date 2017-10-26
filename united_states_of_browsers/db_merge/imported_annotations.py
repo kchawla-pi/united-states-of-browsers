@@ -2,7 +2,8 @@
 
 from pathlib import Path
 from os import PathLike
-from typing import (AnyStr,
+from typing import (Any,
+                    AnyStr,
                     ByteString,
                     Dict,
                     Generator,

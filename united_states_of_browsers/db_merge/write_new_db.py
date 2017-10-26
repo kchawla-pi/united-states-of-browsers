@@ -11,11 +11,11 @@ from united_states_of_browsers.db_merge import helpers
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def merge_databases(source_record_yielder: Iterable[Dict[Dict]],
+def merge_databases(source_record_yielder: Iterable[Dict[int, Dict[Text, Any]]],
                     sink_db_info: Optional[Union[Dict, bool]]=None,
                     start_from: int=0,
                     show_records: Union[bool, int]=False
-                    ) -> [Sequence[int], [Sequence[int], Dict[int, Dict]]]:
+                    ) -> Union[Sequence[int], Optional[Dict[int, Dict[Text, Any]]]]:
 	'''
 	Creates a new database by merging data from multiple databases.
 	Accepts a Iterator to yield source databases records, dict of info for target database.

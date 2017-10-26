@@ -57,7 +57,7 @@ def make_queries(table: Text, field_names: Text) -> Dict:
 	return queries
 
 
-def create_table(cursor: sqlite3.Connection.cursor, query: Text, counter: int=0) -> Union[True, Exception]:
+def create_table(cursor: sqlite3.Connection.cursor, query: Text, counter: int=0) -> Union[bool, Exception]:
 	'''
 	Creates a table in the connected to database.
 	Accepts the connection.cursor object, creation query.
