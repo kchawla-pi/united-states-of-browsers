@@ -5,11 +5,10 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 from united_states_of_browsers.db_merge.helpers import safetychecks
 
 
-def _table_records(cursor, table: [str, Sequence[str]]) -> Generator:
+def _table_records(cursor, table: [Text, Sequence[Text]]) -> Generator:
 	"""
 	Yields one record (row) of the table, whenever called.
 	Accepts the db connection cursor and table name
-
 	"""
 	safetychecks(table)
 	sort_key = "url_hash"

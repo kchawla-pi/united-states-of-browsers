@@ -11,16 +11,22 @@ from united_states_of_browsers.db_merge import helpers
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def merge_databases(source_record_yielder: Generator,
-                    sink_db_info: Union[Dict, bool],
+def merge_databases(source_record_yielder: Iterable[Dict[Dict]],
+                    sink_db_info: Optional[Union[Dict, bool]]=None,
                     start_from: int=0,
                     show_records: Union[bool, int]=False
                     ) -> [Sequence[int], [Sequence[int], Dict[int, Dict]]]:
 	'''
 	Creates a new database by merging data from multiple databases.
-	Accepts a generator to yield source databases records, dict of info for target database.
-	Optional: Accepts the number of initial records to skip, and to print the records as they are processed.
-	Returns array of url_hashes of website addresses.
+	Accepts a Iterator to yield source databases records, dict of info for target database.
+	
+	Returns array of url_hashes of website addresses from processed records.
+	Returns merged records by default.
+	
+	Optional:
+	Writes records to a database file instead of returning them if dict of connection info provided.
+	Accepts the number of initial records to skip.
+	Accepts option to print records as they are processed, as well as how many to print in one go.
 	'''
 	all_records = odict()
 	url_hashes = array('Q')
@@ -31,31 +37,39 @@ def merge_databases(source_record_yielder: Generator,
 		curr_record_hash = list(record.keys())[0]
 		
 		if curr_record_hash not in set(url_hashes):
-			if sink_db_info:
+			if sink_db_info:  # if output database info present, write records to it.
 				curr_record_hash = write_to_db(record=record, sink_db_info=sink_db_info, table='moz_places')
 				show.show_record_(record=record, record_count=count, each_time=each_time)
 				insort(url_hashes, curr_record_hash)
 				all_records = None
-			else:
+			else:  # if output database info not present, return the records.
 				curr_record_hash = list(record.keys())[0]
 				all_records.update(record)
 				insort(url_hashes, curr_record_hash)
-	
-	hash_key_mismatches = [hash_in_key
-	                         for hash_in_key, record in all_records.items()
-	                         if hash_in_key != record['url_hash']
-	                         ]
+				
+	# Raises exception if returned Dict[url_hash] != Dict[url_hash]['url_hash'], happens when value is reference to record, not copy.
 	try:
+		hash_key_mismatches = [hash_in_key
+		                         for hash_in_key, record in all_records.items()
+		                         if hash_in_key != record['url_hash']
+		                         ]
+	except AttributeError:  # if all_recrods is None (records written to database, not returned.
+		pass
+	else:
 		if hash_key_mismatches:
+			print(hash_key_mismatches)
 			raise Exception("In variable all_records(dict), url_hash_in_key != record['url_hash']\n"
 			                "URL hash in key does not match URL hash in record.")
-	except:
-		return hash_key_mismatches
-	else:
-		return url_hashes, all_records
+	
+	
+	return url_hashes, all_records
 
 
-def setup_output_db_paths(output_db):
+def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
+	'''
+	 Returns paths for the database file and the file with record of processed record's hashes.
+	 Accepts filename.ext for the database file to be written to.
+	'''
 	try:
 		output_db, output_ext = output_db.split(os.extsep)
 	except ValueError:
@@ -64,8 +78,8 @@ def setup_output_db_paths(output_db):
 	sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
 	
 	url_hash_log_filename = '_'.join([os.path.splitext(output_db)[0], 'url_hash_log.bin'])
-	url_hash_log_file = helpers.filepath_from_another(url_hash_log_filename)
-	return sink_db_path, url_hash_log_file
+	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
+	return sink_db_path, url_hash_log_path
 
 
 def write_to_db(record: Dict, sink_db_info: Dict, table: Text='moz_places') -> int:
