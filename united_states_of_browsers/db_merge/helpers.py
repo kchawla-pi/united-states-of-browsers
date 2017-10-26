@@ -24,14 +24,14 @@ def get_record_info(record: Dict) -> Tuple[str, Sequence[Text]]:
 	return field_names_string, data
 
 
-def safetychecks(record: dict) -> True:
+def safetychecks(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:
 	'''
 	Checks the names being inserted using string formatting for suspicious characters.
 	Prevents SQL injection attacks.
 	Returns True or Exits the program.
 	'''
 	safe_chars = set(string.ascii_lowercase)
-	safe_chars.update(['_', '_'])
+	safe_chars.update(['_'])
 	try:
 		fields_chars = set(''.join([field for field in record.keys()]))
 	except AttributeError:
