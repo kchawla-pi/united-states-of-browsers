@@ -12,12 +12,18 @@ A project to combine &amp; organize history and bookmarks across multiple browse
 Does not support other OS and browsers YET. Easy to make it work for other OSes.
 Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
 
+Currently the merging browser history databases functionality has been implemented.
 To Run:
-Clone this repo and run \united-states-of-browsers\db_merge\\\_\_main\_\_.py
+Clone this repo. Navigate to the directory/folder where it has been cloned.
 
-It will generate an sqlite file in the \src directory, 'merged_fx_db.sqlite' .
+To merge the databases, run:
+$py .\united_states_of_browsers\db_merge\merge_browser_databases.py
+
+It will generate an sqlite file in the \united_states_of_browsers directory/folder, 'merged_fx_db.sqlite' .
 A url_hash_log.bin might also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
 
+To run tests (requires pytest), type:
+$pytest
 
 The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
 
@@ -25,7 +31,10 @@ Whenever I wish to search something, I have to go through them all until I find 
 
 Initial idea is to read the broswer's sqlite3 database files and copy and combine the data in one place, maybe a json. More features for searching and organization and maybe an ML algo to recommend from within the combined history and the web will be implemented.
 
-Note: PLay with it, I haven't made it Demo-ready yet.
+Note: Play with it, I haven't made it Demo-ready yet.
+It shouldn't damage anything, but if it is does...
+THIS IS A USE AT YOUR OWN RISK SOFTWARE.
+
 
 Future Plans:
 

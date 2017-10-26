@@ -54,8 +54,8 @@ def merge(output_db: Optional[Text]= None,
 
 if __name__ == '__main__':
 	ask = input('Run database merge operation?\n'
-	            'Press <n> to abort, <ENTER> for uncommitted merge.\n'
-	            'Type a filename for a committed merge.')
+	            'Press <n> to abort, <ENTER> for viewing the merged reuslts without writing it to a new database file.\n'
+	            'Type a filename write the merged results to a database file.')
 	if ask.lower() == 'n':
 		print('Program terminated.')
 		os.sys.exit()
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 		from pprint import pprint
 		pprint(merge(output_db=None))
 	elif ask:
-		f'{ask}.sqlite'
+		merge(output_db=f'{ask}.sqlite')
 
 
 '''
