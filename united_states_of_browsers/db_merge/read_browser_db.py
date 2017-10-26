@@ -11,12 +11,12 @@ from united_states_of_browsers.db_merge import record_fetcher
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def firefox(profiles: Optional[Union[str, Sequence[str]]]=None) -> Tuple[List[str], List[str]]:
+def firefox(profiles: Optional[Union[Text, Sequence[Text]]]=None) -> Tuple[List[PathInfo], List[Text]]:
 	'''
 	Setups path & field names of places.sqlite file for Firefox browser profiles in Windows x64.
 	Returns all profiles by default.
-	Optionally, Accepts profile name (str) or list of profile names.
-	Returns tuple(list[path(s)] to Firefox profile database(s), list[field names])
+	Optionally, Accepts profile name or list of profile names.
+	Returns tuple of list of Paths and field_names
 	'''
 	firefox_fieldnames = ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed',
 	                       'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
@@ -49,9 +49,8 @@ def read_browser_database(filepaths: Union[Text, Sequence[Text]], fieldnames: Se
 	Yields a generator of generator of records from all the profile databases.
 	Accepts a single path or a sequence of paths to each database file, and list of field names of records.
 	'''
-	
 	record_template = odict.fromkeys(fieldnames, None)
-	helpers.safetychecks(record_template)
+	helpers.safetychecks(record_template)  # Checks fieldnames to prevent SQL injection attacks.
 	for idx, profile_name_ in enumerate(filepaths):
 		tables = ['moz_places']
 		for table_ in tables:
@@ -60,18 +59,20 @@ def read_browser_database(filepaths: Union[Text, Sequence[Text]], fieldnames: Se
 			except sqlite3.OperationalError as excep:
 				print(excep)
 			else:
-				prepped_records = record_fetcher.yield_prepped_records(cursor=source_db_info['cursor'], table=table_,
+				prepped_records = record_fetcher.yield_prepped_records(cursor=source_db_info['cursor'],
+				                                                       table=table_,
 				                                                       record_template=record_template,
 				                                                       )
-				yield prepped_records
+				yield prepped_records  # generator that yields DB records.
 			finally:
 				source_db_info['cursor'].close()
 				source_db_info['connection'].close()
 
 
 def chrome():
+	home_dir = Path.home()
 	file_paths = browser_setup.db_filepath(
-				root="C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default",
+				root=f'{home_dir}\\AppData\\Local\\Google\\Chrome\\User Data\\Default',
 				filenames='History', ext=None)
 	
 
@@ -83,18 +84,3 @@ if __name__ == '__main__':
 	for rec in yield_db:
 		for entry in rec:
 			print(entry)
-	# read_browser_database({'default': 'C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite'})
-	# quit()
-	# quick_read_record(database='test.sqlite')
-
-# chrome()
-
-"""
-read db: done
-process records bfeore adding: (pending)
- - remove duplicates ( hash in a set, membership tests from new db)
- - give new primary key
- - update last visited to latest among duplicates
- - update number of visits for duplicates
-take record and add to new db: done
-"""

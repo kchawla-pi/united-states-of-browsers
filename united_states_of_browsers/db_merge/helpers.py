@@ -12,7 +12,7 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 # 	from.imported_annotations import *
 
 
-def get_record_info(record: Dict) -> Tuple[str, Sequence]:
+def get_record_info(record: Dict) -> Tuple[str, Sequence[Text]]:
 	'''
 	Accepts dict of field name, field values.
 	Returns str of comma-separated key names and data.
@@ -47,7 +47,7 @@ def safetychecks(record: dict) -> True:
 		sys.exit()
 
 
-def make_queries(table: str, field_names: str) -> Dict:
+def make_queries(table: Text, field_names: Text) -> Dict:
 	'''
 	Constructs the queries necessary for specific pruposes.
 	Returns them as dict['purpose': 'query']
@@ -57,11 +57,11 @@ def make_queries(table: str, field_names: str) -> Dict:
 	return queries
 
 
-def create_table(cursor: sqlite3.Connection.cursor, query: str, counter: int=0) -> True:
+def create_table(cursor: sqlite3.Connection.cursor, query: Text, counter: int=0) -> Union[True, Exception]:
 	'''
 	Creates a table in the connected to database.
 	Accepts the connection.cursor object, creation query.
-	Returns True or prints exception.
+	Returns True or exception.
 	'''
 	try:
 		cursor.execute(query)
@@ -70,16 +70,15 @@ def create_table(cursor: sqlite3.Connection.cursor, query: str, counter: int=0) 
 		return excep
 
 
-def insert_record(connection: sqlite3.Connection, cursor: sqlite3.Connection.cursor, query: str, data: Sequence) -> None:
+def insert_record(connection: sqlite3.Connection,
+                  cursor: sqlite3.Connection.cursor,
+                  query: Text,
+                  data: Sequence) -> None:
 	'''
 	Commits a new record in to the database.
 	Accepts connection object and cursor, insertion query and data.
 	'''
-	# cursor.execute(query, data)
-	# connection.commit()
 	try:
-		# helpers.insert_record(connection=sink_db_info['connection'], cursor=sink_db_info['cursor'],
-		#                       query=queries['insert'], data=data)
 		cursor.execute(query, data)
 	except Exception as excep:
 		connection.commit()
