@@ -23,4 +23,7 @@
     </entry>
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.6.2 virtualenv at C:\Users\kshit\Dropbox\workspace\UnitedStatesOfBrowsers\venv" project-jdk-type="Python SDK" />
+  <component name="PythonCompatibilityInspectionAdvertiser">
+    <option name="version" value="2" />
+  </component>
 </project>

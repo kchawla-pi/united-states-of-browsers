@@ -163,6 +163,48 @@ a_dict_gen = ({str(key): {value: None}} for key, value in zip(range(0, 5), range
 a_dict = dict()
 a_try = [a_dict.update(item) for item in a_dict_gen]
 print(a_try, a_dict)
-"""
+
 from united_states_of_browsers.db_merge import merge_browser_databases
 url_hashes, all_records = merge_browser_databases.merge(output_db='test', profiles='test_profile0', )
+
+import itertools
+
+
+# itertools.groupby()
+
+
+var1 = ['dwdf', 'dexx', 'wdvtbr', 'xexd', 'egafefrbrbtntn', 'ased', 'dae', 'f']
+print(var1)
+
+ord_sum = lambda string_: sum([ord(char_) for char_ in string_])
+# print(ord_sum('abc'))
+# print(ord_sum('abx'))
+ord_sum_cmp = lambda s1, s2: ord_sum(s1) > ord_sum(s2)
+
+data = sorted(var1, key=ord_sum)
+
+# data = var1
+print(data)
+
+groups = []
+unique_keys = []
+
+for k, g in itertools.groupby(data, ord_sum):
+	# g = list(g)
+	# print('k:', k, 'g:', g)
+	groups.append(list(g))
+	unique_keys.append(k)
+
+# print(groups)
+# print(unique_keys)
+
+# for val in itertools.islice(var1, 0, None, 2):
+# 	print(val)
+
+# print(var1[0:-1:2])
+# print(var1[1::2])
+var1 = 'abcdefgh'
+print([grouped for grouped in zip(var1[0:-1:2], var1[1::2])])
+
+
+"""
