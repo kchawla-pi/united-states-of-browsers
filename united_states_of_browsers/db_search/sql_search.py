@@ -1,23 +1,23 @@
 
-# for val in conn.execute('pragma compile_options'):
+# for val in source_conn.execute('pragma compile_options'):
 # 	print(val)
 
 
 def off(conn):
-	# conn.execute("DROP table history;")
+	# source_conn.execute("DROP table history;")
 	#
-	# conn.execute("CREATE virtual table history USING fts5(url, title, url_hash);")
-	# conn.executescript("""
+	# source_conn.execute("CREATE virtual table history USING fts5(url, title, url_hash);")
+	# source_conn.executescript("""
 	# 	INSERT INTO history (url, title, url_hash) VALUES ('www.google.com', 'Google', '1234');
 	# 	INSERT INTO history (url, title, url_hash) VALUES ('www.yahoo.com', 'Yahoo', '2345');
 	# 	""")
-	# for row in conn.execute("SELECT url, title, url_hash FROM history WHERE history MATCH 'title:yahoo';"):
+	# for row in source_conn.execute("SELECT url, title, url_hash FROM history WHERE history MATCH 'title:yahoo';"):
 	# 	print(row)
 	pass
 
-	# conn.enable_load_extension(False)
-# off(conn)
-# conn.enable_load_extension(True)
+	# source_conn.enable_load_extension(False)
+# off(source_conn)
+# source_conn.enable_load_extension(True)
 
 import sqlite3
 
@@ -41,7 +41,7 @@ record1 = dict(query_result.fetchone())
 print(record1['last_visit_date'])
 # print(datetime.datetime.fromordinal((record1['last_visit_date'])))
 print(datetime.datetime.utcfromtimestamp(record1['last_visit_date']/1e3))
-# for record in query_result:
+# for record in source_query_result:
 # 	pass
 	# print(record.keys())
 	# print(odict(record))

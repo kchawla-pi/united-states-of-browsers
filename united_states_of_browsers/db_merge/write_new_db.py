@@ -70,14 +70,22 @@ def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
 	 Returns paths for the database file and the file with record of processed record's hashes.
 	 Accepts filename.ext for the database file to be written to.
 	'''
-	try:
-		output_db, output_ext = output_db.split(os.extsep)
-	except ValueError:
-		output_ext = 'sqlite'
+	if output_db:
+		try:
+			output_db, output_ext = output_db.split(os.extsep)
+		except ValueError:
+			output_ext = 'sqlite'
+		sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
+		url_hash_log_filename = '_'.join([os.path.splitext(output_db)[0], 'url_hash_log.bin'])
+	else:
+		import datetime
+		this_moment = str(datetime.datetime.now()).split('.')[0]
+		this_moment = this_moment.replace('-', '')
+		this_moment = this_moment.replace(':', '')
+		this_moment = this_moment.replace(' ', '_')
+		url_hash_log_filename = '_'.join(['url_hash_log.bin', this_moment])
+		sink_db_path = None
 		
-	sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
-	
-	url_hash_log_filename = '_'.join([os.path.splitext(output_db)[0], 'url_hash_log.bin'])
 	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
 	return sink_db_path, url_hash_log_path
 

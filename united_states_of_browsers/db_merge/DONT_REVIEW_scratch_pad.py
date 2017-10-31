@@ -50,17 +50,17 @@ print(filepath_from_another('abc.txt'))
 print(filepath_from_another('output', 'abc.txt'))
 # print(filepath_from_another('output', 'try', 'abc.txt', filepath='C:'))
 
-# conn =
-with sqlite3.connect(str(db_file)) as conn:
-	conn.row_factory = sqlite3.Row
-	cur = conn.cursor()
+# source_conn =
+with sqlite3.connect(str(db_file)) as source_conn:
+	source_conn.row_factory = sqlite3.Row
+	cur = source_conn.cursor()
 	query = '''SELECT * FROM moz_places'''
 	cur.execute(query)
 	for row in cur:
 		print(row)
 		print(dict(row))
 	
-	# conn.close()
+	# source_conn.close()
 def scratch_pad2():
 	import sqlite3
 	
@@ -68,8 +68,8 @@ def scratch_pad2():
 	
 	db_path = filepath_from_another('test3.sqlite')
 	
-	conn = sqlite3.connect(db_path)
-	cur = conn.cursor()
+	source_conn = sqlite3.connect(db_path)
+	cur = source_conn.cursor()
 	
 	query = 'SELECT * FROM moz_places ORDER BY url_hash'
 	cur.execute(query)
