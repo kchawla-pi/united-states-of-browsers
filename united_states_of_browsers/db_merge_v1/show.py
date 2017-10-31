@@ -68,7 +68,7 @@ def show_record_(record, record_count, each_time=100, profile_name=None):
 		prev_iter_profile_name = profile_name
 
 # def test_print_records(cursor, table, prepped_records):
-# 	from united_states_of_browsers.db_merge import write_new_db
+# 	from united_states_of_browsers.db_merge_v1 import write_new_db
 # 	for num1, record in enumerate(prepped_records):
 # 		query = '''SELECT * FROM {}'''.format('moz_places')
 # 		cursor.execute(query)

@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 import sqlite3
 
-from united_states_of_browsers.db_merge.imported_annotations import *
-from united_states_of_browsers.db_merge.helpers import safetychecks
+from united_states_of_browsers.db_merge_v1.imported_annotations import *
+from united_states_of_browsers.db_merge_v1.helpers import safetychecks
 
 
 def _table_records(cursor, table: [Text, Sequence[Text]]) -> Generator:

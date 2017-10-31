@@ -6,7 +6,7 @@ have ameliorated the import difficulties.
 
 import pytest
 
-from united_states_of_browsers.db_merge import browser_setup
+from united_states_of_browsers.db_merge_v1 import browser_setup
 from tests.data import test_browser_setup_data as bs_data
 
 

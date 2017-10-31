@@ -3,11 +3,11 @@ import sqlite3
 from collections import (namedtuple,
                          OrderedDict as odict)
 
-from united_states_of_browsers.db_merge import (helpers,
-                                                read_browser_db,
-                                                write_new_db,
-                                                )
-from united_states_of_browsers.db_merge.imported_annotations import *
+from united_states_of_browsers.db_merge_v1 import (helpers,
+                                                   read_browser_db,
+                                                   write_new_db,
+                                                   )
+from united_states_of_browsers.db_merge_v1.imported_annotations import *
 
 Record = []
 

@@ -4,7 +4,7 @@ import sys
 search_in = pathlib.Path(__file__).parent
 sys.path.insert(0, str(search_in))
 
-from united_states_of_browsers import db_merge
+from united_states_of_browsers import db_merge_v1
 
 from . import browser_setup
 from . import db_handler

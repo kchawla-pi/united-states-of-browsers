@@ -64,7 +64,7 @@ with sqlite3.connect(str(db_file)) as source_conn:
 def scratch_pad2():
 	import sqlite3
 	
-	from db_merge.helpers import filepath_from_another
+	from db_merge_v1.helpers import filepath_from_another
 	
 	db_path = filepath_from_another('test3.sqlite')
 	
@@ -88,7 +88,7 @@ package_list = setuptools.find_packages('./united_states_of_browsers')
 print(package_list)
 """
 """
-from db_merge.browser_setup import setup_profile_paths
+from db_merge_v1.browser_setup import setup_profile_paths
 
 # test_args = [('', ''), ('somegibberish', 'somemoregibberish'), ('somegibberish', None), (123, 321)]
 test_args = [('Firefox', ['regular_surfing', 'default'])]
@@ -119,7 +119,7 @@ import pytest
 
 from pathlib import Path
 from pprint import pprint
-from db_merge import browser_setup
+from db_merge_v1 import browser_setup
 
 home_dir = Path.home()
 with pytest.raises(AttributeError) as excinfo:
@@ -135,7 +135,7 @@ import pytest
 
 from pathlib import Path
 from pprint import pprint
-from db_merge import read_browser_db
+from db_merge_v1 import read_browser_db
 
 home_dir = Path.home()
 with pytest.raises(AttributeError) as excinfo:
@@ -144,7 +144,7 @@ with pytest.raises(AttributeError) as excinfo:
 """
 """
 from pprint import pprint
-from db_merge import read_browser_db
+from db_merge_v1 import read_browser_db
 pprint(read_browser_db.firefox(profiles=None))
 """
 """
@@ -164,7 +164,7 @@ a_dict = dict()
 a_try = [a_dict.update(item) for item in a_dict_gen]
 print(a_try, a_dict)
 
-from united_states_of_browsers.db_merge import merge_browser_databases
+from united_states_of_browsers.db_merge_v1 import merge_browser_databases
 url_hashes, all_records = merge_browser_databases.merge(output_db='test', profiles='test_profile0', )
 
 import itertools

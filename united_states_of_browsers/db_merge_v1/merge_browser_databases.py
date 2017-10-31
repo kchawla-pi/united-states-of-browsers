@@ -8,11 +8,11 @@ Branch: Nightly-Dev
 """
 import os
 
-from united_states_of_browsers.db_merge import (db_handler,
-                                                read_browser_db,
-                                                write_new_db,
-                                                )
-from united_states_of_browsers.db_merge.imported_annotations import *
+from united_states_of_browsers.db_merge_v1 import (db_handler,
+                                                   read_browser_db,
+                                                   write_new_db,
+                                                   )
+from united_states_of_browsers.db_merge_v1.imported_annotations import *
 
 
 def write_url_hash_log(filename: Text, hashes: Sequence[int]):
@@ -67,6 +67,6 @@ if __name__ == '__main__':
 
 
 '''
-python -m united_states_of_browsers.db_merge.__main__
-python united_states_of_browsers\db_merge\__main__.py
+python -m united_states_of_browsers.db_merge_v1.__main__
+python united_states_of_browsers\db_merge_v1\__main__.py
 '''

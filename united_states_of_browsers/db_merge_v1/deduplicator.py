@@ -20,7 +20,7 @@ import os
 # import jsonlines
 
 # try: ############ circular imports!!!!
-# 	from db_merge import write_new_db
+# 	from db_merge_v1 import write_new_db
 # except (ImportError, ModuleNotFoundError):
 # 	from . import write_new_db
 

@@ -4,7 +4,7 @@ import sqlite3
 from collections import OrderedDict as odict
 from pathlib import Path
 
-from united_states_of_browsers.db_merge import merge_browser_databases
+from united_states_of_browsers.db_merge_v1 import merge_browser_databases
 
 
 home_dir = Path.home()

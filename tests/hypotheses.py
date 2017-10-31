@@ -1,6 +1,6 @@
 import hypothesis
 
-from united_states_of_browsers.db_merge import browser_setup
+from united_states_of_browsers.db_merge_v1 import browser_setup
 
 
 @hypothesis.given(hypothesis.strategies.text(), hypothesis.strategies.text())
