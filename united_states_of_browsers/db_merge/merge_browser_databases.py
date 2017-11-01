@@ -16,8 +16,8 @@ from collections import (namedtuple,
 from pprint import pprint
 
 from united_states_of_browsers.db_merge import (
-                                                helpers,
-                                                read_browser_db,
+	helpers,
+	browser_specific_setup,
                                                 )
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -67,7 +67,7 @@ def make_database_filenames(output_db: Union[None, Text],
 		'source_fields': list of fieldnames in source databases
 		}
 	"""
-	source_db_paths, source_field_names = read_browser_db.firefox(profiles=profiles)
+	source_db_paths, source_field_names = browser_specific_setup.firefox(profiles=profiles)
 	sink_db_path, url_hash_log_file = setup_output_db_paths(output_db)
 	file_paths = {'source': source_db_paths,
 	              'source_fields': source_field_names,
