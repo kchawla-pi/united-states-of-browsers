@@ -9,45 +9,19 @@ Available functions:
 import json
 import os
 import sqlite3
-
 from collections import (namedtuple,
                          OrderedDict as odict
                          )
 from pprint import pprint
 
-from united_states_of_browsers.db_merge import (
-	helpers,
-	browser_specific_setup,
+from united_states_of_browsers.db_merge import (browser_specific_setup,
+                                                helpers,
+                                                paths_setup,
                                                 )
 from united_states_of_browsers.db_merge.imported_annotations import *
 
+
 Record = []
-
-
-def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
-	""" Returns paths for the database file and the file with record of processed record's hashes.
-	 Accepts filename.ext for the database file to be written to.
-	"""
-	if output_db:
-		try:
-			output_db, output_ext = output_db.split(os.extsep)
-		except ValueError:
-			output_ext = 'sqlite'
-		sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
-		filename_part = os.path.splitext(output_db)[0]
-	else:
-		import datetime
-		this_moment = str(datetime.datetime.now()).split('.')[0]
-		for replacee, replacer in zip(['-', ':', ' '], ['', '', '_']):
-			this_moment = this_moment.replace(replacee, replacer)
-		filename_part = this_moment
-		sink_db_path = None
-	
-	filename = '_'.join(['url_hash_log', filename_part])
-	url_hash_log_filename = os.extsep.join([filename, 'bin'])
-	
-	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
-	return sink_db_path, url_hash_log_path
 
 
 def make_database_filenames(output_db: Union[None, Text],
@@ -68,7 +42,7 @@ def make_database_filenames(output_db: Union[None, Text],
 		}
 	"""
 	source_db_paths, source_field_names = browser_specific_setup.firefox(profiles=profiles)
-	sink_db_path, url_hash_log_file = setup_output_db_paths(output_db)
+	sink_db_path, url_hash_log_file = paths_setup.setup_output_db_paths(output_db)
 	file_paths = {'source': source_db_paths,
 	              'source_fields': source_field_names,
 	              'sink': sink_db_path,

@@ -9,6 +9,10 @@ Available functions:
 """
 import os
 from pprint import pprint
+from typing import Optional, Text
+
+from db_merge import helpers
+from db_merge.imported_annotations import PathInfo
 
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -94,6 +98,33 @@ def db_filepath(profile_paths: Dict[str, PathLike], filenames: str='places', ext
 		if debug: raise excep
 		os.sys.exit()
 	
+
+def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
+	""" Returns paths for the database file and the file with record of processed record's hashes.
+	 Accepts filename.ext for the database file to be written to.
+	"""
+	if output_db:
+		try:
+			output_db, output_ext = output_db.split(os.extsep)
+		except ValueError:
+			output_ext = 'sqlite'
+		sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
+		filename_part = os.path.splitext(output_db)[0]
+	else:
+		import datetime
+		this_moment = str(datetime.datetime.now()).split('.')[0]
+		for replacee, replacer in zip(['-', ':', ' '], ['', '', '_']):
+			this_moment = this_moment.replace(replacee, replacer)
+		filename_part = this_moment
+		sink_db_path = None
+	
+	filename = '_'.join(['url_hash_log', filename_part])
+	url_hash_log_filename = os.extsep.join([filename, 'bin'])
+	
+	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
+	return sink_db_path, url_hash_log_path
+
+
 if __name__ == '__main__':
 	pprint(setup_profile_paths(browser_ref='firefox', profiles=None))
 	print('\n' * 3)
@@ -105,5 +136,3 @@ if __name__ == '__main__':
 	print('\n' * 3)
 	print(setup_profile_paths(
 		browser_ref='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing', profiles=None))
-	
-
