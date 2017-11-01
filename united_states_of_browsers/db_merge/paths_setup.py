@@ -8,11 +8,10 @@ Available functions:
 	
 """
 import os
-from pprint import pprint
-from typing import Optional, Text
 
-from db_merge import helpers
-from db_merge.imported_annotations import PathInfo
+from pprint import pprint
+
+from united_states_of_browsers.db_merge import helpers
 
 from united_states_of_browsers.db_merge.imported_annotations import *
 
