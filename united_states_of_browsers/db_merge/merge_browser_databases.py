@@ -96,7 +96,10 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 			source_conn.row_factory = sqlite3.Row
 			try:
 				for db_record_yielder in source_conn.execute("""SELECT * FROM moz_places"""):
-					source_records_template.update(db_record_yielder)
+					# prevents adding additional keys, only updates keys/fields specified in source_fieldnames.
+					source_records_template = odict(
+								(key, dict(db_record_yielder).setdefault(key, None))
+									for key in source_records_template)
 					yield Record(*source_records_template.values())
 			except sqlite3.OperationalError:
 				print(f'This browser profile does not seem to have any data: {profile_name}')
@@ -128,11 +131,6 @@ def write_new_database(sink_db_path: PathInfo,
 			sink_conn.executemany(sink_queries['insert'], source_records)
 
 
-def store_paths_to_disk(path_info):
-	with open('path_info.json', 'w') as json_obj:
-		json.dump(path_info, json_obj)
-
-
 def merge_records(output_db: Union[Text, None],
                   profiles: Union[Text, Iterable[Text], None],
                   table: Text
@@ -149,9 +147,7 @@ def merge_records(output_db: Union[Text, None],
 	returns: Returns None if database is written to disk. Returns tuple of records otherwise.
 	"""
 	file_paths = make_database_filenames(output_db=output_db, profiles=profiles)
-	with open('path_info.json', 'w') as json_obj:
-		json.dump(file_paths, json_obj)
-		
+	
 	source_records_yielder = yield_source_records(source_db_paths=file_paths['source'],
 	                                              source_fieldnames=file_paths['source_fields'])
 	if file_paths['sink']:
@@ -160,6 +156,8 @@ def merge_records(output_db: Union[Text, None],
 		                   fieldnames=file_paths['source_fields'],
 		                   source_records=source_records_yielder
 		                   )
+		with open('path_info.json', 'w') as json_obj:
+			json.dump(file_paths, json_obj, indent=4, ensure_ascii=False)
 	else:
 		# return {record.url_hash: record._asdict() for record in source_records_yielder}
 		return tuple(source_records_yielder)
