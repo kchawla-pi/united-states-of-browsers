@@ -7,9 +7,9 @@ from pathlib import Path
 # Path(__file__).parents
 setuptools.setup(
 		name='usb',
-		version='0.2dev',
+		version='0.5dev',
 		packages=['united_states_of_browsers',
-		          'united_states_of_browsers.db_merge_v1',
+		          'united_states_of_browsers.db_merge',
 		          'united_states_of_browsers.usb_server'
 		          ],
 		# packages=setuptools.find_packages('united_states_of_browsers'),
