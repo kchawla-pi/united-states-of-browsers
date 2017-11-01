@@ -4,7 +4,7 @@ import sqlite3
 from collections import OrderedDict as odict
 from pathlib import Path
 
-from united_states_of_browsers.db_merge_v1 import merge_browser_databases
+from united_states_of_browsers.db_merge import merge_browser_databases
 
 
 home_dir = Path.home()
@@ -40,8 +40,10 @@ def establish_benchmark(profile_dbs):
 	return merged_as_dict
 
 
-merged_url_hashes, merged_using_usb = merge_browser_databases.merge(profiles=profile_dbs.keys())
 benchmark_merged_dict = establish_benchmark(profile_dbs)
+merged_using_usb = merge_browser_databases.merge_records(output_db=None, profiles=profile_dbs.keys(), table='moz_places')
+merged_using_usb = odict((record.url_hash, record._asdict()) for record in merged_using_usb)
+
 
 print(len(merged_using_usb))
 print(len(benchmark_merged_dict))
