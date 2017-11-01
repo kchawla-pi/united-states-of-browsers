@@ -5,13 +5,7 @@ Setups the path to browser Database
 import os
 from pprint import pprint
 
-from imported_annotations import *
-
-
-# try:
-# 	from imported_annotations import *
-# except (ImportError, ModuleNotFoundError):
-# 	from .imported_annotations import *
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 debug = 0

@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 import os
-import sqlite3
 import string
 import sys
 

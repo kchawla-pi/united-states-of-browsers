@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import os
 import sqlite3
 
@@ -48,8 +49,8 @@ def make_database_filenames(output_db: Union[None, Text],
 	Accepts output database name and browser profiles.
 	Returns dict of path of files.
 	
-	:output_db: Union[filename.fileext, filename, None]. If None, records are not written to a database file.
-	:profiles: Union[browser profile, list of browser profiles, None]. If None, includes all the profiles.
+	:output_db: Union[filename.fileext, filename, None]. If None, records are not written to database file.
+	:profiles: Union[browser profile, list of browser profiles, None]. If None, includes all profiles.
 	
 	:return:
 		{
