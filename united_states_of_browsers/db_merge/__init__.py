@@ -6,7 +6,7 @@ sys.path.insert(0, str(search_in))
 
 from united_states_of_browsers import db_merge
 
-from . import browser_setup
+from . import paths_setup
 from . import read_browser_db
 from . import imported_annotations
 from . import merge_browser_databases
