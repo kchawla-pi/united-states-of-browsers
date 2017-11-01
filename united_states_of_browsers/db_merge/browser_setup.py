@@ -1,6 +1,11 @@
 # -*- encoding: utf-8 -*-
 """
-Setups the path to browser Database
+Setups the path to browser database files.
+
+Available functions:
+ - setup_profile_paths: Returns the profile directory path for each firefox profile.
+ - db_filepaths: Returns paths to firefox database files for each profile returned by setup_profile_paths().
+	
 """
 import os
 from pprint import pprint
@@ -12,10 +17,9 @@ debug = 0
 
 
 def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, Dict[str, PathLike]]:
-	'''
-	Accepts a browser name or a directory path pointing to the profile location of the browser.
+	""" Accepts a browser name or a directory path pointing to the profile location of the browser.
 	Returns the browser profile location.
-	'''
+	"""
 	path_crumbs = {'firefox': ['~', 'AppData', 'Roaming', 'Mozilla', 'Firefox', 'Profiles'],
 					'chrome': ['~', 'AppData', 'Local', 'Google', 'Chrome', 'User Data', 'Default',
 								'History'],
@@ -25,10 +29,9 @@ def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, 
 
 
 def _profile_dir(profile_loc: PathLike, *, profiles: Optional[Union[str, Iterable[AnyStr]]]=None) -> Iterable[PathLike]:
-	'''
-	Returns paths for all profile directories in profile_loc (default),
+	""" Returns paths for all profile directories in profile_loc (default),
 	or for the profile name specified in profiles.
-	'''
+	"""
 	get_profile_name = lambda profile_dir: (profile_dir[profile_dir.find('.') + 1:])
 	if profiles is None:  # Returns all the profile paths if no profiles specified
 		return {get_profile_name(dir_.name): dir_ for dir_ in Path(profile_loc).iterdir() if
@@ -42,8 +45,7 @@ def _profile_dir(profile_loc: PathLike, *, profiles: Optional[Union[str, Iterabl
 
 
 def setup_profile_paths(*, browser_ref: Union[str, PathLike], profiles: Optional[str]):
-	"""
-	Returns up the directory path for sqlite database files for each profile.
+	""" Returns the directory path for sqlite database files for each profile.
 	"""
 	profile_loc = _choose_browser_paths(browser_ref=browser_ref)
 	
@@ -52,13 +54,13 @@ def setup_profile_paths(*, browser_ref: Union[str, PathLike], profiles: Optional
 
 
 def _db_files(profile_paths: PathLike, ext: Optional[AnyStr]='.sqlite') -> Iterable[PathLike]:
-	'''
-	Returns a list of file in the specified directory (not subdirectories) with a specified (or no) extension.
+	""" Returns a list of file in the specified directory (not subdirectories) with a specified (or no) extension.
 	
 	profile_paths: Path to directory with the files
-	:param ext: Extension for the file. (Default: .sqlite)
-	:return: list of files with the specified extension.
-	'''
+	ext: Extension for the file. (Default: .sqlite)
+	
+	returns: list of files with the specified extension.
+	"""
 	try:
 		for curr_dir, subdirs, files in os.walk(profile_paths):
 			break
@@ -70,9 +72,9 @@ def _db_files(profile_paths: PathLike, ext: Optional[AnyStr]='.sqlite') -> Itera
 
 
 def db_filepath(profile_paths: Dict[str, PathLike], filenames: str='places', ext='sqlite') -> Dict[str, PathLike]:
-	"""
-	Yields the path for the next database file.
+	""" Yields the path for the next database file.
 	Exits program if browser info or profile directory path are invalid.
+	
 	Accepts profile directory path.
 	Optional: file name(s), extensions (default is sqlite)
 	"""

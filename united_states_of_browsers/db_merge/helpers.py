@@ -7,11 +7,10 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 def safetychecks(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:
-	'''
-	Checks the names being inserted using string formatting for suspicious characters.
+	""" Checks the names being inserted using string formatting for suspicious characters.
 	Prevents SQL injection attacks.
 	Returns True or Exits the program.
-	'''
+	"""
 	safe_chars = set(string.ascii_lowercase)
 	safe_chars.update(['_'])
 	try:
@@ -30,10 +29,9 @@ def safetychecks(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:
 
 
 def make_queries(table: Text, field_names: Text) -> Dict:
-	'''
-	Constructs the queries necessary for specific pruposes.
+	""" Constructs the queries necessary for specific pruposes.
 	Returns them as dict['purpose': 'query']
-	'''
+	"""
 	queries = {'create': '''CREATE TABLE {} ({})'''.format(table, field_names)}
 	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table)})
 	return queries

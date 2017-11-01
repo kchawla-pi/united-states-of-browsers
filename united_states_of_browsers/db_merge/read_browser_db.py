@@ -5,12 +5,12 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 def firefox(profiles: Optional[Union[Text, Sequence[Text]]]=None) -> Tuple[List[PathInfo], List[Text]]:
-	'''
-	Setups path & field names of places.sqlite file for Firefox browser profiles in Windows x64.
+	""" Setups path & field names of places.sqlite file for Firefox browser profiles in Windows x64.
 	Returns all profiles by default.
+	
 	Optionally, Accepts profile name or list of profile names.
 	Returns tuple of list of Paths and field_names
-	'''
+	"""
 	firefox_fieldnames = ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed',
 	                       'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
 	                       'url_hash', 'description', 'preview_image_url',
