@@ -3,37 +3,47 @@ import sqlite3
 
 from pprint import pprint
 
-from united_states_of_browsers.db_merge.merge_browser_databases import yield_source_records
+from united_states_of_browsers.db_merge import merge_browser_databases as mbdb
 
-def build_search_table(db_path, included_fieldnames):
-	
-	with sqlite3.connect(db_path) as sink_conn:
-		column_str = ', '.join(included_fieldnames)
-		create_table_query = f'''CREATE VIRTUAL TABLE history USING fts5({column_str});'''
-		try:
-			sink_conn.execute(create_table_query)
-		except sqlite3.OperationalError:
-			pass
-	
-	record_yielder = yield_source_records(source_db_paths={'all_merged': db_path},
-	                                      source_fieldnames=included_fieldnames,
-	                                      )
-	virtual_insert_query = f'''INSERT INTO history {included_fieldnames} VALUES (?, ?, ?, ?, ?, ?)'''
-	sink_conn.executemany(virtual_insert_query, tuple(record_yielder))
-	
-
-def create_search_query(query_and, query_or=None, query_not=None):
-	pass
-
-def run_search(path_info, search_query):
-	# path_info.get(
-	with sqlite3.connect(path_info['sink']) as sink_conn:
-		search_query = sink_conn.execute("""SELECT * FROM history WHERE history MATCH 'title:python AND list AND pep NOT machine';""")
-		for result in search_query:
-			print(result)
-	
 with open('path_info.json', 'r') as json_obj:
 	path_info = json.load(json_obj)
-included_fieldnames = ('url', 'title', 'visit_count', 'last_visit_date', 'url_hash', 'description')
-build_search_table(path_info=path_info, included_fieldnames=included_fieldnames)
+	
 
+print(path_info['sink'])
+
+with sqlite3.connect(path_info['sink']) as sink_conn:
+	print(sink_conn)
+	try:
+		sink_conn.execute("""DROP TABLE history""")
+	except sqlite3.OperationalError:
+		sink_conn.execute(
+				'''CREATE VIRTUAL TABLE history
+				USING fts5(url, title, url_hash, description, visit_count, last_visit_date);'''
+				)
+	source_fieldnames = ('url', 'title', 'visit_count', 'last_visit_date', 'url_hash', 'description')
+	
+	record_yielder = mbdb.yield_source_records(source_db_paths={'all_merged': path_info['sink']},
+	                                            source_fieldnames =source_fieldnames,
+	                                            )
+	for rec in record_yielder:
+		print(rec)
+	# sink_conn.executemany(f'''INSERT INTO history {source_fieldnames} VALUES (?, ?, ?, ?, ?, ?)''', record_yielder)
+	quit()
+	
+	
+	
+	sink_conn.execute("""DROP TABLE history""")
+	try:
+		search_query = sink_conn.execute("""SELECT * FROM history WHERE history MATCH 'url:www'""")
+	except sqlite3.OperationalError:
+		sink_conn.execute(
+				'''CREATE VIRTUAL TABLE history
+				USING fts5(url, title, url_hash, description, visit_count, last_visit_date);'''
+				)
+		print('+++')
+		search_query = sink_conn.execute("""SELECT * FROM history WHERE history MATCH 'url:www'""")
+	
+	for result in search_query:
+		print(result)
+		print('...')
+	print('***')

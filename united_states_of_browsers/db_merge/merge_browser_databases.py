@@ -164,7 +164,7 @@ def merge_records(output_db: Union[Text, None],
 	else:
 		# return {record.url_hash: record._asdict() for record in source_records_yielder}
 		return source_records_yielder
-			
+		
 
 if __name__ == '__main__':
 	def _test():
