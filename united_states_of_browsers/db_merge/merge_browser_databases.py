@@ -1,4 +1,11 @@
 # -*- encoding: utf-8 -*-
+"""
+Contains functions to merge the records from multiple Firefox profiles.
+
+Available functions:
+ - merge_records: Accepts output database name, list of browser profiles, database table name.
+        Returns Tuple of records, or writes them to disk.
+"""
 import os
 import sqlite3
 

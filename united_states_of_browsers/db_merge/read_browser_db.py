@@ -1,4 +1,10 @@
 # -*- encoding: utf-8 -*-
+"""
+Functions to setup browser specific variables.
+
+Available functions:
+ - firefox: Setups path & field names of places.sqlite file for Firefox browser profiles in Windows x64.
+"""
 from united_states_of_browsers.db_merge import browser_setup
 
 from united_states_of_browsers.db_merge.imported_annotations import *

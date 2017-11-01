@@ -1,4 +1,11 @@
 # -*- encoding: utf-8 -*-
+"""
+Contains miscellaneous functions useful at various places.
+
+Available functions:
+ - safetychecks: Checks the names being inserted using string formatting for suspicious characters.
+ - make_queries: Constructs the queries necessary for specific pruposes.
+"""
 import os
 import string
 import sys
