@@ -7,7 +7,7 @@ have ameliorated the import difficulties.
 import pytest
 
 from united_states_of_browsers.db_merge_v1 import browser_setup
-from tests.data import test_browser_setup_data as bs_data
+from tests_v1.data import test_browser_setup_data as bs_data
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in bs_data.setup_profile_paths_testdata['values']])
