@@ -6,6 +6,7 @@ Available functions:
  - merge_records: Accepts output database name, list of browser profiles, database table name.
         Returns Tuple of records, or writes them to disk.
 """
+import json
 import os
 import sqlite3
 
@@ -42,7 +43,7 @@ def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
 		sink_db_path = None
 	
 	filename = '_'.join(['url_hash_log', filename_part])
-	url_hash_log_filename = os.path.join(filename, 'bin')
+	url_hash_log_filename = os.extsep.join([filename, 'bin'])
 	
 	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
 	return sink_db_path, url_hash_log_path
@@ -127,6 +128,11 @@ def write_new_database(sink_db_path: PathInfo,
 			sink_conn.executemany(sink_queries['insert'], source_records)
 
 
+def store_paths_to_disk(path_info):
+	with open('path_info.json', 'w') as json_obj:
+		json.dump(path_info, json_obj)
+
+
 def merge_records(output_db: Union[Text, None],
                   profiles: Union[Text, Iterable[Text], None],
                   table: Text
@@ -143,6 +149,9 @@ def merge_records(output_db: Union[Text, None],
 	returns: Returns None if database is written to disk. Returns tuple of records otherwise.
 	"""
 	file_paths = make_database_filenames(output_db=output_db, profiles=profiles)
+	with open('path_info.json', 'w') as json_obj:
+		json.dump(file_paths, json_obj)
+		
 	source_records_yielder = yield_source_records(source_db_paths=file_paths['source'],
 	                                              source_fieldnames=file_paths['source_fields'])
 	if file_paths['sink']:
