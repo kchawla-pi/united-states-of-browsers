@@ -1,6 +1,5 @@
 import os
 import sqlite3
-import subprocess
 
 from flask import (Flask,
                    g,
@@ -12,7 +11,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-		DATABASE=os.path.realpath(os.path.join(app.root_path, '..', 'db_merge_v1', 'merged_fx_db.sqlite')),
+		DATABASE=os.path.realpath(os.path.join(app.root_path, '..', 'db_merge', 'test_new_allmerged')),
 		SECRET_KEY='development key',
 		USERNAME='admin',
 		PASSWORD='default',
@@ -50,15 +49,9 @@ def close_db(error):
 
 def run_flask():
 	app.run()
-	# subprocess.run(['set', 'FLASK_APP', '=', 'usb_server'])
-	# subprocess.run(['set', 'FLASK_DEBUG=true'])
-	# subprocess.run(['python', 'flask', 'run'])
 
 
 if __name__ == '__main__':
 	run_flask()
 
-
-
-pass
 
