@@ -165,7 +165,7 @@ a_try = [a_dict.update(item) for item in a_dict_gen]
 print(a_try, a_dict)
 
 from united_states_of_browsers.db_merge_v1 import merge_browser_databases
-url_hashes, all_records = merge_browser_databases.merge(output_db='test', profiles='test_profile0', )
+url_hashes, all_records = merge_browser_databases.merge_records(output_db='test', profiles='test_profile0', )
 
 import itertools
 

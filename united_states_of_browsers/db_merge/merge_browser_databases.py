@@ -1,15 +1,43 @@
+import os
 import sqlite3
 
 from collections import (namedtuple,
-                         OrderedDict as odict)
+                         OrderedDict as odict
+                         )
 
 from united_states_of_browsers.db_merge import (helpers,
                                                 read_browser_db,
-                                                write_new_db,
                                                 )
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 Record = []
+
+
+def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
+	"""
+	 Returns paths for the database file and the file with record of processed record's hashes.
+	 Accepts filename.ext for the database file to be written to.
+	"""
+	if output_db:
+		try:
+			output_db, output_ext = output_db.split(os.extsep)
+		except ValueError:
+			output_ext = 'sqlite'
+		sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
+		filename_part = os.path.splitext(output_db)[0]
+	else:
+		import datetime
+		this_moment = str(datetime.datetime.now()).split('.')[0]
+		for replacee, replacer in zip(['-', ':', ' '], ['', '', '_']):
+			this_moment = this_moment.replace(replacee, replacer)
+		filename_part = this_moment
+		sink_db_path = None
+	
+	filename = '_'.join(['url_hash_log', filename_part])
+	url_hash_log_filename = os.path.join(filename, 'bin')
+	
+	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
+	return sink_db_path, url_hash_log_path
 
 
 def make_database_filenames(output_db: Union[None, Text],
@@ -31,7 +59,7 @@ def make_database_filenames(output_db: Union[None, Text],
 		}
 	"""
 	source_db_paths, source_field_names = read_browser_db.firefox(profiles=profiles)
-	sink_db_path, url_hash_log_file = write_new_db.setup_output_db_paths(output_db)
+	sink_db_path, url_hash_log_file = setup_output_db_paths(output_db)
 	file_paths = {'source': source_db_paths,
 	              'source_fields': source_field_names,
 	              'sink': sink_db_path,
@@ -92,10 +120,10 @@ def write_new_database(sink_db_path: PathInfo,
 			sink_conn.executemany(sink_queries['insert'], source_records)
 
 
-def merge(output_db: Union[Text, None],
-          profiles: Union[Text, Iterable[Text], None],
-          table: Text
-          ) -> Union[None, Tuple[NamedTuple]]:
+def merge_records(output_db: Union[Text, None],
+                  profiles: Union[Text, Iterable[Text], None],
+                  table: Text
+                  ) -> Union[None, Tuple[NamedTuple]]:
 	"""
 	Accepts output database name, list of browser profiles, and database table name.
 	Returns Tuple of records or writes them to disk.
@@ -125,10 +153,12 @@ if __name__ == '__main__':
 	profiles = None
 	output_db = 'test_new_allmerged.sqlite'
 	table = 'moz_places'
-	merge(output_db=output_db, profiles=profiles, table=table)
-	pprint(merge(output_db=None, profiles=profiles, table=table))
+	merge_records(output_db=output_db, profiles=profiles, table=table)
+	pprint(merge_records(output_db=None, profiles=profiles, table=table))
 	
 	profiles = ['dev-edition-default', 'test_profile0', 'test_profile1']
 	output_db = 'test_new_01_dev.sqlite'
-	merge(output_db=output_db, profiles=profiles, table=table)
-	pprint(merge(output_db=None, profiles=profiles, table=table))
+	merge_records(output_db=output_db, profiles=profiles, table=table)
+	pprint(merge_records(output_db=None, profiles=profiles, table=table))
+
+

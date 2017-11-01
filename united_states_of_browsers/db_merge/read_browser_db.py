@@ -1,8 +1,4 @@
 # -*- encoding: utf-8 -*-
-import sqlite3
-
-from collections import OrderedDict as odict
-
 from united_states_of_browsers.db_merge import browser_setup
 
 from united_states_of_browsers.db_merge.imported_annotations import *

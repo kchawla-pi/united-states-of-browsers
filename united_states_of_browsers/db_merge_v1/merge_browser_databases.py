@@ -53,7 +53,7 @@ def merge(output_db: Optional[Text]= None,
 
 
 if __name__ == '__main__':
-	ask = input('Run database merge operation?\n'
+	ask = input('Run database merge_records operation?\n'
 	            'Press <n> to abort, <ENTER> for viewing the merged reuslts without writing it to a new database file.\n'
 	            'Type a filename write the merged results to a database file.')
 	if ask.lower() == 'n':

@@ -8,6 +8,5 @@ from united_states_of_browsers import db_merge
 
 from . import browser_setup
 from . import read_browser_db
-from . import write_new_db
 from . import imported_annotations
 from . import merge_browser_databases
