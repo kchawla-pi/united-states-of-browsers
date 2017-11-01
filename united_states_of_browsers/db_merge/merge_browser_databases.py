@@ -122,9 +122,13 @@ def merge(output_db: Union[Text, None],
 
 if __name__ == '__main__':
 	from pprint import pprint
-	profiles = ['dev-edition-default', 'test_profile0', 'test_profile1']
 	profiles = None
-	output_db = 'record_fetcher2_test_allmerged.sqlite'
+	output_db = 'test_new_allmerged.sqlite'
 	table = 'moz_places'
+	merge(output_db=output_db, profiles=profiles, table=table)
+	pprint(merge(output_db=None, profiles=profiles, table=table))
+	
+	profiles = ['dev-edition-default', 'test_profile0', 'test_profile1']
+	output_db = 'test_new_01_dev.sqlite'
 	merge(output_db=output_db, profiles=profiles, table=table)
 	pprint(merge(output_db=None, profiles=profiles, table=table))
