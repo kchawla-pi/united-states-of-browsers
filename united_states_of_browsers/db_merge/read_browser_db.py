@@ -4,9 +4,7 @@ import sqlite3
 from collections import OrderedDict as odict
 
 from united_states_of_browsers.db_merge import browser_setup
-# from united_states_of_browsers.db_merge import db_handler
 from united_states_of_browsers.db_merge import helpers
-# from united_states_of_browsers.db_merge import record_fetcher
 
 from united_states_of_browsers.db_merge.imported_annotations import *
 

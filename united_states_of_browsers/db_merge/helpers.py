@@ -6,11 +6,6 @@ import sys
 
 from united_states_of_browsers.db_merge.imported_annotations import *
 
-# try:
-# 	from imported_annotations import *
-# except (ImportError, ModuleNotFoundError):
-# 	from.imported_annotations import *
-
 
 def get_record_info(record: Dict) -> Tuple[str, Sequence[Text]]:
 	'''

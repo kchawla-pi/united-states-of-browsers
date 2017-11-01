@@ -5,10 +5,9 @@ from array import array
 from bisect import insort
 from collections import OrderedDict as odict
 
-from united_states_of_browsers.db_merge_v1 import show
-from united_states_of_browsers.db_merge_v1 import helpers
+from united_states_of_browsers.db_merge import helpers
 
-from united_states_of_browsers.db_merge_v1.imported_annotations import *
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 def merge_databases(source_record_yielder: Iterable[Dict[int, Dict[Text, Any]]],
