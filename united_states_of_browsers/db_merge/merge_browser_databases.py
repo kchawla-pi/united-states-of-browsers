@@ -15,7 +15,8 @@ from collections import (namedtuple,
                          )
 from pprint import pprint
 
-from united_states_of_browsers.db_merge import (helpers,
+from united_states_of_browsers.db_merge import (
+                                                helpers,
                                                 read_browser_db,
                                                 )
 from united_states_of_browsers.db_merge.imported_annotations import *
@@ -78,7 +79,7 @@ def make_database_filenames(output_db: Union[None, Text],
 
 def yield_source_records(source_db_paths: Dict[Text, PathInfo],
                          source_fieldnames: Sequence[Text]
-                         ) -> Generator:
+                         ) -> Generator[NamedTuple, None, None]:
 	""" Returns a generator of named tuple which can yield a record across all database files.
 	Accepts dict of profile names and their database filepaths; and inclusive list of fieldnames.
 	
@@ -134,7 +135,7 @@ def write_new_database(sink_db_path: PathInfo,
 def merge_records(output_db: Union[Text, None],
                   profiles: Union[Text, Iterable[Text], None],
                   table: Text
-                  ) -> Union[None, Tuple[NamedTuple]]:
+                  ) -> Union[None, Generator[Sequence[NamedTuple], None, None]]:
 	""" Returns Tuple of records or writes them to disk.
 	Accepts output database name, list of browser profiles, and database table name.
 	
@@ -158,9 +159,11 @@ def merge_records(output_db: Union[Text, None],
 		                   )
 		with open('path_info.json', 'w') as json_obj:
 			json.dump(file_paths, json_obj, indent=4, ensure_ascii=False)
+		included_fieldnames = ('url', 'title', 'visit_count', 'last_visit_date', 'url_hash', 'description')
+		# db_search.build_search_table(path_info=file_paths, included_fieldnames=included_fieldnames)
 	else:
 		# return {record.url_hash: record._asdict() for record in source_records_yielder}
-		return tuple(source_records_yielder)
+		return source_records_yielder
 			
 
 if __name__ == '__main__':
@@ -174,7 +177,7 @@ if __name__ == '__main__':
 		profiles = ['dev-edition-default', 'test_profile0', 'test_profile1']
 		output_db = 'test_new_01_dev.sqlite'
 		merge_records(output_db=output_db, profiles=profiles, table=table)
-		pprint(merge_records(output_db=None, profiles=profiles, table=table))
+		pprint(tuple(merge_records(output_db=None, profiles=profiles, table=table)))
 		
 		
 	def _main():
@@ -185,7 +188,7 @@ if __name__ == '__main__':
 			print('Program terminated.')
 			os.sys.exit()
 		elif not ask:
-			pprint(merge_records(output_db=None, profiles=None, table='moz_places'))
+			pprint(tuple(merge_records(output_db=None, profiles=None, table='moz_places')))
 		elif ask:
 			merge_records(output_db=f'{ask}.sqlite', profiles=None, table='moz_places')
 	
