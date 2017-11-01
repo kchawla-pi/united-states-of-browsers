@@ -7,10 +7,10 @@ sys.path.insert(0, str(search_in))
 from united_states_of_browsers import db_merge
 
 from . import browser_setup
-from . import db_handler
+# from . import db_handler
 # from . import deduplicator
 from . import read_browser_db
-from . import record_fetcher
+# from . import record_fetcher
 from . import write_new_db
 from . import imported_annotations
 from . import merge_browser_databases

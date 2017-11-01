@@ -42,7 +42,7 @@ def make_database_filenames(output_db: Union[None, Text],
 
 def yield_source_records(source_db_paths: Dict[Text, PathInfo],
                          source_fieldnames: Sequence[Text]
-                         ) -> Generator[NamedTuple]:
+                         ) -> Generator:
 	"""
 	Accepts dict of profile names and their database filepaths; and inclusive list of fieldnames.
 	Returns a generator of named tuple which can yield a record across all database files.
