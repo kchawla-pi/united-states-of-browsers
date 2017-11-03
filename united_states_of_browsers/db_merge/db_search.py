@@ -111,19 +111,22 @@ def parse_keywords(query):
 
 
 if __name__ == '__main__':
-	time_stamps = (1509123590555000, 1501259124168000, 1506703039399000)
-	human_times = [datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
-	               time_stamps]
+	def _test():
+		time_stamps = (1509123590555000, 1501259124168000, 1506703039399000)
+		human_times = [datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
+		               time_stamps]
+		
+		search_test_cases = (
+			(app_inf['sink'], 'python', time_stamps[1], time_stamps[2]),
+			(app_inf['sink'], "python AND variable NOT update anaconda AND stackoverflow", None, None),
+			)
+		
+		for (db_path, word_query, date_start, date_stop) in search_test_cases:
+			search_results = search(db_path, word_query, date_start, date_stop)
+			_print_search(search_results)
+			print()
 	
-	search_test_cases = (
-		(app_inf['sink'], 'python', time_stamps[1], time_stamps[2]),
-		(app_inf['sink'], "python AND variable NOT update anaconda AND stackoverflow", None, None),
-		)
-	
-	for (db_path, word_query, date_start, date_stop) in search_test_cases:
-		search_results = search(db_path, word_query, date_start, date_stop)
-		_print_search(search_results)
-		print()
+	_test()
 		
 	
 	"""
