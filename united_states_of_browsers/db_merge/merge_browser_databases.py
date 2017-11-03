@@ -10,7 +10,11 @@ import json
 import os
 from pprint import pprint
 
-from united_states_of_browsers.db_merge import database_operations as db_ops
+from united_states_of_browsers.db_merge import (database_operations as db_ops,
+                                                db_search,
+                                                helpers
+                                                )
+from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
@@ -29,20 +33,22 @@ def merge_records(output_db: Union[Text, None],
 	
 	returns: Returns None if database is written to disk. Returns tuple of records otherwise.
 	"""
-	file_paths = db_ops.make_database_filepaths(output_db=output_db, profiles=profiles)
+	app_inf = db_ops.make_database_filepaths(output_db=output_db, profiles=profiles)
 	
-	source_records_yielder = db_ops.yield_source_records(source_db_paths=file_paths['source'],
-	                                              source_fieldnames=file_paths['source_fields'])
-	if file_paths['sink']:
-		db_ops.write_new_database(sink_db_path=file_paths['sink'],
+	source_records_yielder = db_ops.yield_source_records(source_db_paths=app_inf['source'],
+	                                              source_fieldnames=app_inf['source_fieldnames'])
+	if app_inf['sink']:
+		db_ops.write_new_database(sink_db_path=app_inf['sink'],
 		                   table=table,
-		                   fieldnames=file_paths['source_fields'],
+		                   fieldnames=app_inf['source_fieldnames'],
 		                   source_records=source_records_yielder
 		                   )
-		with open('path_info.json', 'w') as json_obj:
-			json.dump(file_paths, json_obj, indent=4, ensure_ascii=False)
-		included_fieldnames = ('url', 'title', 'visit_count', 'last_visit_date', 'url_hash', 'description')
-		# db_search.build_search_table(path_info=file_paths, included_fieldnames=included_fieldnames)
+		
+		
+		app_inf.update({'search_table_fieldnames': db_search.search_table_fieldnames})
+		with open(app_inf_path, 'w') as json_obj:
+			json.dump(app_inf, json_obj, indent=4, ensure_ascii=False)
+		db_search.build_search_table(db_path=app_inf['sink'], included_fieldnames=db_search.search_table_fieldnames)
 	else:
 		# return {record.url_hash: record._asdict() for record in source_records_yielder}
 		return source_records_yielder

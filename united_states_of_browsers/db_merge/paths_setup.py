@@ -18,6 +18,7 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 debug = 0
 
+app_inf_path = helpers.filepath_from_another('app_inf.json')
 
 def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, Dict[str, PathLike]]:
 	""" Accepts a browser name or a directory path pointing to the profile location of the browser.
