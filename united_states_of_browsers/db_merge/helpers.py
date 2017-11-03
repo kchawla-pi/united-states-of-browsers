@@ -13,7 +13,7 @@ import sys
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def safetychecks(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:
+def safetychecks_deprecated(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:
 	""" Checks the names being inserted using string formatting for suspicious characters.
 	Prevents SQL injection attacks.
 	Returns True or Exits the program.
@@ -42,6 +42,8 @@ def make_queries(table: Text, field_names: Text) -> Dict:
 	queries = {'create': '''CREATE TABLE {} ({})'''.format(table, field_names)}
 	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table)})
 	return queries
-		
-		
+	
+	
+query_sanitizer = lambda query: ''.join([chr for chr in query if chr.isalnum() or chr in {'_'}])  #, '?', '(', ')', ','}])
+
 filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))

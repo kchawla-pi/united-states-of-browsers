@@ -17,7 +17,7 @@ from united_states_of_browsers.db_merge import (browser_specific_setup,
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-Record = []
+DBRecord = []
 
 
 def make_database_filepaths(output_db: Union[None, Text],
@@ -34,13 +34,13 @@ def make_database_filepaths(output_db: Union[None, Text],
 		'source': Databases to read from {profile name: profile paths},
 		'sink': database to write to,
 		'hash': filepath to hashes of urls written,
-		'source_fields': list of fieldnames in source databases
+		'source_fieldnames': list of fieldnames in source databases
 		}
 	"""
 	source_db_paths, source_field_names = browser_specific_setup.firefox(profiles=profiles)
 	sink_db_path, url_hash_log_file = paths_setup.setup_output_db_paths(output_db)
 	file_paths = {'source': source_db_paths,
-	              'source_fields': source_field_names,
+	              'source_fieldnames': source_field_names,
 	              'sink': sink_db_path,
 	              'hash': url_hash_log_file,
 	              }
@@ -58,8 +58,8 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 	
 	returns: Generator of namedtuple which can yield each record.
 	"""
-	global Record
-	Record = namedtuple('Record', ' '.join(source_fieldnames))
+	global DBRecord
+	DBRecord = namedtuple('DBRecord', source_fieldnames)
 	
 	source_records_template = odict.fromkeys(source_fieldnames, None)
 	for profile_name, profile_db_path in source_db_paths.items():
@@ -71,7 +71,7 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 					source_records_template = odict(
 								(key, dict(db_record_yielder).setdefault(key, None))
 									for key in source_records_template)
-					yield Record(*source_records_template.values())
+					yield DBRecord(*source_records_template.values())
 			except sqlite3.OperationalError:
 				print(f'This browser profile does not seem to have any data: {profile_name}')
 
@@ -94,6 +94,9 @@ def write_new_database(sink_db_path: PathInfo,
 	table: name of table in the database. Default is 'moz_places'.
 	"""
 	sink_fieldnames = fieldnames[:]
+	table = helpers.query_sanitizer(table)
+	sink_fieldnames = [helpers.query_sanitizer(fieldname) for fieldname in sink_fieldnames]
+	
 	with sqlite3.connect(sink_db_path) as sink_conn:
 		sink_queries = helpers.make_queries(table=table, field_names=', '.join(sink_fieldnames))
 		try:
