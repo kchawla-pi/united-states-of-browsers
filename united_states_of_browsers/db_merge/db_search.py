@@ -11,6 +11,7 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 from pprint import pprint
 
+
 search_table_fieldnames = ('id', 'url', 'title', 'visit_count',
                            'last_visit_date', 'url_hash', 'description')
 
@@ -18,6 +19,7 @@ with open(app_inf_path, 'r') as json_obj:
 	app_inf = json.load(json_obj)
 
 DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
+
 
 def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 	""" Builds virtual table for full-text search in sqlite databases.
@@ -41,25 +43,17 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 		sink_conn.executemany(virtual_insert_query, tuple(record_yielder))
 
 
-def parse_search_query(query):
-	print(query)
-	parsing = re.search("*\(*\)*", query)
-	try:
-		print(parsing.start(), parsing.end())
-	except AttributeError:
-		pass
-
-
-def create_search_query(any_word, all_words=None, not_words=None):
+def _create_search_query(any_word, all_words=None, not_words=None):
 	words_any = ' OR '.join(any_word)
 	words_all = ' AND '.join(all_words)
 	words_not = ' NOT '.join(not_words)
 	return words_any, words_all, words_not
 
 
-def make_sql_statement(word_query: Text,
-                       date_start: Optional[int]=None, date_stop: Optional[int]=None
-                       ) -> Union[Text, Iterable[Text]]:
+def _make_sql_statement(word_query: Text,
+                        date_start: Union[int, None],
+                        date_stop: Union[int, None]
+                        ) -> Union[Text, Iterable[Text]]:
 	""" Returns prepared SQL statements and bindings for queries with and without dates.
 	Accepts word_query.
 		Optional: date_start and date_stop.
@@ -80,15 +74,15 @@ def make_sql_statement(word_query: Text,
 	return sql_query, query_bindings
 
 
-def run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]) -> Iterable[NamedTuple]:
-	
+def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]) -> Iterable[
+	NamedTuple]:
 	with sqlite3.connect(db_path) as sink_conn:
 		sink_conn.row_factory = sqlite3.Row
 		query_results = sink_conn.execute(sql_query, query_bindings)
 		return [DBRecord(*result) for result in query_results]
-		
-		
-def print_search(search_results: Iterable):
+
+
+def _print_search(search_results: Iterable):
 	for result in search_results:
 		timestamp_ = result.last_visit_date
 		try:
@@ -99,12 +93,21 @@ def print_search(search_results: Iterable):
 			print(human_readable_date, '.', result.url)
 		else:
 			print(human_readable_date, '.', result.title)
-			
-		
-def build_new_search_table():
-	with open('app_inf.json', 'r') as json_obj:
-		app_inf = json.load(json_obj)
-	build_search_table(db_path=app_inf['sink'], included_fieldnames=app_inf['search_table_fields'])
+
+
+def search(db_path, word_query, date_start=None, date_stop=None):
+	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
+	search_results = _run_search(db_path, sql_query, query_bindings)
+	return search_results
+
+
+def parse_keywords(query):
+	print(query)
+	parsing = re.search("*\(*\)*", query)
+	try:
+		print(parsing.start(), parsing.end())
+	except AttributeError:
+		pass
 
 
 if __name__ == '__main__':
@@ -112,29 +115,24 @@ if __name__ == '__main__':
 	human_times = [datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
 	               time_stamps]
 	
-	sql_query, query_bindings = make_sql_statement(word_query='python', date_start=time_stamps[1], date_stop=time_stamps[2])
-	run_search(db_path=app_inf['sink'], sql_query=sql_query, query_bindings=query_bindings)
-	print()
-	search_query = "python AND variable NOT update anaconda AND stackoverflow"
-	sql_query, query_bindings = make_sql_statement(word_query=search_query)
-	search_results = run_search(db_path=app_inf['sink'], sql_query=sql_query, query_bindings=query_bindings)
-	print_search(search_results)
+	search_test_cases = (
+		(app_inf['sink'], 'python', time_stamps[1], time_stamps[2]),
+		(app_inf['sink'], "python AND variable NOT update anaconda AND stackoverflow", None, None),
+		)
+	
+	for (db_path, word_query, date_start, date_stop) in search_test_cases:
+		search_results = search(db_path, word_query, date_start, date_stop)
+		_print_search(search_results)
+		print()
+		
 	
 	"""
-	entered_searches, search_queries = get_searches_list()
-	for query in entered_searches:
-		pass
-	# parse_search_query(query=query)
+	# parse_keywords(query=query)
 	
 	
-	search_query = create_search_query(any_word=['python', 'pep', 'list'],
+	search_query = _create_search_query(any_word=['python', 'pep', 'list'],
 	                                   all_words=['machine', 'learning'],
 	                                   not_words=['numpy', 'javascript']
 	                                   )
 	
-	# pprint(app_inf)
-	# search_query = 'title:python'
-	
-	# print(datetime.datetime.utcfromtimestamp(1509123590555000/10**6))
-	# run_search_long(path_info=app_inf['sink'], word_query='python', )
 	"""
