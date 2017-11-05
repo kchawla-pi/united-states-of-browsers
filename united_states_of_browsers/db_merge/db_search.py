@@ -11,14 +11,17 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 from pprint import pprint
 
-
-search_table_fieldnames = ('id', 'url', 'title', 'visit_count',
-                           'last_visit_date', 'url_hash', 'description')
-
-with open(app_inf_path, 'r') as json_obj:
-	app_inf = json.load(json_obj)
-
-DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
+def setup_module():
+	search_table_fieldnames = ('id', 'url', 'title', 'visit_count',
+	                           'last_visit_date', 'url_hash', 'description')
+	try:
+		with open(app_inf_path, 'r') as json_obj:
+			app_inf = json.load(json_obj)
+	except FileNotFoundError as excep:
+		app_inf_path.name
+	
+	DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
+	return app_inf, search_table_fieldnames, DBRecord
 
 
 def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
@@ -74,8 +77,8 @@ def _make_sql_statement(word_query: Text,
 	return sql_query, query_bindings
 
 
-def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]) -> Iterable[
-	NamedTuple]:
+def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
+                ) -> Iterable[NamedTuple]:
 	with sqlite3.connect(db_path) as sink_conn:
 		sink_conn.row_factory = sqlite3.Row
 		query_results = sink_conn.execute(sql_query, query_bindings)
@@ -108,6 +111,9 @@ def parse_keywords(query):
 		print(parsing.start(), parsing.end())
 	except AttributeError:
 		pass
+
+
+app_inf, search_table_fieldnames, DBRecord = setup_module()
 
 
 if __name__ == '__main__':
