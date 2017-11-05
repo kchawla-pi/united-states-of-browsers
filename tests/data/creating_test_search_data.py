@@ -3,6 +3,7 @@ import random
 import sqlite3
 
 from collections import OrderedDict as odict
+from pprint import pprint
 
 from collections import namedtuple
 from pathlib import Path
@@ -102,7 +103,7 @@ def save_url_hashes(url_log_path, written_url_hashes):
 	
 def create_test_db(number_of_records):
 	global DBRecords
-	src_db_path, sink_db_path, url_log_path  = setup_paths()
+	src_db_path, sink_db_path, url_log_path = setup_paths()
 	if sink_db_path.exists():
 		print(f'{sink_db_path.name} already exists at \n{sink_db_path.parent}')
 	else:
@@ -115,5 +116,16 @@ def create_test_db(number_of_records):
 		make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder)
 
 
+def query_search_db(primary_key):
+	_, search_db_path, _ = setup_paths()
+	with sqlite3.connect(str(search_db_path)) as conn:
+		query = f'''SELECT * from moz_places WHERE id is ?'''
+		query_result = conn.execute(query, [primary_key])
+		return query_result.fetchall()
+
+
 if __name__ == '__main__':
-	create_test_db(100)
+	# create_test_db(100)
+	selected_primary_keys = [455]
+	for primary_key in selected_primary_keys:
+		print(query_search_db(primary_key), end='\n')
