@@ -12,7 +12,6 @@ from pprint import pprint
 
 from united_states_of_browsers.db_merge import (database_operations as db_ops,
                                                 db_search,
-                                                helpers
                                                 )
 from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 from united_states_of_browsers.db_merge.imported_annotations import *
@@ -48,6 +47,7 @@ def merge_records(output_db: Union[Text, None],
 		app_inf.update({'search_table_fieldnames': db_search.search_table_fieldnames})
 		with open(app_inf_path, 'w') as json_obj:
 			json.dump(app_inf, json_obj, indent=4, ensure_ascii=False)
+			
 		db_search.build_search_table(db_path=app_inf['sink'], included_fieldnames=db_search.search_table_fieldnames)
 	else:
 		# return {record.url_hash: record._asdict() for record in source_records_yielder}

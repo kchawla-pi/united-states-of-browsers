@@ -39,8 +39,8 @@ def make_queries(table: Text, field_names: Text) -> Dict:
 	""" Constructs the queries necessary for specific pruposes.
 	Returns them as dict['purpose': 'query']
 	"""
-	queries = {'create': '''CREATE TABLE {} ({})'''.format(table, field_names)}
-	queries.update({'insert': "INSERT INTO {} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)".format(table)})
+	queries = {'create': f'''CREATE TABLE {table} ({field_names})'''}
+	queries.update({'insert': f"INSERT INTO {table} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"})
 	return queries
 	
 	
