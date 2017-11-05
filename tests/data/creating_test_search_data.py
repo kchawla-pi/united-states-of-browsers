@@ -1,5 +1,8 @@
-import sqlite3
+import json
 import random
+import sqlite3
+
+from collections import OrderedDict as odict
 
 from collections import namedtuple
 from pathlib import Path
@@ -13,9 +16,11 @@ def setup_paths():
 	root = Path(__file__).parents[2]
 	src_db_path = Path.joinpath(root, 'united_states_of_browsers', 'db_merge', 'all_merged.sqlite')
 	sink_db_path = Path.joinpath(root, 'tests', 'data', 'db_for_testing_search.sqlite')
-	return src_db_path, sink_db_path
-
-
+	url_log_path = Path.joinpath(sink_db_path.parent,
+	                             f'{sink_db_path.stem}_written_url_hashes.json')
+	return src_db_path, sink_db_path, url_log_path
+		
+		
 def get_fieldnames():
 	firefox_fieldnames = ['id',
 	                      'url',
@@ -65,8 +70,11 @@ def make_test_db(sink_db_path, firefox_fieldnames, chosen_records):
 		try:
 			sink_conn.execute(f'''CREATE TABLE moz_places ({fx_fieldnames_str})''')
 		except sqlite3.OperationalError as excep:
-			print(excep)
+			print(excep.args)
 		sink_conn.executemany(f'''INSERT INTO moz_places VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', chosen_records)
+		url_hashes_query_result = sink_conn.execute('''SELECT id, url_hash FROM moz_places''')
+		written_url_hashes = odict(url_hashes_query_result.fetchall())
+	return written_url_hashes
 	
 	
 def make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder):
@@ -81,22 +89,30 @@ def make_search_table(sink_db_path, search_table_fieldnames, search_records_yiel
 
 
 def make_search_records(db_records):
-	return (SearchRecord(
-	                     *[
-		                     record.__getattribute__(fieldname)
-		                     for fieldname in SearchRecord._fields
-		                     ])
-		for record in db_records)
+	return (SearchRecord(*[record.__getattribute__(fieldname)
+	                       for fieldname in SearchRecord._fields
+	                       ]
+	                     )
+	        for record in db_records
+	        )
 	
-
+def save_url_hashes(url_log_path, written_url_hashes):
+	with open(str(url_log_path), 'w') as write_obj:
+		json.dump(dict(written_url_hashes), write_obj, sort_keys=True,indent=4,)
+	
 def create_test_db(number_of_records):
 	global DBRecords
-	src_db_path, sink_db_path = setup_paths()
-	firefox_fieldnames, search_table_fieldnames = get_fieldnames()
-	chosen_records = get_records_for_test_db(src_db_path, num_rec=number_of_records)
-	search_records_yielder = make_search_records(db_records=chosen_records)
-	make_test_db(sink_db_path, firefox_fieldnames, chosen_records)
-	make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder)
+	src_db_path, sink_db_path, url_log_path  = setup_paths()
+	if sink_db_path.exists():
+		print(f'{sink_db_path.name} already exists at \n{sink_db_path.parent}')
+	else:
+		firefox_fieldnames, search_table_fieldnames = get_fieldnames()
+		chosen_records = get_records_for_test_db(src_db_path, num_rec=number_of_records)
+		
+		search_records_yielder = make_search_records(db_records=chosen_records)
+		written_url_hashes  = make_test_db(sink_db_path, firefox_fieldnames, chosen_records)
+		save_url_hashes(url_log_path, written_url_hashes)
+		make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder)
 
 
 if __name__ == '__main__':
