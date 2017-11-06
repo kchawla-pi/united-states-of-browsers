@@ -116,7 +116,7 @@ def create_test_db(number_of_records):
 		make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder)
 
 
-def query_search_db(primary_key):
+def retrieve_record_using_id(primary_key):
 	_, search_db_path, _ = setup_paths()
 	with sqlite3.connect(str(search_db_path)) as conn:
 		query = f'''SELECT * from moz_places WHERE id is ?'''
@@ -128,4 +128,4 @@ if __name__ == '__main__':
 	# create_test_db(100)
 	selected_primary_keys = [455]
 	for primary_key in selected_primary_keys:
-		print(query_search_db(primary_key), end='\n')
+		print(retrieve_record_using_id(primary_key), end='\n')
