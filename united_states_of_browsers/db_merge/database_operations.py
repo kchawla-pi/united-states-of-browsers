@@ -37,10 +37,11 @@ def make_database_filepaths(output_db: Union[None, Text],
 		'source_fieldnames': list of fieldnames in source databases
 		}
 	"""
-	source_db_paths, source_field_names = browser_specific_setup.firefox(profiles=profiles)
+	source_db_paths, source_fieldnames, source_search_fields = browser_specific_setup.firefox(profiles=profiles)
 	sink_db_path, url_hash_log_file = paths_setup.setup_output_db_paths(output_db)
 	file_paths = {'source': source_db_paths,
-	              'source_fieldnames': source_field_names,
+	              'source_fieldnames': source_fieldnames,
+	              'search_fieldnames': source_search_fields,
 	              'sink': sink_db_path,
 	              'hash': url_hash_log_file,
 	              }

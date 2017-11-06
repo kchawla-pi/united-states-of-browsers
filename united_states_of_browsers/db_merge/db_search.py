@@ -11,18 +11,6 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 from pprint import pprint
 
-def setup_module():
-	search_table_fieldnames = ('id', 'url', 'title', 'visit_count',
-	                           'last_visit_date', 'url_hash', 'description')
-	try:
-		with open(app_inf_path, 'r') as json_obj:
-			app_inf = json.load(json_obj)
-	except FileNotFoundError as excep:
-		app_inf_path.name
-	
-	DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
-	return app_inf, search_table_fieldnames, DBRecord
-
 
 def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 	""" Builds virtual table for full-text search in sqlite databases.
@@ -79,6 +67,9 @@ def _make_sql_statement(word_query: Text,
 
 def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
                 ) -> Iterable[NamedTuple]:
+	with open(app_inf_path, 'r') as read_json_obj:
+		app_inf = json.load(read_json_obj)
+	DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
 	with sqlite3.connect(db_path) as sink_conn:
 		sink_conn.row_factory = sqlite3.Row
 		query_results = sink_conn.execute(sql_query, query_bindings)
@@ -113,7 +104,6 @@ def parse_keywords(query):
 		pass
 
 
-app_inf, search_table_fieldnames, DBRecord = setup_module()
 
 
 if __name__ == '__main__':

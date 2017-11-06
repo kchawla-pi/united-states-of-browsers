@@ -42,13 +42,10 @@ def merge_records(output_db: Union[Text, None],
 		                   fieldnames=app_inf['source_fieldnames'],
 		                   source_records=source_records_yielder
 		                   )
-		
-		
-		app_inf.update({'search_table_fieldnames': db_search.search_table_fieldnames})
 		with open(app_inf_path, 'w') as json_obj:
 			json.dump(app_inf, json_obj, indent=4, ensure_ascii=False)
 			
-		db_search.build_search_table(db_path=app_inf['sink'], included_fieldnames=db_search.search_table_fieldnames)
+		db_search.build_search_table(db_path=app_inf['sink'], included_fieldnames=app_inf['search_fieldnames'])
 	else:
 		# return {record.url_hash: record._asdict() for record in source_records_yielder}
 		return source_records_yielder

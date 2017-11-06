@@ -21,9 +21,12 @@ def firefox(profiles: Optional[Union[Text, Sequence[Text]]]=None) -> Tuple[List[
 	                       'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
 	                       'url_hash', 'description', 'preview_image_url',
 	                       ]
+	fx_search_fieldnames = ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+	                        'description',
+	                        ]
 	profile_paths = paths_setup.setup_profile_paths(browser_ref='firefox', profiles=profiles)
 	file_paths = paths_setup.db_filepath(profile_paths=profile_paths, filenames='places', ext='sqlite')
-	return file_paths, firefox_fieldnames
+	return file_paths, firefox_fieldnames,fx_search_fieldnames
 
 
 def chrome():

@@ -30,7 +30,10 @@ def data_for_firefox():
 			['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed', 'favicon_id',
 			 'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash', 'description',
 			 'preview_image_url',
-			 ]
+			 ],
+			['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+			 'description',
+			 ],
 			)
 				),
 	)
@@ -44,7 +47,11 @@ def data_for_firefox():
 			          'favicon_id',
 			          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash',
 			          'description',
-			          'preview_image_url', ]
+			          'preview_image_url',
+			          ],
+			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+			          'description',
+			          ],
 			         )
 		         ),
 		TestCase(profiles='gibberishprofile',
@@ -54,7 +61,11 @@ def data_for_firefox():
 			          'favicon_id',
 			          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash',
 			          'description',
-			          'preview_image_url', ]
+			          'preview_image_url',
+			          ],
+			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+			          'description',
+			          ],
 			         )
 		         ),
 		TestCase(profiles=[],
@@ -64,7 +75,11 @@ def data_for_firefox():
 			          'favicon_id',
 			          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash',
 			          'description',
-			          'preview_image_url', ]
+			          'preview_image_url',
+			          ],
+			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+			          'description',
+			          ],
 			         )
 		         ),
 		TestCase(profiles=['test_profile0', 'test_profile1'],
@@ -77,7 +92,11 @@ def data_for_firefox():
 			          'favicon_id',
 			          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash',
 			          'description',
-			          'preview_image_url', ]
+			          'preview_image_url',
+			          ],
+			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+			          'description',
+			          ],
 			         )
 		         ),
 		TestCase(profiles=None,  # default value
@@ -100,7 +119,10 @@ def data_for_firefox():
 			         ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed', 'favicon_id',
 			          'frecency', 'last_visit_date', 'guid', 'foreign_count', 'url_hash', 'description',
 			          'preview_image_url',
-			          ]
+			          ],
+			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
+			          'description',
+			          ],
 			         )
 		         ),
 		)
