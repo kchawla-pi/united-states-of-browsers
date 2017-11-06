@@ -107,6 +107,10 @@ def parse_keywords(query):
 
 
 if __name__ == '__main__':
+	root = Path(__file__).parents[1]
+	db_for_testing = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
+	with open('app_inf.json', 'r') as json_obj:
+		app_inf = json.load(json_obj)
 	def _test():
 		time_stamps = (1509123590555000, 1501259124168000, 1506703039399000)
 		human_times = [datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
@@ -122,8 +126,12 @@ if __name__ == '__main__':
 			_print_search(search_results)
 			print()
 	
-	_test()
-		
+	# _test()
+	search_result = search(db_for_testing, '7*')
+	print(len(search_result))
+	pprint(search_result)
+	search_result = search(db_for_testing, '7')
+	print(len(search_result))
 	
 	"""
 	# parse_keywords(query=query)
