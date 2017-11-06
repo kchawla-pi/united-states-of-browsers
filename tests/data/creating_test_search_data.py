@@ -119,13 +119,14 @@ def create_test_db(number_of_records):
 def retrieve_record_using_id(primary_key):
 	_, search_db_path, _ = setup_paths()
 	with sqlite3.connect(str(search_db_path)) as conn:
+		conn.row_factory = sqlite3.Row
 		query = f'''SELECT * from moz_places WHERE id is ?'''
 		query_result = conn.execute(query, [primary_key])
-		return query_result.fetchall()
+		return query_result.fetchall()[:]
 
 
 if __name__ == '__main__':
 	# create_test_db(100)
-	selected_primary_keys = [455]
+	selected_primary_keys = [7787]
 	for primary_key in selected_primary_keys:
 		print(retrieve_record_using_id(primary_key), end='\n')

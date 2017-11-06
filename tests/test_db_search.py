@@ -16,7 +16,7 @@ db_for_testing = Path.joinpath(root, 'tests', 'data', 'db_for_testing_search.sql
 @pytest.mark.parametrize('test_case', [test_case for test_case in dbs_data.search_testdata['keywords only']])
 def test_search_keywords(test_case):
 	actual_output = db_search.search(db_path=str(db_for_testing), word_query=test_case.input)
-	assert test_case.expected == actual_output
+	assert set(test_case.expected) == set(actual_output)
 	
 	
 if __name__ == '__main__':
