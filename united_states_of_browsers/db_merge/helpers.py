@@ -44,7 +44,7 @@ def make_queries(table: Text, fieldnames: Text) -> Dict:
 	return queries
 	
 
-def incrementer(start: int=0) -> Generator[int]:
+def incrementer(start: int=0) -> Generator[int, None, None]:
 	"""	Infinite Generator which yields integer value, incremented by +1 every time it is used
 	Accepts a start value, default is 0.
 	

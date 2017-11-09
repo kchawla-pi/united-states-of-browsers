@@ -63,7 +63,7 @@ def data_for_search():
 				         None)]
 		         ),
 		# 'title:7 OR url:7 OR description:7'
-		TestCase(input='7* OR *7',
+		TestCase(input='7*',
 		         expected=[(5849, 'https://smile.amazon.com/dp/B06XHB6BLN?psc=1',
 		                    'AmazonSmile: Sardonyx SX-918 Bluetooth Headphones, Best Wireless Sport Earphones Noise Cancelling IPX7 Waterproof HD Stereo Headset w/ Mic, Secure-Fit Sweatproof Earbuds for Gym Running Workout Exercise: Cell Phones & Accessories',
 		                    'moc.nozama.elims.', 1, 0, 0, None, 20, 1499536336654000,
