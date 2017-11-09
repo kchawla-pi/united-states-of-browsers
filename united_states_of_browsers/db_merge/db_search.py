@@ -104,8 +104,6 @@ def parse_keywords(query):
 		pass
 
 
-
-
 if __name__ == '__main__':
 	root = Path(__file__).parents[1]
 	db_for_testing = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
