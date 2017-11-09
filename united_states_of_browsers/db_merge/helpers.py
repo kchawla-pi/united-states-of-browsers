@@ -35,15 +35,37 @@ def safetychecks_deprecated(record: Union[Dict[Text, Dict], Iterable[Text]]) -> 
 		sys.exit()
 
 
-def make_queries(table: Text, field_names: Text) -> Dict:
+def make_queries(table: Text, fieldnames: Text) -> Dict:
 	""" Constructs the queries necessary for specific pruposes.
 	Returns them as dict['purpose': 'query']
 	"""
-	queries = {'create': f'''CREATE TABLE {table} ({field_names})'''}
+	queries = {'create': f'''CREATE TABLE {table} (id INT PRIMARY KEY , {fieldnames})'''}
 	queries.update({'insert': f"INSERT INTO {table} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"})
 	return queries
 	
+
+def incrementer(start: int=0) -> Generator[int]:
+	"""	Infinite Generator which yields integer value, incremented by +1 every time it is used
+	Accepts a start value, default is 0.
 	
+	Usage: inc = incrementer(0); next(inc)
+	"""
+	next = start
+	yield next
+	while True:
+		next += 1
+		yield next
+
 query_sanitizer = lambda query: ''.join([chr for chr in query if chr.isalnum() or chr in {'_'}])  #, '?', '(', ')', ','}])
 
 filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
+
+
+if __name__ == '__main__':
+	table = 'moz_places'
+	fieldnames = ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed',
+	              'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
+	              'url_hash', 'description', 'preview_image_url',
+	              ]
+	queries = make_queries(table=table, fieldnames=', '.join(fieldnames))
+	print(queries)

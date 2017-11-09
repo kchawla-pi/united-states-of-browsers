@@ -73,7 +73,12 @@ if __name__ == '__main__':
 			print('Program terminated.')
 			os.sys.exit()
 		elif not ask:
-			pprint(tuple(merge_records(output_db=None, profiles=None, table='moz_places')))
+			merged_records = (tuple(merge_records(output_db=None, profiles=None, table='moz_places')))
+			show = input('Records merged. If you would like to see them, press ENTER now, else press <n> key')
+			if show == 'n'.lower():
+				pass
+			else:
+				pprint(merged_records)
 		elif ask:
 			merge_records(output_db=f'{ask}.sqlite', profiles=None, table='moz_places')
 	

@@ -61,7 +61,7 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 	"""
 	global DBRecord
 	DBRecord = namedtuple('DBRecord', source_fieldnames)
-	
+	incr = helpers.incrementer()
 	source_records_template = odict.fromkeys(source_fieldnames, None)
 	for profile_name, profile_db_path in source_db_paths.items():
 		with sqlite3.connect(profile_db_path) as source_conn:
@@ -72,6 +72,7 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 					source_records_template = odict(
 								(key, dict(db_record_yielder).setdefault(key, None))
 									for key in source_records_template)
+					source_records_template['id'] = next(incr)
 					yield DBRecord(*source_records_template.values())
 			except sqlite3.OperationalError:
 				print(f'This browser profile does not seem to have any data: {profile_name}')
@@ -99,7 +100,7 @@ def write_new_database(sink_db_path: PathInfo,
 	sink_fieldnames = [helpers.query_sanitizer(fieldname) for fieldname in sink_fieldnames]
 	
 	with sqlite3.connect(sink_db_path) as sink_conn:
-		sink_queries = helpers.make_queries(table=table, field_names=', '.join(sink_fieldnames))
+		sink_queries = helpers.make_queries(table=table, fieldnames=', '.join(sink_fieldnames[1:]))
 		try:
 			sink_conn.executemany(sink_queries['insert'], source_records)
 		except sqlite3.OperationalError:

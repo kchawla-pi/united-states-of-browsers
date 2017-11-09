@@ -5,7 +5,7 @@ from collections import OrderedDict as odict
 from pathlib import Path
 
 from united_states_of_browsers.db_merge import merge_browser_databases
-
+from united_states_of_browsers.db_merge import helpers
 
 home_dir = Path.home()
 profile_dbs = {'test_profile0':
@@ -18,6 +18,7 @@ profile_dbs = {'test_profile0':
 
 
 def establish_benchmark(profile_dbs):
+	incr = helpers.incrementer()
 	profile_records_dict = odict()
 	for profile_name, profile_path in profile_dbs.items():
 		conn = sqlite3.connect(profile_path)
@@ -29,7 +30,12 @@ def establish_benchmark(profile_dbs):
 		except sqlite3.OperationalError:
 			pass
 		else:
+			
+			# row_dict['id'] = next(incr)
 			profile_records_dict.update({profile_name: [dict(row) for row in cur]})
+			for record in profile_records_dict[profile_name]:
+				record['id'] = next(incr)
+			
 		finally:
 			conn.close()
 	merged_as_dict = odict({
