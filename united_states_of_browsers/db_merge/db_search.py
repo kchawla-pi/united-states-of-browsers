@@ -125,11 +125,11 @@ if __name__ == '__main__':
 			print()
 	
 	# _test()
-	search_result = search(db_for_testing, '7*')
-	print(len(search_result))
-	pprint(search_result)
-	search_result = search(db_for_testing, '7')
-	print(len(search_result))
+	# search_result = search(db_for_testing, '7*')
+	# print(len(search_result))
+	# pprint(search_result)
+	search_result = search('C:\\Users\\kshit\\Dropbox\\workspace\\UnitedStatesOfBrowsers\\united_states_of_browsers\\db_merge\\all_merged_pk.sqlite', 'economy')
+	pprint((search_result))
 	
 	"""
 	# parse_keywords(query=query)

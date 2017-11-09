@@ -77,6 +77,7 @@ def get_show_diff_info(active, show, in_only_id, fts_only_id):
 	id_lists = (in_only_id, fts_only_id)
 	empty_rec_db = []
 	nonempty_rec_db = []
+	if show: print('id_lists')
 	for id_list in id_lists:
 		empty_records = []
 		not_empty_records = []
@@ -105,15 +106,13 @@ def show_total_is_omniset(active, id_lists, empty_rec_db, nonempty_rec_db):
 	print('nonempty_rec_db', nonempty_rec_db)
 	
 	
-if __name__ == '__main__':
+def setup_paths():
 	root = Path(__file__).parents[1]
-	query = 'python'
 	db_for_testing = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
 	db_main = str(root.joinpath('united_states_of_browsers\\db_merge\\all_merged.sqlite'))
+	return {'db_for_testing': db_for_testing , 'db_main': db_main }
 	
-	current_db = db_main
-	# current_db = db_for_testing
-	
+def run_comparision(query, current_db):
 	(results_from_search_using_in, results_from_search_using_fts5,
 	 id_from_search_using_in, id_from_search_using_fts5,
 	 in_only_id, fts_only_id
@@ -130,6 +129,20 @@ if __name__ == '__main__':
 	show_total_is_omniset(0, id_lists, empty_rec_db, nonempty_rec_db)
 	
 	get_show_diff_info(1, 1, nonempty_rec_db[0], nonempty_rec_db[1])
+	# pprint(nonempty_rec_db)
+
+
+if __name__ == '__main__':
+	queries = ['python', 'python', '"python" *']
+	db_paths = setup_paths()
+	
+	current_db = db_paths['db_main']
+	# current_db = db_paths['db_for_testing']
+	for query in queries:
+		print('-'*25, query, '.'*25, sep='\n', end='\n')
+		run_comparision(query, current_db)
+		print('.' * 25, query, '-' * 25, sep='\n', end='\n')
+	
 	# search_results = [record_dict['id']
 	#                   for record_dict in query_result
 	#                   if query in record_dict['title']
