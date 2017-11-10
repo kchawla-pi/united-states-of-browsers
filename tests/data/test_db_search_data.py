@@ -1,7 +1,11 @@
 from collections import namedtuple
 
 
-def get_searches_list():
+TestFields = namedtuple('TestFields', 'title url url_hash guid')
+TestCase = namedtuple('TestCase', 'input expected')
+
+
+def get_searches_list ():
 	entered_queries = ('python pep list',
 	                   'python, pep, list,',
 	                   'python pep list -machine',
@@ -38,26 +42,80 @@ def get_searches_list():
 	                  )
 	return entered_queries, search_queries
 
-def data_for_search():
-	TestCase = namedtuple('TestCase', 'input expected')
-	search_testdata = dict.fromkeys(['keywords only', 'keywords+both dates', 'keywords+start date', 'keywords+end date'], None)
+
+def data_for_search ():
+	global TestCase, TestFields
+	search_testdata = dict.fromkeys(
+			['keywords only', 'keywords+both dates', 'keywords+start date', 'keywords+end date'],
+			None)
 	
 	search_testdata['keywords only'] = [
 		TestCase(input='twitter',
-		         expected=[(455, 'https://twitter.com/franzsupport/status/810975463480979456?lang=en',
-		                   'Franz Support on Twitter: "We are working on an update to improve the '
-		                   'stability of Franz. More infos coming soon. 🎅🏻"', 'moc.rettiwt.', 1, 0,
-		                   0, None, 78, 1501449040291000, 'riB9LFRxrW_C', 0, 47357899617728, None,
-		                   None
-		                   )]
+		         expected=[TestFields(title='Franz Support on Twitter: "We are working on an update '
+		                                    'to improve the stability of Franz. More infos coming soon. 🎅🏻"',
+			                    url='https://twitter.com/franzsupport/status/810975463480979456?lang=en',
+			                    url_hash=47357899617728, guid='riB9LFRxrW_C')
+			         ]
 		         ),
 		TestCase(input='franz',
-		         expected=[(455, 'https://twitter.com/franzsupport/status/810975463480979456?lang=en',
-				         'Franz Support on Twitter: "We are working on an update to improve the '
-				         'stability of Franz. More infos coming soon. 🎅🏻"', 'moc.rettiwt.', 1, 0,
-				         0, None, 78, 1501449040291000, 'riB9LFRxrW_C', 0, 47357899617728, None,
-				         None)]
+		         expected=[TestFields(title='Franz Support on Twitter: "We are working on an update '
+			                          'to improve the stability of Franz. More infos coming soon. 🎅🏻"',
+			                    url='https://twitter.com/franzsupport/status/810975463480979456?lang=en',
+			                    url_hash=47357899617728, guid='riB9LFRxrW_C')
+			         ]
 		         ),
+		TestCase(input='javascript python NOT react',
+		         expected=[TestFields(title='CheckIO - online game for Python and JavaScript coders',
+		                              url='https://checkio.org/',
+		                              url_hash=47358795098781, guid='LQhtEHjQYW9O')
+		                   ]
+		         ),
+		TestCase(input='python',
+		         expected=[
+			         TestFields(title='CheckIO - online game for Python and JavaScript coders',
+			                    url='https://checkio.org/', url_hash=47358795098781,
+			                    guid='LQhtEHjQYW9O'),
+			         TestFields(title=None,
+			                    url='https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0ahUKEwi0lLWK9e_VAhXEMSYKHQB-DLwQFgg6MAI&url=https%3A%2F%2Fwww.python.org%2Fjobs%2F&usg=AFQjCNGVN2EMfuOJtnlD7PnKYT4CJwTCpg',
+			                    url_hash=47360571611328, guid='6tqwfOD2rnhn'),
+			         TestFields(title='Create a Python game: how to make a puzzle game called Same - The MagPi MagazineThe MagPi Magazine',
+			                    url='https://www.raspberrypi.org/magpi/create-python-game/',
+			                    url_hash=47359990351841, guid='hJUUonA35KiM'),
+			         TestFields(title="python - How to import module when module name has a '-' dash or hyphen in it? - Stack Overflow",
+			                    url='https://stackoverflow.com/questions/8350853/how-to-import-module-when-module-name-has-a-dash-or-hyphen-in-it',
+			                    url_hash=47358360613425, guid='-t4Ztj7fmHYC'),
+			         TestFields(title='Learn Python the Hard Way',
+			                    url='https://learnpythonthehardway.org/python3/appendix-a-cli/introduction.html',
+			                    url_hash=47356852294123, guid='lKsnTf4niVxn'),
+			         TestFields(title='Top 6 Open Source Python Application Servers',
+			                    url='https://blog.idrsolutions.com/2015/05/top-6-open-source-python-application-servers/',
+			                    url_hash=47359959715876, guid='cr4KtxIMCg0r'),
+			         TestFields(title='Python Developer, Groom & Associates | Python.org',
+			                    url='https://www.python.org/jobs/2626/', url_hash=47356330220911,
+			                    guid='uUVQa0s1vg_U'),
+			         TestFields(title='Python Cookbook',
+			                    url='http://chimera.labs.oreilly.com/books/1230000000393/ch06.html#_discussion_95',
+			                    url_hash=125510013275591, guid='Zlo9LP2OWH65'),
+			         TestFields(title='Browse : Python Package Index',
+			                    url='https://pypi.python.org/pypi?:action=browse&c=4',
+			                    url_hash=47360326338850, guid='QLnAxVpUWyx4'),
+			         TestFields(title='Rmotr advanced-python-programming-syllabus.pdf',
+			                    url='https://mail-attachment.googleusercontent.com/attachment/u/0/?ui=2&ik=0dcb9da7ee&view=att&th=15e717fed6ab522e&attid=0.1&disp=safe&zw&saddbat=ANGjdJ9yCEWJ5KM1NGQXNJORW-x6Kn69_KkPVhGkW2NAxXn_PjwZUpx2YmYVPYkoIfcBlpZR8B-MqyMelXDXcksTvB_HqTNYg0daXMrUklqd7JtmVRVjbLThcte0GfoEQ4kEyCsHvwk3ExGxSkuIB0sdH7GpEXjq4HqzmStvvOqvKeEl_-eLXvRUXgkGho6CgbxLUJBlQFJ7paPRDvWvJO95BdnMOiGdjDCnljFpImEwNcrgJoK9FyAkYpV0l9wRfIL3DMQ5oeEnlMhveaPxND8c1_Cp9GTNBc90yBRYpJ3388h8y8FtdeUCcGUV8S0WePrDnk86CYBll7K8vkKBI2089AAB_JEW3C35j2Sy47IumbyUc7HoEVofT4-aLZCAUu_VxsIDVJdgTC52nUfXWrBmOz-twglNMRKwFc3YmksIBk5XzqZF3uDqXlW4rDKfmhnl0iCySvycTQIKrz_TUBmC3JyHFIr4eFBGL0yak0dIe1x1zSR_0onr35QNtTv5pooMH34etPdzpVcJr8g4CunT2mTbGICO0X-tmyPk61a9BN8YJ4QzA-FW_OVOqTaImNX0iOPS6BRIjiJ3r5AYyL8-e09gV_9L0gX2hIzF3A',
+			                    url_hash=47357624936213, guid='Umeftsoca4jQ'),
+			         TestFields(title='generator - yield break in Python - Stack Overflow',
+			                    url='https://stackoverflow.com/questions/6395063/yield-break-in-python',
+			                    url_hash=47357668862239, guid='WTvQbT2rdjbU'),
+			         ]
+		
+		         ),
+		TestCase(input='python game NOT javascript',
+		         expected=[TestFields(title='Create a Python game: how to make a puzzle game called '
+		                                    'Same - The MagPi MagazineThe MagPi Magazine',
+		                              url='https://www.raspberrypi.org/magpi/create-python-game/',
+		                              url_hash=47359990351841, guid='hJUUonA35KiM')
+		                   ]
+		         ),
+		
 		# 'title:7 OR url:7 OR description:7'
 		# TestCase(input='7',
 		#          expected=[(5849, 'https://smile.amazon.com/dp/B06XHB6BLN?psc=1',
@@ -76,7 +134,7 @@ def data_for_search():
 		#                    ]
 		#          ),
 		]
-		
+	
 	return search_testdata
 
 

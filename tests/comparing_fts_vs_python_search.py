@@ -138,7 +138,8 @@ if __name__ == '__main__':
 	
 	current_db = db_paths['db_main']
 	# current_db = db_paths['db_for_testing']
-	for query in queries:
+	print(current_db)
+	for query in queries[-1]:
 		print('-'*25, query, '.'*25, sep='\n', end='\n')
 		run_comparision(query, current_db)
 		print('.' * 25, query, '-' * 25, sep='\n', end='\n')
