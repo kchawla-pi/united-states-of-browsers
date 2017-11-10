@@ -79,8 +79,6 @@ def retrieve_record(db_path: PathInfo, key: Union[Text, int, Iterable[Union[Text
 		conn.row_factory = sqlite3.Row
 		query = f'''SELECT * from moz_places WHERE {key_type} IN ({binding_placeholders[:-2]})'''
 		query_result = conn.execute(query, [*key])
-		
-		
 		return query_result.fetchall()[:]
 
 

@@ -6,6 +6,8 @@ import sqlite3
 from collections import namedtuple
 
 from united_states_of_browsers.db_merge import database_operations as db_ops
+from united_states_of_browsers.db_merge import helpers
+
 from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -34,13 +36,6 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 		sink_conn.executemany(virtual_insert_query, tuple(record_yielder))
 
 
-def _create_search_query(any_word, all_words=None, not_words=None):
-	words_any = ' OR '.join(any_word)
-	words_all = ' AND '.join(all_words)
-	words_not = ' NOT '.join(not_words)
-	return words_any, words_all, words_not
-
-
 def _make_sql_statement(word_query: Text,
                         date_start: Union[int, None],
                         date_stop: Union[int, None]
@@ -60,7 +55,7 @@ def _make_sql_statement(word_query: Text,
 	             ' (SELECT id'
 	             ' FROM search_table'
 	             ' WHERE search_table'
-	             f' MATCH ?){query_addon}'
+	             f' MATCH ? ORDER BY bm25(search_table, 0, 7, 9, 0, 0, 0, 10)){query_addon}'
 	             )
 	return sql_query, query_bindings
 
@@ -90,6 +85,7 @@ def _print_search(search_results: Iterable):
 
 
 def search(db_path, word_query, date_start=None, date_stop=None):
+	helpers.query_sanitizer(word_query, exceptions=[' ', '%'])
 	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
 	search_results = _run_search(db_path, sql_query, query_bindings)
 	return search_results
@@ -105,39 +101,49 @@ def parse_keywords(query):
 
 
 if __name__ == '__main__':
-	root = Path(__file__).parents[1]
-	db_for_testing = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
-	with open('app_inf.json', 'r') as json_obj:
-		app_inf = json.load(json_obj)
-	def _test():
+	def _test_archive ():
+		db_for_testing = db_test
 		time_stamps = (1509123590555000, 1501259124168000, 1506703039399000)
 		human_times = [datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
 		               time_stamps]
 		
 		search_test_cases = (
 			(app_inf['sink'], 'python', time_stamps[1], time_stamps[2]),
-			(app_inf['sink'], "python AND variable NOT update anaconda AND stackoverflow", None, None),
+			(app_inf['sink'], "python AND variable NOT update anaconda AND stackoverflow", None,
+			 None),
 			)
 		
 		for (db_path, word_query, date_start, date_stop) in search_test_cases:
 			search_results = search(db_path, word_query, date_start, date_stop)
 			_print_search(search_results)
 			print()
+		
+		queries = ['india AND economy',
+		           'javascript AND economy',
+		           'javascript python NOT react']
+		
+		for query in queries[2:]:
+			helpers.query_sanitizer(query)
+			search_result = search(db_test, query)
+			print(f'\nquery: {query}')
+			pprint((search_result))
 	
-	# _test()
-	# search_result = search(db_for_testing, '7*')
-	# print(len(search_result))
-	# pprint(search_result)
-	search_result = search('C:\\Users\\kshit\\Dropbox\\workspace\\UnitedStatesOfBrowsers\\united_states_of_browsers\\db_merge\\all_merged_pk.sqlite', 'economy')
-	pprint((search_result))
 	
-	"""
-	# parse_keywords(query=query)
+	root = Path(__file__).parents[2]
+	db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
+	db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
+	with open('app_inf.json', 'r') as json_obj:
+		app_inf = json.load(json_obj)
 	
 	
-	search_query = _create_search_query(any_word=['python', 'pep', 'list'],
-	                                   all_words=['machine', 'learning'],
-	                                   not_words=['numpy', 'javascript']
-	                                   )
+	def _test(queries):
+		for query in queries:
+			helpers.query_sanitizer(query)
+			search_result = search(db_test, query)
+			print(f'\nquery: {query}')
+			pprint((search_result))
 	
-	"""
+	queries = ['python game NOT javascript',
+	           ]
+	
+	_test(queries=queries)
