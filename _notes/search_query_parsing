@@ -1,0 +1,15 @@
+a, b, c and d, e, f == a or b or (c and d) or e or f
+a, b, c, and d, e, f == (a or b or c) AND (d or e or f) == (a & d) | (a & e) | (a & f); (b & d) | (b & e) | (b & f), (c & d) | (c & e) | (c & f)
+
+
+a b c and d e f not p q r == (a|b|c)&(d|e|f)not(p|q|r)
+____________________________________________________________________
+... MATCH 'one two three'         -- 'one AND two AND three'
+... MATCH 'three "one two"'       -- 'three AND "one two"'
+... MATCH 'NEAR(one two) three'   -- 'NEAR(one two) AND three'
+... MATCH 'one OR two three'      -- 'one OR two AND three'
+
+... MATCH '(one OR two) three'    -- Syntax error!
+... MATCH 'func(one two)'         -- Syntax error!
+____________________________________________________________________
+python sqlite3 or pymongo
