@@ -56,12 +56,40 @@ def incrementer(start: int=0) -> Generator[int, None, None]:
 		next += 1
 		yield next
 
-query_sanitizer = lambda query: ''.join([chr for chr in query if chr.isalnum() or chr in {'_'}])  #, '?', '(', ')', ','}])
+
+def query_sanitizer(query: str, exceptions: Union[str, Iterable]='_') -> str:
+	""" Removes non-alphanumeric characters from a query.
+	Retains characters passed in as exceptions. (Default: '_')
+	Returns a string.
+	"""
+	exceptions = set(exceptions)
+	return ''.join([char for char in query if char.isalnum() or char in exceptions])  #, '?', '(', ')', ','}])
+
+
+def retrieve_record(db_path: PathInfo, key: Union[Text, int, Iterable[Union[Text, int]]], key_type: Union['id', 'guid', 'hash']
+                    ) -> NamedTuple:
+	""" Returns the record from a database based on the provided key.
+	Accepts the database's path and the key value.
+	Optionally, accepts key type. Options: 'id' (default), 'guid', 'hash'
+	"""
+	import sqlite3
+	# key = [str(key_element) for key_element in [key]]
+	binding_placeholders = '?, '*len(key)
+	with sqlite3.connect(str(db_path)) as conn:
+		conn.row_factory = sqlite3.Row
+		query = f'''SELECT * from moz_places WHERE {key_type} IN ({binding_placeholders[:-2]})'''
+		query_result = conn.execute(query, [*key])
+		
+		
+		return query_result.fetchall()[:]
+
 
 filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
 
 
 if __name__ == '__main__':
+	from collections import OrderedDict as odict
+	from pprint import pprint
 	table = 'moz_places'
 	fieldnames = ['id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed',
 	              'favicon_id', 'frecency', 'last_visit_date', 'guid', 'foreign_count',
@@ -69,3 +97,11 @@ if __name__ == '__main__':
 	              ]
 	queries = make_queries(table=table, fieldnames=', '.join(fieldnames))
 	print(queries)
+	keys_dict = {'id': (6, 10),
+	             'guid': ('RcfYRk__x5kh', 'GfWa8wchW59X'),
+	             'url_hash': (268504983346218, 47356520479868),
+	             }
+	for key_type, key_ in keys_dict.items():
+		retrieved_records = retrieve_record('all_merged.sqlite', key=key_, key_type=key_type)
+		for record in retrieved_records:
+			pprint(odict(record))
