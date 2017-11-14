@@ -12,9 +12,6 @@ setuptools.setup(
 		          'united_states_of_browsers.db_merge',
 		          'united_states_of_browsers.usb_server'
 		          ],
-		# packages=setuptools.find_packages('united_states_of_browsers'),
-		# packages_dir={'':'united_states_of_browsers'},
-		# py_modules=['united_states_of_browsers.db_merge_v1', 'united_states_of_browsers.usb_server'],
 		
 		author='kchawla-pi',
 		author_email='kc.insight.pi@gmail.com',

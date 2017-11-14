@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-		DATABASE=os.path.realpath(os.path.join(app.root_path, '..', 'db_merge', 'test_new_allmerged')),
+		DATABASE=os.path.realpath(os.path.join(app.root_path, '..', 'db_merge', 'all_merged.sqlite')),
 		SECRET_KEY='development key',
 		USERNAME='admin',
 		PASSWORD='default',

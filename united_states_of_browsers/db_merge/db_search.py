@@ -36,10 +36,10 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 		sink_conn.executemany(virtual_insert_query, tuple(record_yielder))
 
 
-def _make_sql_statement(word_query: Text,
-                        date_start: Union[int, None],
-                        date_stop: Union[int, None]
-                        ) -> Union[Text, Iterable[Text]]:
+def _make_sql_statement (word_query: Text,
+                         date_start: Union[int, None],
+                         date_stop: Union[int, None]
+                         ) -> Union[Text, Iterable[Text]]:
 	""" Returns prepared SQL statements and bindings for queries with and without dates.
 	Accepts word_query.
 		Optional: date_start and date_stop.
@@ -60,8 +60,8 @@ def _make_sql_statement(word_query: Text,
 	return sql_query, query_bindings
 
 
-def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
-                ) -> Iterable[NamedTuple]:
+def _run_search (db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
+                 ) -> Iterable[NamedTuple]:
 	with open(app_inf_path, 'r') as read_json_obj:
 		app_inf = json.load(read_json_obj)
 	DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
@@ -71,7 +71,7 @@ def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Tex
 		return [DBRecord(*result) for result in query_results]
 
 
-def _print_search(search_results: Iterable):
+def _print_search (search_results: Iterable):
 	for result in search_results:
 		timestamp_ = result.last_visit_date
 		try:
@@ -84,14 +84,19 @@ def _print_search(search_results: Iterable):
 			print(human_readable_date, '.', result.title)
 
 
-def search(db_path, word_query, date_start=None, date_stop=None):
-	helpers.query_sanitizer(word_query, exceptions=[' ', '%'])
+def _fix_query (query):
+	for replacee in ('[', '{'):
+		query.replace(replacee, '(')
+
+
+def search (db_path, word_query, date_start=None, date_stop=None):
+	helpers.query_sanitizer(word_query, exceptions=[' ', '%', '(', ')'])
 	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
 	search_results = _run_search(db_path, sql_query, query_bindings)
 	return search_results
 
 
-def parse_keywords(query):
+def parse_keywords (query):
 	print(query)
 	parsing = re.search("*\(*\)*", query)
 	try:
@@ -136,14 +141,38 @@ if __name__ == '__main__':
 		app_inf = json.load(json_obj)
 	
 	
-	def _test(queries):
+	def _test (queries):
 		for query in queries:
 			helpers.query_sanitizer(query)
-			search_result = search(db_test, query)
-			print(f'\nquery: {query}')
-			pprint((search_result))
+			try:
+				search_result = search(db_test, query)
+			except Exception as excep:
+				print(f'Query Failed:{query}.\n Error: {excep.args}')
+			else:
+				print('\n', 'v' * 15, query, 'v' * 15)
+				print(f'\nquery: {query}')
+				pprint((search_result))
+				print('^' * 15, query, '^' * 15)
+		print()
 	
-	queries = ['python game NOT javascript',
-	           ]
+	
+	queries = [
+		# 'checkio', # works
+		#  'python game NOT javascript', # works
+		#  '"java" *', # works
+		# '* "java"', # doesnt work
+		# 'script',  # works
+		# 'python OR NEAR(pep list)', # works
+		# 'python OR (NEAR (pep hacker) list)', # works
+		# 'python OR (NEAR (pep hacker) AND list)', # works
+		# 'python OR  (pep hacker) list', # doesnt work
+		# 'python OR (pep hacker) AND list', # works
+		# 'python OR NEAR(pep hacker) alist', # works
+		# '(pep hacker) list',  # doesn't work
+		# '(pep hacker) OR list', # works
+		# 'python OR (pep hacker)   NOT     list', # works
+		# 'NOT(pep hacker)',  # doesn't work
+		'python OR javascript NOT  ((abacus hacker) fortran)', # works
+		]
 	
 	_test(queries=queries)
