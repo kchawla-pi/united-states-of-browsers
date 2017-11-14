@@ -36,10 +36,10 @@ def connect_db():
 @app.route('/')
 def show_entries():
 	db = get_db()
-	select_query = '''SELECT * FROM moz_places'''
+	select_query = '''SELECT url, title,visit_count, last_visit_date, description FROM moz_places'''
 	cur = db.execute(select_query)
-	entries = cur.fetchmany(10)
-	return render_template('show_records.html', entries=entries)
+	entries = cur.fetchmany(100)
+	return render_template('show_records_view.html', entries=entries)
 	
 	
 @app.teardown_appcontext

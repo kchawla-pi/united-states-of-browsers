@@ -67,7 +67,7 @@ if __name__ == '__main__':
 		
 	def _main():
 		ask = input('Run database merge_records operation?\n'
-		            'Press <n> to abort, <ENTER> for viewing the merged reuslts without writing it to a new database file.\n'
+		            'Press <n> to abort, <ENTER> for viewing the merged results without writing it to a new database file.\n'
 		            'Type a filename to write the merged results to a database file.')
 		if ask.lower() == 'n':
 			print('Program terminated.')
