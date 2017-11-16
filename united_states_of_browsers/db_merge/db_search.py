@@ -98,7 +98,7 @@ def search (db_path, word_query, date_start=None, date_stop=None):
 
 def parse_keywords (query):
 	print(query)
-	parsing = re.search("*\(*\)*", query)
+	parsing = re.search("", query)
 	try:
 		print(parsing.start(), parsing.end())
 	except AttributeError:
