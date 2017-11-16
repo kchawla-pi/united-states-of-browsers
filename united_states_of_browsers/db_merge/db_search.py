@@ -137,7 +137,7 @@ if __name__ == '__main__':
 	root = Path(__file__).parents[2]
 	db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
 	db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
-	with open('app_inf.json', 'r') as json_obj:
+	with open(app_inf_path, 'r') as json_obj:
 		app_inf = json.load(json_obj)
 	
 	
@@ -172,7 +172,7 @@ if __name__ == '__main__':
 		# '(pep hacker) OR list', # works
 		# 'python OR (pep hacker)   NOT     list', # works
 		# 'NOT(pep hacker)',  # doesn't work
-		'python OR javascript NOT  ((abacus hacker) fortran)', # works
+		# 'python OR javascript NOT  ((abacus hacker) fortran)', # doesn't work
 		]
 	
 	_test(queries=queries)
