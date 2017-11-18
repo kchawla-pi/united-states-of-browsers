@@ -9,19 +9,17 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
-    </head>    
-    <body>
+    </head>
     <style>
-        * { margin: 0; padding: 0; outline: 0; }
         h1 {
             color:red;
             font-family: Roboto, sans-serif;
             font-size: 12px;
         }
         #search-box {
-            margin-left: 25%;
+            margin-left: 7%;
             width: 50%;
-            align-self: center;
+            alignment: center;
 
             /*border: 3px;*/
             /*border-style: double;*/
@@ -29,51 +27,43 @@
 
         }
         .date {
-            margin-left: 25%;
-            align-self: center;
+            margin-left: 7%;
+            alignment: center;
         }
-        tbody {
-            margin: 0
-        }
+        /*tbody {*/
+            /*margin: 0*/
+        /*}*/
         .table {
-	        max-height: 430px;
-	        max-width: 100%;
+	        max-height: 490px;
+	        max-width: 93.5%;
 	        overflow-x: hidden;
 	        display: block;
-            margin: 0;
+            margin-left: 7%;
 	        /*display: block;*/
-            /*white-space-treatment: no-wrap;*/
-            /*width: 100%;*/
-            /*table-layout: fixed;*/
-            /*overflow: visible;*/
-            /*text-overflow: ellipsis;*/
-            /*word-wrap: break-word;*/
-            /*display: inline-table;*/
-            /*overflow-x: fragments;*/
-            /*width: min-content;*/
-            /*-ms-overflow-style: -ms-autohiding-scrollbar;*/
         }
-        /*table, td, tr, thead, tbody { display: block }*/
         td {
-            max-width: 300px;
+            max-width: 400px;
             overflow: auto;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        .td-crit {
+            max-width: 500px;
+            overflow: auto;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
+	</style>
 
-
-
-    </style>
-
-
+    <body>
     <div class="container-fluid">
 
         <h1 class="text-right"> United States of Browsers </h1>
-        <h2 class="text-center"> Firefox History </h2>
+        <!--<h2 class="text-center"> Firefox History </h2>-->
         <form action="#">
             <input id="search-box" type="text" placeholder="Enter search query here">
-            <button class="btn btn-primary" type="submit">Search</button>
-            <br>
+            <button class="btn btn-primary" type="submit">Search Firefox History</button>
+            <!--<br>-->
             <div class="date">
 
                 <label for="date-from">from:</label>
@@ -90,19 +80,19 @@
                 <tr>
                     <th scope="col"> Page Title </th>
                     <th scope="col"> Address </th>
-                    <th scope="col"> Last Visited On</th>
-                    <th scope="col"> Times visited </th>
-                    <th scope="col"> Description </th>
+                    <th scope="col"> Last Visit</th>
+                    <th scope="col"> Visits </th>
+                    <!--<th scope="col"> Description </th>-->
                 </tr>
             </thead>
             <tbody>
                 {% for entry in entries %}
                 <tr>
-                    <td>{{ entry['title'] }}</td>
+                    <td class="td-crit">{{ entry['title'] }}</td>
                     <td>{{ entry['url'] }}</td>
                     <td>{{ entry['last_visit_date'] }}</td>
                     <td>{{ entry['visit_count'] }}</td>
-                    <td>{{ entry['description'] }}</td>
+                    <!--<td>{{ entry['description'] }}</td>-->
                 </tr>
                 {% endfor %}
             </tbody>
