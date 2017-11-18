@@ -18,7 +18,7 @@ Following functionality has been implemented as of Nov 17, 2017:
  - Rudminetary UI to view the first 1000 entries running on a local webserver.
 
 ##### To Run:
-1. Clone this repo's `frontend` branch,  or download and unzip it.
+1. Clone this repo's `master` branch,  or download and unzip it.
 2. Navigate to the directory/folder where it has been cloned.
 
 To merge the databases, run:
