@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{18e6edee-9520-4d9d-a25b-11e3004c3db8}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>setup.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>MSBuild|UnitedStatesOfBrowsers|$(MSBuildProjectFullPath)</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="TODO.txt" />
+    <Content Include="united_states_of_browsers\usb_server\templates\show_records.html" />
+    <Content Include="united_states_of_browsers\usb_server\templates\show_records2.html" />
+    <Content Include="united_states_of_browsers\usb_server\templates\show_records_view.css" />
+    <Content Include="united_states_of_browsers\usb_server\templates\show_records_view.html" />
+    <Content Include="united_states_of_browsers\usb_server\templates\ui_draft.html" />
+    <Content Include="usb.egg-info\dependency_links.txt" />
+    <Content Include="usb.egg-info\SOURCES.txt" />
+    <Content Include="usb.egg-info\top_level.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="setup.py" />
+    <Compile Include="tests\comparing_fts_vs_python_search.py" />
+    <Compile Include="tests\data\creating_test_search_data.py" />
+    <Compile Include="tests\data\test_browser_specific_setup_data.py" />
+    <Compile Include="tests\data\test_db_search_data.py" />
+    <Compile Include="tests\data\test_paths_setup_data.py" />
+    <Compile Include="tests\test_browser_specific_setup.py" />
+    <Compile Include="tests\test_db_search.py" />
+    <Compile Include="tests\test_merge_browser_databases.py" />
+    <Compile Include="tests\test_paths_setup.py" />
+    <Compile Include="united_states_of_browsers\db_merge\browser_specific_setup.py" />
+    <Compile Include="united_states_of_browsers\db_merge\database_operations.py" />
+    <Compile Include="united_states_of_browsers\db_merge\db_search.py" />
+    <Compile Include="united_states_of_browsers\db_merge\helpers.py" />
+    <Compile Include="united_states_of_browsers\db_merge\imported_annotations.py" />
+    <Compile Include="united_states_of_browsers\db_merge\merge_browser_databases.py" />
+    <Compile Include="united_states_of_browsers\db_merge\paths_setup.py" />
+    <Compile Include="united_states_of_browsers\db_merge\_DONT_REVIEW_scratchpad.py" />
+    <Compile Include="united_states_of_browsers\db_merge\__init__.py" />
+    <Compile Include="united_states_of_browsers\usb_server\usb_server.py" />
+    <Compile Include="united_states_of_browsers\__init__.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="tests" />
+    <Folder Include="tests\data" />
+    <Folder Include="united_states_of_browsers" />
+    <Folder Include="united_states_of_browsers\db_merge" />
+    <Folder Include="united_states_of_browsers\usb_server" />
+    <Folder Include="united_states_of_browsers\usb_server\templates" />
+    <Folder Include="usb.egg-info" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="venv\">
+      <Id>UnitedStatesOfBrowsers</Id>
+      <Description>venv (Python 3.6 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <Version>3.6</Version>
+      <Architecture>X64</Architecture>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
