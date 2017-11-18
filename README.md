@@ -12,15 +12,26 @@ A project to combine &amp; organize history and bookmarks across multiple browse
 Does not support other OS and browsers YET. Easy to make it work for other OSes.
 Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
 
-Currently the merging browser history databases functionality has been implemented.
-To Run:
-Clone this repo. Navigate to the directory/folder where it has been cloned.
+Following functionality has been implemented as of Nov 17, 2017:
+ - The merging firefox browser history databases functionality has been implemented.
+ - Search using python functions, but not using the UI.
+ - Rudminetary UI to view the first 1000 entries running on a local webserver.
+
+##### To Run:
+1. Clone this repo or download and unzip it.
+2. Navigate to the directory/folder where it has been cloned.
 
 To merge the databases, run:
-$py .\united_states_of_browsers\db_merge\merge_browser_databases.py
 
-It will generate an sqlite file in the \united_states_of_browsers directory/folder, 'merged_fx_db.sqlite' .
-A url_hash_log.bin might also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
+    $py .\united_states_of_browsers\db_merge\merge_browser_databases.py
+
+To launch the user interface, run:
+
+    $py .\united_states_of_browsers\usb_server\usb_server.py
+    Then go to the browser and visit: localhost:5000
+
+Merging the database will generate an sqlite file in the \united_states_of_browsers directory/folder, 'all_merged.sqlite' .
+A url_hash_log.bin _might_ also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
 
 To run tests (requires pytest), type:
 $pytest
