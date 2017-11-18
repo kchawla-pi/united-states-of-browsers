@@ -103,3 +103,7 @@ ENV/
 # pycharm workspace file
 .idea/workspace.xml
 /tinker/data/firefox_regular_surfing/places.sqlite
+
+# excluded file extensions
+*.sqlite
+*.json
