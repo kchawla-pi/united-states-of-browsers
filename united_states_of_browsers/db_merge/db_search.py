@@ -87,7 +87,11 @@ def _print_search (search_results: Iterable):
 def _fix_query (query):
 	for replacee in ('[', '{'):
 		query.replace(replacee, '(')
-
+		
+def make_date(record):
+	record.update('last_visit_date',
+	datetime.datetime.utcfromtimestamp(record.last_visit_date/10**6)
+	              )
 
 def search (db_path, word_query, date_start=None, date_stop=None):
 	helpers.query_sanitizer(word_query, exceptions=[' ', '%', '(', ')'])

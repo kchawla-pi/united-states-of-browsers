@@ -12,28 +12,101 @@
     </head>    
     <body>
     <style>
+        * { margin: 0; padding: 0; outline: 0; }
         h1 {
             color:red;
             font-family: Roboto, sans-serif;
             font-size: 12px;
         }
+        #search-box {
+            margin-left: 25%;
+            width: 50%;
+            align-self: center;
+
+            /*border: 3px;*/
+            /*border-style: double;*/
+            /*border-color: red;*/
+
+        }
+        .date {
+            margin-left: 25%;
+            align-self: center;
+        }
+        tbody {
+            margin: 0
+        }
+        .table {
+	        max-height: 430px;
+	        max-width: 100%;
+	        overflow-x: hidden;
+	        display: block;
+            margin: 0;
+	        /*display: block;*/
+            /*white-space-treatment: no-wrap;*/
+            /*width: 100%;*/
+            /*table-layout: fixed;*/
+            /*overflow: visible;*/
+            /*text-overflow: ellipsis;*/
+            /*word-wrap: break-word;*/
+            /*display: inline-table;*/
+            /*overflow-x: fragments;*/
+            /*width: min-content;*/
+            /*-ms-overflow-style: -ms-autohiding-scrollbar;*/
+        }
+        /*table, td, tr, thead, tbody { display: block }*/
+        td {
+            max-width: 300px;
+            overflow: auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
 
 
     </style>
 
-    <div class="container-fluid">
 
+    <div class="container-fluid">
 
         <h1 class="text-right"> United States of Browsers </h1>
         <h2 class="text-center"> Firefox History </h2>
-        <p>  </p>
-        <table>
-            <tr>
-                <th> title </th>
-                <th> url </th>
-                <th> visit_count </th>
-                <th> description </th>
-            </tr>
+        <form action="#">
+            <input id="search-box" type="text" placeholder="Enter search query here">
+            <button class="btn btn-primary" type="submit">Search</button>
+            <br>
+            <div class="date">
+
+                <label for="date-from">from:</label>
+                <input type="date" id="date-from">
+
+                <label for="date-to">to:</label>
+                <input type="date" id="date-to">
+            </div>
+        </form>
+
+        <table class="table htable table-responsive-s table-striped table-hover table-sm">
+            <caption>Firefox broswer history across all profiles.</caption>
+            <thead>
+                <tr>
+                    <th scope="col"> Page Title </th>
+                    <th scope="col"> Address </th>
+                    <th scope="col"> Last Visited On</th>
+                    <th scope="col"> Times visited </th>
+                    <th scope="col"> Description </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry['title'] }}</td>
+                    <td>{{ entry['url'] }}</td>
+                    <td>{{ entry['last_visit_date'] }}</td>
+                    <td>{{ entry['visit_count'] }}</td>
+                    <td>{{ entry['description'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
 
     </div>

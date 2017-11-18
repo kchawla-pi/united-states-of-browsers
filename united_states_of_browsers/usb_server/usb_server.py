@@ -36,12 +36,13 @@ def connect_db():
 @app.route('/')
 def show_entries():
 	db = get_db()
-	select_query = '''SELECT url, title,visit_count, last_visit_date, description FROM moz_places'''
+	select_query = '''SELECT url, title,visit_count, last_visit_date, description FROM search_table'''
 	cur = db.execute(select_query)
-	entries = cur.fetchmany(100)
-	return render_template('show_records_view.html', entries=entries)
+	entries = cur.fetchmany(1000)
+	# entries = (record for record in cur)
+	return render_template('ui_draft.html', entries=entries)
 	
-	
+
 @app.teardown_appcontext
 def close_db(error):
 	if hasattr(g, 'sqlite_db'):
