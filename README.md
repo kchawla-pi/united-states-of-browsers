@@ -18,8 +18,10 @@ Following functionality has been implemented as of Nov 17, 2017:
  - Rudminetary UI to view the first 1000 entries running on a local webserver.
 
 ##### To Run:
-1. Clone this repo's `master` branch,  or download and unzip it.
-2. Navigate to the directory/folder where it has been cloned.
+
+0. Install python 3.6 for windows x64 from python.org.
+1. Clone this repo's `master` branch (you'll need git),  or download and unzip it.
+2. Navigate to the directory/folder where it has been cloned/unzipped.
 
 To merge the databases, run:
 
