@@ -28,9 +28,9 @@ def merge_records(output_db: Union[Text, None],
 		If None, returns the records without writing to disk.
 	profiles: Name of a single profile or list of profiles to read from.
 		If None, reads from all the profiles found.
-	table: Name of table in database file to read from. Default is 'moz_places'.
+	table: Name of table in database file to read from. (Firefox stores its data in 'moz_places')
 	
-	returns: Returns None if database is written to disk. Returns tuple of records otherwise.
+	returns: None if database is written to disk. Returns tuple of records otherwise.
 	"""
 	app_inf = db_ops.make_database_filepaths(output_db=output_db, profiles=profiles)
 	

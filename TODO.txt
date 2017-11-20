@@ -1,3 +1,15 @@
+Fix Setup
+Link search with UI
+Add date column, recreated
+Add chrome
+Add update
+
+
+
+
+
+
+
 {prologue: File with url_hash: id}
 0. Open URL Archive.
 1. Open Source DB from Profile.

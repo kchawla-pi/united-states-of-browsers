@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
+import json
 import os
+from pathlib import Path
 import sqlite3
 
 from flask import (Flask,
@@ -11,8 +13,14 @@ from flask import (Flask,
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+app_root_path = Path(app.root_path).parents[0]
+app_inf_path = app_root_path.joinpath('db_merge', 'app_inf.json')
+
+with open(str(app_inf_path), 'r') as json_obj:
+	app_inf = json.load(json_obj)
+
 app.config.update(dict(
-		DATABASE=os.path.realpath(os.path.join(app.root_path, '..', 'db_merge', 'all_merged.sqlite')),
+		DATABASE=str(app_inf['sink']),
 		SECRET_KEY='development key',
 		USERNAME='admin',
 		PASSWORD='default',
