@@ -18,16 +18,19 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 	""" Builds virtual table for full-text search in sqlite databases.
 	Accepts path to the sqlite file and subset of its fieldnames to be included in the virtual table.
 	"""
+	table = 'search_table'
 	with sqlite3.connect(db_path) as sink_conn:
 		column_str = ', '.join(included_fieldnames)
 		create_table_query = f'''CREATE VIRTUAL TABLE search_table USING fts5({column_str});'''
 		try:
 			sink_conn.execute(create_table_query)
 		except sqlite3.OperationalError as excep:
-			print(f'{excep} Exception raised during '
-			      f'sink_conn.execute({create_table_query}) '
-			      f'in db_search.build_search_table()'
-			      )
+			if f'table {table}already exists' in str(excep):
+				pass
+			# print(f'{excep} Exception raised during '
+			#       f'sink_conn.execute({create_table_query}) '
+			#       f'in db_search.build_search_table()'
+			#       )
 		sql_placeholder = ('?, ' * len(included_fieldnames))[:-2]
 		record_yielder = db_ops.yield_source_records(source_db_paths={'all_merged': db_path},
 		                                             source_fieldnames=included_fieldnames,

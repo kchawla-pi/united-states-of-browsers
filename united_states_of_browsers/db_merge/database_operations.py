@@ -100,9 +100,28 @@ def write_new_database(sink_db_path: PathInfo,
 	sink_fieldnames = [helpers.query_sanitizer(fieldname) for fieldname in sink_fieldnames]
 	
 	with sqlite3.connect(sink_db_path) as sink_conn:
-		sink_queries = helpers.make_queries(table=table, fieldnames=', '.join(sink_fieldnames[1:]))
+		sink_queries = helpers.make_queries(table=table, fieldnames=sink_fieldnames)
 		try:
 			sink_conn.executemany(sink_queries['insert'], source_records)
-		except sqlite3.OperationalError:
-			sink_conn.execute(sink_queries['create'])
-			sink_conn.executemany(sink_queries['insert'], source_records)
+		except Exception as excep:
+			if 'UNIQUE constraint failed:' in str(excep):
+				# print(f'{"-"*20} \n {excep}')
+				raise (excep)
+			elif f'table {table} already exists' in str(excep):
+				print(f'{"-"*20} \n {excep}')
+			elif f'no such table: {table}' in str(excep):
+				sink_conn.execute(sink_queries['create'])
+				sink_conn.executemany(sink_queries['insert'], source_records)
+			else:
+				print('Unanticipated exception:')
+				raise (excep)
+				# print(f'{"-"*20} \n {excep}')
+			
+"""
+sqlite3.OperationalError: database is locked
+sqlite3.OperationalError: table moz_places already exists
+
+excep ==
+UNIQUE constraint failed: moz_places.id
+table moz_places already exists
+"""

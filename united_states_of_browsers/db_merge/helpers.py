@@ -35,12 +35,14 @@ def safetychecks_deprecated(record: Union[Dict[Text, Dict], Iterable[Text]]) -> 
 		sys.exit()
 
 
-def make_queries(table: Text, fieldnames: Text) -> Dict:
-	""" Constructs the queries necessary for specific pruposes.
+def make_queries(table: Text, fieldnames: Sequence[Text]) -> Dict:
+	""" Constructs the queries necessary for specific purposes.
 	Returns them as dict['purpose': 'query']
 	"""
-	queries = {'create': f'''CREATE TABLE {table} (id INT PRIMARY KEY , {fieldnames})'''}
-	queries.update({'insert': f"INSERT INTO {table} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"})
+	filednames_str = ', '.join(fieldnames)
+	query_placeholder = '?, ' * len(fieldnames)
+	queries = {'create': f'''CREATE TABLE {table} ({filednames_str})'''}
+	queries.update({'insert': f"INSERT INTO {table} VALUES ({query_placeholder[:-2]})"})
 	return queries
 	
 
