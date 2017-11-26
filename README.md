@@ -9,8 +9,6 @@ A project to combine &amp; organize history and bookmarks across multiple browse
  - For Mozilla Firefox.
  - May work with other Windows versions.
 
-`UPDATE Nov 18, 2017: Currently the installation and setup process is broken. this is being worked on and will be resolved soon.`
-
 Does not support other OS and browsers YET. Easy to make it work for other OSes.
 Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
 
