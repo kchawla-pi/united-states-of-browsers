@@ -19,26 +19,53 @@ Following functionality has been implemented as of Nov 17, 2017:
  - Search using python functions, but not using the UI.
  - Rudminetary UI to view the first 1000 entries running on a local webserver.
 
-##### To Run:
+##### To Check it out: (Currently, instructions for command line only)
 
-0. Install python 3.6 for windows x64 from python.org.
-1. Clone this repo's `master` branch (you'll need git),  or download and unzip it.
-2. Navigate to the directory/folder where it has been cloned/unzipped.
+0. Install the required software if it is not already installed.
+     - Install python 3.6 for windows x64 from https://www.python.org/downloads/release/python-363/.
+     During setup, choose to add python to the PATH variable, if it is not already chosen by default.
+     - Install git from https://git-scm.com/downloads.
+1. Open terminal (In windows, these are cmd.exe and powershell).
+2. Navigate to the directory/folder where you wish to store the files.
+     In this example, we will do this on the windows Desktop.
+     In the terminal window, type the command:
 
-To merge the databases, run:
+        cd C:\Users\<your username>\Desktop (press ENTER).
+3. Clone this repo's `master` branch using the command:
 
-    $py .\united_states_of_browsers\db_merge\merge_browser_databases.py
+        git clone "https://github.com/kchawla-pi/united-states-of-browsers.git"
+4. Navigate into the newly created directory/folder:
 
-To launch the user interface, run:
+        cd united-states-of-browsers
+4. Make a virtual environment using:
 
-    $py .\united_states_of_browsers\usb_server\usb_server.py
-    Then go to the browser and visit: localhost:5000
+        python -m venv venv
+5. Activate the virtual environment:
+
+        venv\Scripts\activate
+6. Install the required python packages:
+
+        pip install - r requirements.txt
+7. Install the project:
+
+        pip install .
+8. To merge the databases, run:
+
+        python .\united_states_of_browsers\db_merge\merge_browser_databases.py
+
+9. To launch the user interface, run:
+
+        python .\united_states_of_browsers\usb_server\usb_server.py
+10. Then go to the browser and visit:
+
+        localhost:5000
 
 Merging the database will generate an sqlite file in the \united_states_of_browsers directory/folder, 'all_merged.sqlite' .
 A url_hash_log.bin _might_ also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
 
 To run tests (requires pytest), type:
-$pytest
+
+    pytest
 
 The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
 
