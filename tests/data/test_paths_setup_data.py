@@ -15,7 +15,7 @@ def data_for_setup_profile_paths():
 			         'RegularSurfing': Path(
 					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 			         'default': Path(
-					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 			         'dev-edition-default': Path(
 					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 			         'kc.qubit': Path(
@@ -46,7 +46,7 @@ def data_for_setup_profile_paths():
 			         'RegularSurfing': Path(
 					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 			         'default': Path(
-					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 			         'dev-edition-default': Path(
 					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 			         'kc.qubit': Path(
@@ -63,14 +63,14 @@ def data_for_setup_profile_paths():
 		         profiles=('regular_surfing', 'default', None, 'programming'),
 		         expected={'default':
 			         Path(
-					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default')
+					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default')
 			         }
 		         ),
 		TestCase(browser_ref='firefox',
 		         profiles=('regular_surfing', 'default', None, 'programming'),
 		         expected={'default':
 			         Path(
-					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default')
+					         f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default')
 			         }
 		         ),
 		)
@@ -111,7 +111,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(
@@ -127,7 +127,7 @@ def data_for_db_filepaths():
 					'RegularSurfing':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
 					'default':
-						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite',
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\places.sqlite',
 					'dev-edition-default':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.sqlite',
 					'kc.qubit':
@@ -157,7 +157,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(
@@ -174,7 +174,7 @@ def data_for_db_filepaths():
 					'RegularSurfing':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
 					'default':
-						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite',
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\places.sqlite',
 					'dev-edition-default':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.sqlite',
 					'kc.qubit':
@@ -192,7 +192,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(
@@ -209,7 +209,7 @@ def data_for_db_filepaths():
 					'RegularSurfing':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\somegibberish.sqlite',
 					'default':
-						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\somegibberish.sqlite',
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\somegibberish.sqlite',
 					'dev-edition-default':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\somegibberish.sqlite',
 					'kc.qubit':
@@ -227,7 +227,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(
@@ -244,7 +244,7 @@ def data_for_db_filepaths():
 					'RegularSurfing':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.gibberishext',
 					'default':
-						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.gibberishext',
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\places.gibberishext',
 					'dev-edition-default':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.gibberishext',
 					'kc.qubit':
@@ -262,7 +262,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(
@@ -279,7 +279,7 @@ def data_for_db_filepaths():
 					'RegularSurfing':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\.sqlite',
 					'default':
-						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\.sqlite',
+						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\.sqlite',
 					'dev-edition-default':
 						f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\.sqlite',
 					'kc.qubit':
@@ -315,7 +315,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(
@@ -335,7 +335,7 @@ def data_for_db_filepaths():
 					'RegularSurfing': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/px2kvmlk.RegularSurfing'),
 					'default': Path(
-							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/xl8257ca.default'),
+							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/r057a01e.default'),
 					'dev-edition-default': Path(
 							f'{home_dir}/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default'),
 					'kc.qubit': Path(

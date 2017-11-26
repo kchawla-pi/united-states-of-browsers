@@ -15,7 +15,7 @@ def data_for_firefox():
 			{'RegularSurfing':
 				 f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
 			 'default':
-				 f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite',
+				 f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\places.sqlite',
 			 'dev-edition-default':
 				 f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.sqlite',
 			 'kc.qubit':
@@ -104,7 +104,7 @@ def data_for_firefox():
 			         {'RegularSurfing':
 				          f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
 			          'default':
-				          f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\xl8257ca.default\\places.sqlite',
+				          f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\r057a01e.default\\places.sqlite',
 			          'dev-edition-default':
 				          f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\vy2bqplf.dev-edition-default\\places.sqlite',
 			          'kc.qubit':

@@ -58,7 +58,7 @@ Following functionality has been implemented as of Nov 17, 2017:
 
         localhost:5000
 
-Merging the database will generate an sqlite file in the \united_states_of_browsers directory/folder, 'all_merged.sqlite' .
+Merging the database will generate an sqlite file in the \united_states_of_browsers directory/folder.
 A url_hash_log.bin _might_ also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
 
 To run tests (requires pytest), type:
