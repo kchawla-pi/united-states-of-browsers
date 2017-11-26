@@ -3,8 +3,6 @@ import setuptools
 from pathlib import Path
 
 
-
-# Path(__file__).parents
 setuptools.setup(
 		name='usb',
 		version='0.5dev',
@@ -20,5 +18,3 @@ setuptools.setup(
 		keywords='browser history',
 		url='https://github.com/kchawla-pi/united-states-of-browsers',
 		)
-		
-		
