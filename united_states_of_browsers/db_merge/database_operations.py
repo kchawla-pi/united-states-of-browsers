@@ -104,11 +104,13 @@ def write_new_database(sink_db_path: PathInfo,
 		try:
 			sink_conn.executemany(sink_queries['insert'], source_records)
 		except Exception as excep:
+			table_exists_text = f'table {table}already exists'
+			
 			if 'UNIQUE constraint failed:' in str(excep):
 				# print(f'{"-"*20} \n {excep}')
 				raise (excep)
-			elif f'table {table} already exists' in str(excep):
-				print(f'{"-"*20} \n {excep}')
+			elif table_exists_text in str(excep):
+				print(f'{table_exists_text}.')
 			elif f'no such table: {table}' in str(excep):
 				sink_conn.execute(sink_queries['create'])
 				sink_conn.executemany(sink_queries['insert'], source_records)

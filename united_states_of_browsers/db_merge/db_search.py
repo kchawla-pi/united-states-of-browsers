@@ -25,7 +25,9 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 		try:
 			sink_conn.execute(create_table_query)
 		except sqlite3.OperationalError as excep:
-			if f'table {table}already exists' in str(excep):
+			table_exists_text = f'table {table}already exists'
+			if table_exists_text in str(excep):
+				print(f'{table_exists_text}.')
 				pass
 			# print(f'{excep} Exception raised during '
 			#       f'sink_conn.execute({create_table_query}) '
