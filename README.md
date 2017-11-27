@@ -35,28 +35,30 @@ Following functionality has been implemented as of Nov 17, 2017:
 4. Navigate into the newly created directory/folder:
 
         cd united-states-of-browsers
-4. Make a virtual environment using:
+5. Make a virtual environment using:
 
         python -m venv venv
-5. Activate the virtual environment:
+6. Activate the virtual environment:
 
         venv\Scripts\activate
-6. Install the required python packages:
+7. Install the required python packages:
 
         pip install - r requirements.txt
-7. Install the project:
+8. Install the project:
 
         pip install .
-8. To merge the databases, run:
+9. To merge the databases, run:
 
         python .\united_states_of_browsers\db_merge\merge_browser_databases.py
 
-9. To launch the user interface, run:
+10. To launch the user interface, run:
 
         python .\united_states_of_browsers\usb_server\usb_server.py
-10. Then go to the browser and visit:
+11. Then go to the browser and visit:
 
         localhost:5000
+12. To stop, go back to the same terminal window  where the program is running and press `Ctrl+C`.
+13. Deactivate the virtual environment by typing `deactivate` and pressing ENTER.
 
 Merging the database will generate an sqlite file in the \united_states_of_browsers directory/folder.
 A url_hash_log.bin _might_ also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
