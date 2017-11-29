@@ -48,7 +48,7 @@ def show_entries():
 	cur = db.execute(select_query)
 	entries = cur.fetchmany(1000)
 	# entries = (record for record in cur)
-	return render_template('ui_draft.html', entries=entries)
+	return render_template('main.html', entries=entries)
 	
 
 @app.teardown_appcontext

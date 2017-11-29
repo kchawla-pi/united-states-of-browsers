@@ -1,1 +1,7 @@
-include .\united_states_of_browsers\usb_server\templates\ui_draft.html
+graft ./united_states_of_browsers/usb_server/static
+graft ./united_states_of_browsers/usb_server/templates
+
+include ./united_states_of_browsers/usb_server/templates/main.html
+include ./united_states_of_browsers/usb_server/templates/primary.css
+
+include ./united_states_of_browsers/usb_server/schema.sql
