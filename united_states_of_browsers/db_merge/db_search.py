@@ -50,7 +50,7 @@ def _make_sql_statement (word_query: Text,
 		Optional: date_start and date_stop.
 	"""
 	if not word_query:
-		sql_query = ('SELECT * FROM moz_places'
+		sql_query = ('SELECT * FROM search_table'
 		             ' WHERE id IN'
 		             ' (SELECT id'
 		             ' FROM search_table'
@@ -58,7 +58,7 @@ def _make_sql_statement (word_query: Text,
 		             )
 		query_bindings = [date_start, date_stop]
 	else:
-		sql_query = ('SELECT * FROM moz_places'
+		sql_query = ('SELECT * FROM search_table'
 		             ' WHERE id IN'
 		             ' (SELECT id'
 		             ' FROM search_table'
@@ -73,7 +73,7 @@ def _run_search (db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Te
                  ) -> Iterable[NamedTuple]:
 	with open(app_inf_path, 'r') as read_json_obj:
 		app_inf = json.load(read_json_obj)
-	DBRecord = namedtuple('DBRecord', app_inf['source_fieldnames'])
+	DBRecord = namedtuple('DBRecord', app_inf['search_fieldnames'])
 	with sqlite3.connect(db_path) as sink_conn:
 		sink_conn.row_factory = sqlite3.Row
 		query_results = sink_conn.execute(sql_query, query_bindings)
@@ -193,4 +193,8 @@ if __name__ == '__main__':
 	# _test(queries=queries,db_test=db_test)
 	# _test_archive(db_test)
 
-	print(search(app_inf['sink']))
+	# print(search(app_inf['sink']))
+	noargs_id = [record.id for record in search(app_inf['sink'])]
+	# print(noargs_id)
+	from pprint import pprint
+	pprint(search(app_inf['sink'], 'python'))
