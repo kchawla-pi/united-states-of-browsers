@@ -1,8 +1,8 @@
-import datetime
 import json
 import re
 import sqlite3
 
+from datetime import datetime as dt
 from collections import namedtuple
 
 from united_states_of_browsers.db_merge import database_operations as db_ops
@@ -49,19 +49,23 @@ def _make_sql_statement (word_query: Text,
 	Accepts word_query.
 		Optional: date_start and date_stop.
 	"""
-	if date_start and date_stop:
-		query_addon = ' AND last_visit_date BETWEEN ? AND ?'
-		query_bindings = [word_query, date_start, date_stop]
+	if not word_query:
+		sql_query = ('SELECT * FROM moz_places'
+		             ' WHERE id IN'
+		             ' (SELECT id'
+		             ' FROM search_table'
+		             ' WHERE last_visit_date BETWEEN ? AND ?)'
+		             )
+		query_bindings = [date_start, date_stop]
 	else:
-		query_addon = ''
-		query_bindings = [word_query]
-	sql_query = ('SELECT * FROM moz_places'
-	             ' WHERE id IN'
-	             ' (SELECT id'
-	             ' FROM search_table'
-	             ' WHERE search_table'
-	             f' MATCH ? ORDER BY bm25(search_table, 0, 7, 9, 0, 0, 0, 10)){query_addon}'
-	             )
+		sql_query = ('SELECT * FROM moz_places'
+		             ' WHERE id IN'
+		             ' (SELECT id'
+		             ' FROM search_table'
+		             ' WHERE search_table'
+		             ' MATCH ? ORDER BY bm25(search_table, 0, 7, 9, 0, 0, 0, 10)) AND last_visit_date BETWEEN ? AND ?'
+		             )
+		query_bindings = [word_query, date_start, date_stop]
 	return sql_query, query_bindings
 
 
@@ -80,7 +84,7 @@ def _print_search (search_results: Iterable):
 	for result in search_results:
 		timestamp_ = result.last_visit_date
 		try:
-			human_readable_date = datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6)
+			human_readable_date = dt.utcfromtimestamp(timestamp_ / 10 ** 6)
 		except TypeError as excep:
 			human_readable_date = 'Date Unavailable'
 		if not result.title:
@@ -95,11 +99,14 @@ def _fix_query (query):
 		
 def make_date(record):
 	record.update('last_visit_date',
-	datetime.datetime.utcfromtimestamp(record.last_visit_date/10**6)
+	dt.utcfromtimestamp(record.last_visit_date/10**6)
 	              )
 
-def search (db_path, word_query, date_start=None, date_stop=None):
-	helpers.query_sanitizer(word_query, exceptions=[' ', '%', '(', ')'])
+def search (db_path, word_query='',
+            date_start=0,
+            date_stop=int(dt.utcnow().timestamp() * 10 ** 6),
+            ):
+	helpers.query_sanitizer(word_query, allowed_chars=[' ', '%', '(', ')'])
 	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
 	search_results = _run_search(db_path, sql_query, query_bindings)
 	return search_results
@@ -115,10 +122,10 @@ def parse_keywords (query):
 
 
 if __name__ == '__main__':
-	def _test_archive ():
+	def _test_archive (db_test):
 		db_for_testing = db_test
 		time_stamps = (1509123590555000, 1501259124168000, 1506703039399000)
-		human_times = [datetime.datetime.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
+		human_times = [dt.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
 		               time_stamps]
 		
 		search_test_cases = (
@@ -141,16 +148,8 @@ if __name__ == '__main__':
 			search_result = search(db_test, query)
 			print(f'\nquery: {query}')
 			pprint((search_result))
-	
-	
-	root = Path(__file__).parents[2]
-	db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
-	db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
-	with open(app_inf_path, 'r') as json_obj:
-		app_inf = json.load(json_obj)
-	
-	
-	def _test (queries):
+
+	def _test (queries, db_test):
 		for query in queries:
 			helpers.query_sanitizer(query)
 			try:
@@ -163,8 +162,8 @@ if __name__ == '__main__':
 				pprint((search_result))
 				print('^' * 15, query, '^' * 15)
 		print()
-	
-	
+
+
 	queries = [
 		# 'checkio', # works
 		#  'python game NOT javascript', # works
@@ -183,5 +182,15 @@ if __name__ == '__main__':
 		# 'NOT(pep hacker)',  # doesn't work
 		# 'python OR javascript NOT  ((abacus hacker) fortran)', # doesn't work
 		]
-	
-	_test(queries=queries)
+
+	# root = Path(__file__).parents[2]
+	# db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
+	# db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
+	with open(app_inf_path, 'r') as json_obj:
+		app_inf = json.load(json_obj)
+
+
+	# _test(queries=queries,db_test=db_test)
+	# _test_archive(db_test)
+
+	print(search(app_inf['sink']))

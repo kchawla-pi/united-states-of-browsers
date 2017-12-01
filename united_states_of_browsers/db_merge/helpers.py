@@ -59,13 +59,13 @@ def incrementer(start: int=0) -> Generator[int, None, None]:
 		yield next
 
 
-def query_sanitizer(query: str, exceptions: Union[str, Iterable]='_') -> str:
+def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
 	""" Removes non-alphanumeric characters from a query.
-	Retains characters passed in as exceptions. (Default: '_')
+	Retains characters passed in via `allowed_chars`. (Default: '_')
 	Returns a string.
 	"""
-	exceptions = set(exceptions)
-	return ''.join([char for char in query if char.isalnum() or char in exceptions])  #, '?', '(', ')', ','}])
+	allowed_chars = set(allowed_chars)
+	return ''.join([char for char in query if char.isalnum() or char in allowed_chars])  #, '?', '(', ')', ','}])
 
 
 def retrieve_record(db_path: PathInfo, key: Union[Text, int, Iterable[Union[Text, int]]], key_type: Union['id', 'guid', 'hash']
