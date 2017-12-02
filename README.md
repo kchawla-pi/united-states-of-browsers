@@ -12,10 +12,9 @@ A project to combine &amp; organize history and bookmarks across multiple browse
 Does not support other OS and browsers YET. Easy to make it work for other OSes.
 Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
 
-Following functionality has been implemented as of Nov 17, 2017:
+Following functionality has been implemented as of Dec 2, 2017:
  - The merging firefox browser history databases functionality has been implemented.
- - Search using python functions, but not using the UI.
- - Rudminetary UI to view the first 1000 entries running on a local webserver.
+ - Keyword and Date range search available via the UI.
 
 ##### To Check it out: (Currently, instructions for command line only)
 
@@ -60,12 +59,13 @@ Following functionality has been implemented as of Nov 17, 2017:
 12. To stop, go back to the same terminal window  where the program is running and press `Ctrl+C`.
 13. Deactivate the virtual environment by typing `deactivate` and pressing ENTER.
 
-Merging the database will generate an sqlite file in the \united_states_of_browsers directory/folder.
-A url_hash_log.bin _might_ also be generated. It is a binary file containing the hashes of URLs that were written to 'merged_fx_db.sqlite'.
+Merging the database will generate an sqlite file in the \united_states_of_browsers\appdata directory/folder.
 
 To run tests (requires pytest), type:
 
     pytest
+
+Currently some tests are broken.
 
 The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
 

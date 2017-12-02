@@ -1,0 +1,11 @@
+v 0.5dev
+Following functionality has been implemented as of Nov 17, 2017:
+ - The merging firefox browser history databases functionality has been implemented.
+ - Search using python functions, but not using the UI.
+ - Rudminetary UI to view the first 1000 entries running on a local webserver.
+
+v 0.55dev
+Following functionality has been implemented as of Dec 2, 2017:
+ - A rudimentary browser based user-interface has been implemented.
+ - keyword and date range search and combinations now working and accessible via the UI.
+ - Data files moved from db_merge to appdata directory.
