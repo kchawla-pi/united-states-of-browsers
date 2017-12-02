@@ -58,7 +58,11 @@ def show_entries():
 @app.route('/search', methods=['GET', 'POST'])
 def search():
 	db = get_db()
-	search_results = db_search.flask_search(db, request.args["query"])
+	search_results = db_search.flask_search(db,
+	                                        request.args["query"],
+	                                        request.args["date-from"],
+	                                        request.args["date-to"]
+	                                        )
 	return render_template('main.html', entries=search_results)
 	# return search_results
 
