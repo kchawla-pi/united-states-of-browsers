@@ -187,6 +187,7 @@ if __name__ == '__main__':
 		noargs_id = [record.id for record in search(app_inf['sink'])]
 		print(noargs_id, '\n')
 		noargs_id = [record.id for record in search(app_inf['sink'], 'python')]
+		pprint(_test_search(db_path=app_inf['sink'], show_only_id=True))
 		print(noargs_id, '\n')
 		noargs_id = [record.id for record in search(app_inf['sink'], 'python', 1501259124168000)]
 		print(noargs_id, '\n')
@@ -222,5 +223,4 @@ if __name__ == '__main__':
 	# print(search(app_inf['sink']))
 	# _test(queries=queries,db_test=db_test)
 	# _test_archive(db_test)
-	pprint(_test_search(db_path=app_inf['sink'], show_only_id=True))
 	# pprint(search(app_inf['sink'], 'python'))
