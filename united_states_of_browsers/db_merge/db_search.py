@@ -1,5 +1,4 @@
 import json
-import re
 import sqlite3
 
 from datetime import datetime as dt
@@ -35,13 +34,13 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 		sink_conn.executemany(virtual_insert_query, tuple(record_yielder))
 
 
-def _make_sql_statement(word_query: Text,
+def _make_sql_statement(word_query: Optional[Text],
                         date_start: Union[int, None],
                         date_stop: Union[int, None]
                         ) -> Union[Text, Iterable[Text]]:
 	""" Returns prepared SQL statements and bindings for queries with and without dates.
-	Accepts word_query.
-		Optional: date_start and date_stop.
+	If no args provided, returns a search query which will select all records.
+		Optional: word_query, date_start and date_stop.
 	"""
 	if not word_query:
 		sql_query = ('SELECT * FROM search_table'
@@ -63,7 +62,7 @@ def _make_sql_statement(word_query: Text,
 	return sql_query, query_bindings
 
 
-def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
+def _run_search(db_ref: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
                 ) -> Iterable[NamedTuple]:
 	""" Returns the search results as a list of NamedTuples of records.
 	Accepts --
@@ -74,10 +73,13 @@ def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Tex
 	with open(app_inf_path, 'r') as read_json_obj:
 		app_inf = json.load(read_json_obj)
 	DBRecord = namedtuple('DBRecord', app_inf['search_fieldnames'])
-	with sqlite3.connect(db_path) as sink_conn:
-		sink_conn.row_factory = sqlite3.Row
-		query_results = sink_conn.execute(sql_query, query_bindings)
-		return [DBRecord(*result) for result in query_results]
+	try:
+		query_results = db_ref.execute(sql_query, query_bindings)
+	except AttributeError:
+		with sqlite3.connect(db_ref) as sink_conn:
+			sink_conn.row_factory = sqlite3.Row
+			query_results = sink_conn.execute(sql_query, query_bindings)
+	return [DBRecord(*result) for result in query_results]
 
 
 def _print_search(search_results: Iterable, show_only_id=False):
@@ -110,9 +112,13 @@ def search(db_path: PathInfo,
 		date_stop: if None (default), the present date is used.
 	"""
 	if not date_start:
-		date_start = 0
+		date_start = int(dt.timestamp(dt.strptime('1970-01-02', '%Y-%m-%d')) * 10**6)
+	else:
+		date_start = int(dt.timestamp(dt.strptime(date_start, '%Y-%m-%d')) * 10**6)
 	if not date_stop:
 		date_stop = int(dt.utcnow().timestamp() * 10 ** 6)
+	else:
+		date_stop = int(dt.timestamp(dt.strptime(date_stop, '%Y-%m-%d')) * 10**6)
 	word_query = helpers.query_sanitizer(word_query, allowed_chars=[' ', '%', '(', ')', '_'])
 	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
 	search_results = _run_search(db_path, sql_query, query_bindings)
@@ -227,5 +233,7 @@ if __name__ == '__main__':
 
 	# print(search(app_inf['sink']))
 	# _test(queries=queries,db_test=db_test)
-	# _test_archive(db_test)
 	# pprint(search(app_inf['sink'], 'python'))
+	with sqlite3.connect(app_inf['sink']) as sink_conn:
+		pprint(search(sink_conn, 'python import'))
+	# _test_search(app_inf['sink'], 'python')
