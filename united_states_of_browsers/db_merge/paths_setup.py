@@ -9,6 +9,7 @@ Available functions:
 """
 import os
 
+from pathlib import Path
 from pprint import pprint
 
 from united_states_of_browsers.db_merge import helpers
@@ -18,7 +19,8 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 debug = 0
 
-app_inf_path = helpers.filepath_from_another('app_inf.json')
+appdata_path = Path(__file__).parents[1].joinpath('appdata')
+app_inf_path = str(appdata_path.joinpath('app_inf.json'))
 
 def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, Dict[str, PathLike]]:
 	""" Accepts a browser name or a directory path pointing to the profile location of the browser.
@@ -29,7 +31,7 @@ def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, 
 								'History'],
 					}
 	# if browser_ref not in path_crumbs, returns browser_ref as list of profile path.
-	return os.path.expanduser(Path(*path_crumbs.get(browser_ref, [browser_ref])))
+	return str(Path(*path_crumbs.get(browser_ref, [browser_ref])).expanduser())
 
 
 def _profile_dir(profile_loc: PathLike, *, profiles: Optional[Union[str, Iterable[AnyStr]]]=None) -> Iterable[PathLike]:
@@ -57,7 +59,7 @@ def setup_profile_paths(*, browser_ref: Union[str, PathLike], profiles: Optional
 	return profile_paths
 
 
-def _db_files(profile_paths: PathLike, ext: Optional[AnyStr]='.sqlite') -> Iterable[PathLike]:
+def _db_files(profile_paths: PathInfo, ext: Optional[AnyStr]='.sqlite') -> Iterable[PathLike]:
 	""" Returns a list of file in the specified directory (not subdirectories) with a specified (or no) extension.
 	
 	profile_paths: Path to directory with the files
@@ -99,30 +101,24 @@ def db_filepath(profile_paths: Dict[str, PathLike], filenames: str='places', ext
 		os.sys.exit()
 	
 
-def setup_output_db_paths(output_db: Optional[Text]) -> [PathInfo, PathInfo]:
+def setup_output_db_paths(db_filename: Optional[Text]) -> [PathInfo, PathInfo]:
 	""" Returns paths for the database file and the file with record of processed record's hashes.
-	 Accepts filename.ext for the database file to be written to.
+	 Accepts filename for the sqlite database file to be written to.
 	"""
-	if output_db:
-		try:
-			output_db, output_ext = output_db.split(os.extsep)
-		except ValueError:
-			output_ext = 'sqlite'
-		sink_db_path = helpers.filepath_from_another(os.extsep.join([output_db, output_ext]))
-		filename_part = os.path.splitext(output_db)[0]
+
+	appdata_path.mkdir(exist_ok=True)
+	if db_filename:
+		db_filename = helpers.query_sanitizer(query=db_filename, allowed_chars=['_', '-', ' '])
+		sink_db_path = str(appdata_path.joinpath(f'{db_filename}.sqlite'))
+		url_hash_log_path = str(appdata_path .joinpath(f'{db_filename}_url_hashes.bin'))
 	else:
 		import datetime
 		this_moment = str(datetime.datetime.now()).split('.')[0]
 		for replacee, replacer in zip(['-', ':', ' '], ['', '', '_']):
 			this_moment = this_moment.replace(replacee, replacer)
-		filename_part = this_moment
+		url_hash_log_path = str(appdata_path.joinpath(f'url_hash_log_{this_moment}.bin'))
 		sink_db_path = None
-	
-	filename = '_'.join(['url_hash_log', filename_part])
-	url_hash_log_filename = os.extsep.join([filename, 'bin'])
-	
-	url_hash_log_path = helpers.filepath_from_another(url_hash_log_filename)
-	return sink_db_path, url_hash_log_path
+	return appdata_path, sink_db_path, url_hash_log_path
 
 
 if __name__ == '__main__':
