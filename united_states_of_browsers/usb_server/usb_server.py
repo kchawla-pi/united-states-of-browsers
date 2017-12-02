@@ -11,18 +11,18 @@ from flask import (Flask,
                    )
 
 from united_states_of_browsers.db_merge import db_search
+from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 app_root_path = Path(app.root_path).parents[0]
-app_inf_path = app_root_path.joinpath('db_merge', 'app_inf.json')
 
-with open(str(app_inf_path), 'r') as json_obj:
+with open(app_inf_path, 'r') as json_obj:
 	app_inf = json.load(json_obj)
 
 app.config.update(dict(
-		DATABASE=str(app_inf['sink']),
+		DATABASE=app_inf['sink'],
 		SECRET_KEY='development key',
 		USERNAME='admin',
 		PASSWORD='default',
@@ -58,7 +58,7 @@ def show_entries():
 @app.route('/search', methods=['GET', 'POST'])
 def search():
 	db = get_db()
-	search_results = db_search.flask_search(db,
+	search_results = db_search.search(db,
 	                                        request.args["query"],
 	                                        request.args["date-from"],
 	                                        request.args["date-to"]
