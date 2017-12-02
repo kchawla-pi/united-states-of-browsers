@@ -1,14 +1,9 @@
 # -*- encoding: utf-8 -*-
 import json
-import os
-from pathlib import Path
 import sqlite3
+import werkzeug
 
-import logging
-handler = logging.FileHandler('error.log')  # errors logged to this file
-handler.setLevel(logging.ERROR) # only log errors and above
-
-
+from pathlib import Path
 from flask import (Flask,
                    g,
                    render_template,
@@ -22,8 +17,6 @@ app.config.from_object(__name__)
 
 app_root_path = Path(app.root_path).parents[0]
 app_inf_path = app_root_path.joinpath('db_merge', 'app_inf.json')
-
-app.logger.addHandler(handler)  # attach the handler to the app's logger
 
 with open(str(app_inf_path), 'r') as json_obj:
 	app_inf = json.load(json_obj)
@@ -51,21 +44,23 @@ def connect_db():
 		return conn
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def show_entries():
 	db = get_db()
 	select_query = '''SELECT url, title,visit_count, last_visit_date, description FROM search_table'''
 	cur = db.execute(select_query)
 	entries = cur.fetchmany(1000)
 	# entries = (record for record in cur)
-	return render_template('main.html', entries=entries)
+	# search_results = db_search.flask_search(db_connection=db, word_query=request.form["search"])
+	return render_template('main.html', entries=entries )
 
 
-@app.route('/search/', methods=['GET'])
+@app.route('/search', methods=['GET', 'POST'])
 def search():
-	search_results = db_search.search(app.config['DATABASE'], request.form["search"])
+	db = get_db()
+	search_results = db_search.flask_search(db, request.args["query"])
 	return render_template('main.html', entries=search_results)
-
+	# return search_results
 
 @app.teardown_appcontext
 def close_db(error):

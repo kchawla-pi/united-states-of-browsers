@@ -96,17 +96,6 @@ def _print_search(search_results: Iterable, show_only_id=False):
 		pprint(formatted_results)
 
 
-def _fix_query(query):
-	for replacee in ('[', '{'):
-		query.replace(replacee, '(')
-
-
-def make_date(record):
-	record.update('last_visit_date',
-	              dt.utcfromtimestamp(record.last_visit_date / 10 ** 6)
-	              )
-
-
 def search(db_path: PathInfo,
            word_query: Optional[Text]='',
            date_start: Optional[Text]=None,
@@ -130,14 +119,30 @@ def search(db_path: PathInfo,
 	return search_results
 
 
-def parse_keywords(query):
-	print(query)
-	parsing = re.search("", query)
-	try:
-		print(parsing.start(), parsing.end())
-	except AttributeError:
-		pass
-
+def flask_search(db_connection: PathInfo,
+                 word_query: Optional[Text]='',
+                 date_start: Optional[Text]=None,
+                 date_stop: Optional[Text]=None,
+                 ) -> Iterable[NamedTuple]:
+	""" Returns the search result as a list of NamedTuple of records.
+	Accepts sqlite database connection and optionally, keywords and date range.
+	Connection is assumed to have Row row_factory method implemented.
+	Optional:
+		word_query: if None (default), not included in search filter.
+		date_start: if None(default), the earliest date is used.
+		date_stop: if None (default), the present date is used.
+	"""
+	if not date_start:
+		date_start = 0
+	if not date_stop:
+		date_stop = int(dt.utcnow().timestamp() * 10 ** 6)
+	word_query = helpers.query_sanitizer(word_query, allowed_chars=[' ', '%', '(', ')', '_'])
+	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
+	query_results = db_connection.execute(sql_query, query_bindings)
+	with open(str(app_inf_path), 'r') as json_obj:
+		app_inf = json.load(json_obj)
+	DBRecord = namedtuple('DBRecord', app_inf['search_fieldnames'])
+	return [DBRecord(*result) for result in query_results]
 
 if __name__ == '__main__':
 	def _test_search(db_path, show_only_id=False):

@@ -18,8 +18,8 @@
 <div class="container-fluid">
 
     <h1 class="text-right"> United States of Browsers </h1>
-    <form action="/search/" method="get">
-        <input id="search-box" type="text" name="search" placeholder="Enter search query here">
+    <form action="{{ url_for('search') }}" method="GET">
+        <input id="search-box" type="text" name="query" placeholder="Enter search query here">
         <button class="btn btn-primary" type="submit">Search Firefox History</button>
         <!--<br>-->
         <div class="date">
