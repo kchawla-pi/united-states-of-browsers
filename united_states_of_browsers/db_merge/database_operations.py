@@ -68,7 +68,7 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 		with sqlite3.connect(profile_db_path) as source_conn:
 			source_conn.row_factory = sqlite3.Row
 			try:
-				for db_record_yielder in source_conn.execute("""SELECT * FROM moz_places"""):
+				for db_record_yielder in source_conn.execute("""SELECT * FROM moz_places WHERE title IS NOT NULL"""):
 					# prevents adding additional keys, only updates keys/fields specified in source_fieldnames.
 					source_records_template = odict(
 								(key, dict(db_record_yielder).setdefault(key, None))
