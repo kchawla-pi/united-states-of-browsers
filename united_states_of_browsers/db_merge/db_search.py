@@ -4,14 +4,13 @@ import sqlite3
 
 from datetime import datetime as dt
 from collections import namedtuple
+from pprint import pprint
 
 from united_states_of_browsers.db_merge import database_operations as db_ops
 from united_states_of_browsers.db_merge import helpers
 
 from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 from united_states_of_browsers.db_merge.imported_annotations import *
-
-from pprint import pprint
 
 
 def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
@@ -28,11 +27,6 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 			table_exists_text = f'table {table}already exists'
 			if table_exists_text in str(excep):
 				print(f'{table_exists_text}.')
-				pass
-			# print(f'{excep} Exception raised during '
-			#       f'sink_conn.execute({create_table_query}) '
-			#       f'in db_search.build_search_table()'
-			#       )
 		sql_placeholder = ('?, ' * len(included_fieldnames))[:-2]
 		record_yielder = db_ops.yield_source_records(source_db_paths={'all_merged': db_path},
 		                                             source_fieldnames=included_fieldnames,
@@ -41,10 +35,10 @@ def build_search_table(db_path: PathInfo, included_fieldnames: Sequence[Text]):
 		sink_conn.executemany(virtual_insert_query, tuple(record_yielder))
 
 
-def _make_sql_statement (word_query: Text,
-                         date_start: Union[int, None],
-                         date_stop: Union[int, None]
-                         ) -> Union[Text, Iterable[Text]]:
+def _make_sql_statement(word_query: Text,
+                        date_start: Union[int, None],
+                        date_stop: Union[int, None]
+                        ) -> Union[Text, Iterable[Text]]:
 	""" Returns prepared SQL statements and bindings for queries with and without dates.
 	Accepts word_query.
 		Optional: date_start and date_stop.
@@ -69,8 +63,14 @@ def _make_sql_statement (word_query: Text,
 	return sql_query, query_bindings
 
 
-def _run_search (db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
-                 ) -> Iterable[NamedTuple]:
+def _run_search(db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Text]
+                ) -> Iterable[NamedTuple]:
+	""" Returns the search results as a list of NamedTuples of records.
+	Accepts --
+	db_path: database file path,
+	sql_query: a formed SQL query,
+	query_bindings: list of attributes for the query.
+	"""
 	with open(app_inf_path, 'r') as read_json_obj:
 		app_inf = json.load(read_json_obj)
 	DBRecord = namedtuple('DBRecord', app_inf['search_fieldnames'])
@@ -80,39 +80,57 @@ def _run_search (db_path: PathInfo, sql_query: Text, query_bindings: Iterable[Te
 		return [DBRecord(*result) for result in query_results]
 
 
-def _print_search (search_results: Iterable):
+def _print_search(search_results: Iterable, show_only_id=False):
+	formatted_results = []
 	for result in search_results:
 		timestamp_ = result.last_visit_date
 		try:
 			human_readable_date = dt.utcfromtimestamp(timestamp_ / 10 ** 6)
-		except TypeError as excep:
+		except TypeError:
 			human_readable_date = 'Date Unavailable'
-		if not result.title:
-			print(human_readable_date, '.', result.url)
+		if show_only_id:
+			result_rec = result.id
 		else:
-			print(human_readable_date, '.', result.title)
+			result_rec = result.title if result.title else result.url
+		formatted_results.append(f'{human_readable_date}, . , {result_rec}')
+		pprint(formatted_results)
 
 
-def _fix_query (query):
+def _fix_query(query):
 	for replacee in ('[', '{'):
 		query.replace(replacee, '(')
-		
+
+
 def make_date(record):
 	record.update('last_visit_date',
-	dt.utcfromtimestamp(record.last_visit_date/10**6)
+	              dt.utcfromtimestamp(record.last_visit_date / 10 ** 6)
 	              )
 
-def search (db_path, word_query='',
-            date_start=0,
-            date_stop=int(dt.utcnow().timestamp() * 10 ** 6),
-            ):
-	helpers.query_sanitizer(word_query, allowed_chars=[' ', '%', '(', ')'])
+
+def search(db_path: PathInfo,
+           word_query: Optional[Text]='',
+           date_start: Optional[Text]=None,
+           date_stop: Optional[Text]=None,
+           ) -> Iterable[NamedTuple]:
+	""" Returns the search result as a list of NamedTuple of records.
+	Accepts database file path and optionally, keywords and date range.
+
+	Optional:
+		word_query: if None (default), not included in search filter.
+		date_start: if None(default), the earliest date is used.
+		date_stop: if None (default), the present date is used.
+	"""
+	if not date_start:
+		date_start = 0
+	if not date_stop:
+		date_stop = int(dt.utcnow().timestamp() * 10 ** 6)
+	word_query = helpers.query_sanitizer(word_query, allowed_chars=[' ', '%', '(', ')', '_'])
 	sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
 	search_results = _run_search(db_path, sql_query, query_bindings)
 	return search_results
 
 
-def parse_keywords (query):
+def parse_keywords(query):
 	print(query)
 	parsing = re.search("", query)
 	try:
@@ -122,34 +140,35 @@ def parse_keywords (query):
 
 
 if __name__ == '__main__':
-	def _test_archive (db_test):
-		db_for_testing = db_test
-		time_stamps = (1509123590555000, 1501259124168000, 1506703039399000)
-		human_times = [dt.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
-		               time_stamps]
-		
-		search_test_cases = (
-			(app_inf['sink'], 'python', time_stamps[1], time_stamps[2]),
-			(app_inf['sink'], "python AND variable NOT update anaconda AND stackoverflow", None,
-			 None),
-			)
-		
-		for (db_path, word_query, date_start, date_stop) in search_test_cases:
-			search_results = search(db_path, word_query, date_start, date_stop)
-			_print_search(search_results)
-			print()
-		
-		queries = ['india AND economy',
-		           'javascript AND economy',
-		           'javascript python NOT react']
-		
-		for query in queries[2:]:
-			helpers.query_sanitizer(query)
-			search_result = search(db_test, query)
-			print(f'\nquery: {query}')
-			pprint((search_result))
+	def _test_search(db_path, show_only_id=False):
+		query_dates = (1501259124168000, 1506703039399000, 1509123590555000)
+		human_times = {timestamp_: dt.utcfromtimestamp(timestamp_ / 10 ** 6) for timestamp_ in
+		               query_dates}
 
-	def _test (queries, db_test):
+		search_test_cases = (
+			(db_path, 'python~', None, None),
+			(db_path, 'python', query_dates[0], None),
+			(db_path, 'python', None, query_dates[0]),
+			(db_path, 'python', query_dates[0], query_dates[2]),
+			(db_path, [], query_dates[1], query_dates[0]),
+			(db_path, "python AND variable NOT update anaconda AND stackoverflow", None, None),
+			(db_path, 'india AND economy', None, None),
+			(db_path, 'javascript AND economy', None, None),
+			(db_path, 'javascript python NOT react', None, None),
+			)
+
+		pprint(human_times)
+		for (db_path, word_query, date_start, date_stop) in search_test_cases[3:4]:
+			date_start_str = f'Start Date: {date_start} -- {human_times.get(date_start, "n/a")}'
+			date_stop_str = f'Start Stop: {date_stop} -- {human_times.get(date_stop, "n/a")}'
+			print('-' * 25)
+			print(f'word_query: {word_query},\n{date_start_str},\n{date_stop_str}')
+			search_results = search(db_path, word_query, date_start, date_stop)
+			_print_search(search_results, show_only_id=show_only_id)
+			print()
+
+
+	def test_query_validity(queries, db_test):
 		for query in queries:
 			helpers.query_sanitizer(query)
 			try:
@@ -164,37 +183,44 @@ if __name__ == '__main__':
 		print()
 
 
-	queries = [
-		# 'checkio', # works
-		#  'python game NOT javascript', # works
-		#  '"java" *', # works
-		# '* "java"', # doesnt work
-		# 'script',  # works
-		# 'python OR NEAR(pep list)', # works
-		# 'python OR (NEAR (pep hacker) list)', # works
-		# 'python OR (NEAR (pep hacker) AND list)', # works
-		# 'python OR  (pep hacker) list', # doesnt work
-		# 'python OR (pep hacker) AND list', # works
-		# 'python OR NEAR(pep hacker) alist', # works
-		# '(pep hacker) list',  # doesn't work
-		# '(pep hacker) OR list', # works
-		# 'python OR (pep hacker)   NOT     list', # works
-		# 'NOT(pep hacker)',  # doesn't work
-		# 'python OR javascript NOT  ((abacus hacker) fortran)', # doesn't work
-		]
+	def test_get_id_only():
+		noargs_id = [record.id for record in search(app_inf['sink'])]
+		print(noargs_id, '\n')
+		noargs_id = [record.id for record in search(app_inf['sink'], 'python')]
+		print(noargs_id, '\n')
+		noargs_id = [record.id for record in search(app_inf['sink'], 'python', 1501259124168000)]
+		print(noargs_id, '\n')
+		noargs_id = [record.id for record in search(app_inf['sink'], 'python', 1501259124168000, 1509123590555000)]
+		print(noargs_id, '\n')
 
-	# root = Path(__file__).parents[2]
-	# db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
-	# db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
+	root = Path(__file__).parents[2]
+	db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
+	db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
+
 	with open(app_inf_path, 'r') as json_obj:
 		app_inf = json.load(json_obj)
 
-
-	# _test(queries=queries,db_test=db_test)
-	# _test_archive(db_test)
+	queries = [
+			# 'checkio', # works
+			#  'python game NOT javascript', # works
+			#  '"java" *', # works
+			# '* "java"', # doesnt work
+			# 'script',  # works
+			# 'python OR NEAR(pep list)', # works
+			# 'python OR (NEAR (pep hacker) list)', # works
+			# 'python OR (NEAR (pep hacker) AND list)', # works
+			# 'python OR  (pep hacker) list', # doesnt work
+			# 'python OR (pep hacker) AND list', # works
+			# 'python OR NEAR(pep hacker) alist', # works
+			# '(pep hacker) list',  # doesn't work
+			# '(pep hacker) OR list', # works
+			# 'python OR (pep hacker)   NOT     list', # works
+			# 'NOT(pep hacker)',  # doesn't work
+			# 'python OR javascript NOT  ((abacus hacker) fortran)', # doesn't work
+			]
 
 	# print(search(app_inf['sink']))
-	noargs_id = [record.id for record in search(app_inf['sink'])]
-	# print(noargs_id)
-	from pprint import pprint
-	pprint(search(app_inf['sink'], 'python'))
+	# _test(queries=queries,db_test=db_test)
+	# _test_archive(db_test)
+	pprint(_test_search(db_path=app_inf['sink'], show_only_id=True))
+	# pprint(search(app_inf['sink'], 'python'))
