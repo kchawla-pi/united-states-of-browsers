@@ -13,7 +13,8 @@ from pprint import pprint
 from united_states_of_browsers.db_merge import (database_operations as db_ops,
                                                 db_search,
                                                 )
-from united_states_of_browsers.db_merge.paths_setup import app_inf_path
+from united_states_of_browsers.db_merge.paths_setup import (app_inf_path,
+                                                            appdata_path,)
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
@@ -80,7 +81,7 @@ if __name__ == '__main__':
 			else:
 				pprint(merged_records)
 		elif ask:
-			merge_records(output_db=f'{ask}.sqlite', profiles=None, table='moz_places')
+			merge_records(output_db=ask, profiles=None, table='moz_places')
 	
 	
 	_main()
