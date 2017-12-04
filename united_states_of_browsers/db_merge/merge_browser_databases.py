@@ -13,8 +13,7 @@ from pprint import pprint
 from united_states_of_browsers.db_merge import (database_operations as db_ops,
                                                 db_search,
                                                 )
-from united_states_of_browsers.db_merge.paths_setup import (app_inf_path,
-                                                            appdata_path,)
+from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
@@ -37,7 +36,7 @@ def merge_records(output_db: Union[Text, None],
 	
 	source_records_yielder = db_ops.yield_source_records(source_db_paths=app_inf['source'],
 	                                              source_fieldnames=app_inf['source_fieldnames'])
-	if app_inf['sink']:
+	if app_inf['sink']:  # if a sink db path is present then write to that db, e if not return the info.
 		db_ops.write_new_database(sink_db_path=app_inf['sink'],
 		                   table=table,
 		                   fieldnames=app_inf['source_fieldnames'],

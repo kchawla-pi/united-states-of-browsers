@@ -86,7 +86,7 @@ def db_filepath(profile_paths: Dict[str, PathLike], filenames: str='places', ext
 	"""
 	try:
 		ext_joiner = '' if ext[0] in {os.extsep, '.'} else os.extsep  # if a . in ext arg, doesn't add another
-	except (TypeError, IndexError):  #  if file doesn't have an ext, ext arg is empty, doesn't add the .
+	except (TypeError, IndexError):  #  if file doesn't have an ext, ext arg is empty, doesn't add the `.`
 		ext_joiner, ext = ('', '')
 	if filenames is None:
 		filenames = _db_files(profile_paths=profile_paths, ext=ext)
