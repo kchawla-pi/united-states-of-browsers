@@ -15,10 +15,16 @@ db_for_testing = Path.joinpath(root, 'tests', 'data', 'db_for_testing_search.sql
 @pytest.mark.parametrize('test_case', [test_case for test_case in dbs_data.search_testdata['keywords only']])
 def test_search_keywords(test_case):
 	actual_output = db_search.search(db_path=str(db_for_testing), word_query=test_case.input)
-	fields_to_check = [TestFields(record.title, record.url, record.url_hash, record.guid,)
-	                  for record in actual_output
+	actual_output_data = [dict(record) for record in actual_output]
+	actual_output_data = [TestFields(record['title'], record['url'], record['url_hash'], record['guid'],)
+	                  for record in actual_output_data
 	                  ]
-	assert set(test_case.expected) == set(fields_to_check)
+	expected_output_data = [TestFields(record.title, record.url, record.url_hash, record.guid,)
+	                  for record in test_case.expected
+	                  ]
+	assert len(actual_output_data) == len(expected_output_data)
+	for actual_, expected_  in zip (actual_output_data, expected_output_data):
+		assert actual_ == expected_
 	
 	
 if __name__ == '__main__':

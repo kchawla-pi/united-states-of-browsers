@@ -7,7 +7,9 @@ from tests.data import test_browser_specific_setup_data as bss_data
 @pytest.mark.parametrize('test_case', [test_case for test_case in bss_data.firefox_testdata['defaults']])
 def test_firefox_defaults(test_case):
 	actual_output = browser_specific_setup.firefox()
-	assert test_case.expected == actual_output
+	for expected_, actual_ in zip(test_case.expected, actual_output):
+		assert set(expected_) == set(actual_)
+
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in bss_data.firefox_testdata['values']])
 def test_firefox_values(test_case):

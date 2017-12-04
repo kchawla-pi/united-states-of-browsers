@@ -32,7 +32,7 @@ def data_for_firefox():
 			 'preview_image_url',
 			 ],
 			['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-			 'description',
+			 'description', 'guid'
 			 ],
 			)
 				),
@@ -50,7 +50,7 @@ def data_for_firefox():
 			          'preview_image_url',
 			          ],
 			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-			          'description',
+			          'description', 'guid'
 			          ],
 			         )
 		         ),
@@ -64,7 +64,7 @@ def data_for_firefox():
 			          'preview_image_url',
 			          ],
 			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-			          'description',
+			          'description', 'guid'
 			          ],
 			         )
 		         ),
@@ -78,7 +78,7 @@ def data_for_firefox():
 			          'preview_image_url',
 			          ],
 			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-			          'description',
+			          'description', 'guid'
 			          ],
 			         )
 		         ),
@@ -95,7 +95,7 @@ def data_for_firefox():
 			          'preview_image_url',
 			          ],
 			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-			          'description',
+			          'description', 'guid'
 			          ],
 			         )
 		         ),
@@ -121,7 +121,7 @@ def data_for_firefox():
 			          'preview_image_url',
 			          ],
 			         ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-			          'description',
+			          'description', 'guid'
 			          ],
 			         )
 		         ),
