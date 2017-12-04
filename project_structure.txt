@@ -1,0 +1,41 @@
+1. Determine the location of the profile directory for each browser.
+2. Determine the location of the database files for each profile of each browser.
+3. Create a list of paths to these database file.
+4. Iterate over this list.
+5. Connect with each database file in the list and create a connection.cursor to the records, and yield a generator function.
+6. Create a new sqlite database file at a consturcted path and open a connection with it.
+7. Use the generator from Step 5 to yield one record at a time and write it to the new database file.
+8. Save important parameteres to a JSON file for future lookup and use.
+9. Build a virtual table for sqlite fts search.
+
+
+merge_browser_database.merge_records()
+
+    database_operations.make_database_filepaths()
+        browser_specific_setup.firefox()
+            path_setup.setup_profile_paths()
+                _choose_browser_paths()
+                _profile_dir()
+
+            paths_setup.setup_output_db_paths()
+                helpers.query_sanitizer
+    --> returned: list of paths of browser database files, path of new database file.
+    Completed Steps: 1, 2, 3.
+
+    '''
+    I am kinda obsessed with generators so i wanted to not use up all the memory.
+    It allowed me to process and change each record if I need to .
+    Earlier the program was very slow, because I would close the connection to the sink database after writing one record, then reopened the connection for the next one.
+    Once I opened the connection once, wrote all the records, thhen closed the connection, it became pretty fast.
+    '''
+
+    database_operations.yield_source_records()  # sql queries retireve record generator.
+    # loops over the paths list and connects with them.
+    --> returned: a generator which yields records across the database files list, one record per iteration.
+
+    database_operations.write_new_database():
+        helpers.query_sanitizer()
+        helpers.make_queries()  # create new table, insert record
+        --> insert new records
+
+

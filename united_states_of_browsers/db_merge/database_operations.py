@@ -46,7 +46,7 @@ def make_database_filepaths(output_db: Union[None, Text],
 	              'hash': url_hash_log_file,
 	              'appdata_path': str(appdata_path),
 	              }
-	return file_paths
+	return file_paths  # collected in a dict, to be written to a JSON file.
 
 
 def yield_source_records(source_db_paths: Dict[Text, PathInfo],
@@ -56,11 +56,13 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 	Accepts dict of profile names and their database filepaths; and inclusive list of fieldnames.
 	
 	source_db_paths: {Profile names: profile database filepaths}
-	source_fieldnames: lis of fieldnames inclusive of al the fieldnames across all database files.
+	source_fieldnames: list of fieldnames inclusive of all the fieldnames across all database files.
 	
 	returns: Generator of namedtuple which can yield each record.
 	"""
 	global DBRecord
+	# Additional field to store last_visited_date field value converted from microsceonds to human usable format.
+	# source_fieldnames.append('visited_on')  # will likely be moved to browser specific settings, when otjer browsers are added.
 	DBRecord = namedtuple('DBRecord', source_fieldnames)
 	incr = helpers.incrementer()
 	source_records_template = odict.fromkeys(source_fieldnames, None)
@@ -69,11 +71,15 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 			source_conn.row_factory = sqlite3.Row
 			try:
 				for db_record_yielder in source_conn.execute("""SELECT * FROM moz_places WHERE title IS NOT NULL"""):
-					# prevents adding additional keys, only updates keys/fields specified in source_fieldnames.
+					''' Prevents adding additional keys, only updates keys/fields specified in source_fieldnames.
+					Prevents field mismatches among profiles, ex: favicon_url in Firefox exists in some profiles not in others.
+					'''
 					source_records_template = odict(
 								(key, dict(db_record_yielder).setdefault(key, None))
 									for key in source_records_template)
+					# Couldn't figure out how to make AUTOINCREMENT PRIMARY KEY work in SQL, hence this serial# generator.
 					source_records_template['id'] = next(incr)
+					# OrderedDict converted to NamedTuple as tuples easily convert to SQL query bindings.
 					yield DBRecord(*source_records_template.values())
 			except sqlite3.OperationalError:
 				print(f'This browser profile does not seem to have any data: {profile_name}')
@@ -96,9 +102,9 @@ def write_new_database(sink_db_path: PathInfo,
 	source_records: Generator which yields the records to be merged.
 	table: name of table in the database. Default is 'moz_places'.
 	"""
-	sink_fieldnames = fieldnames[:]
+	sink_fieldnames = fieldnames[:]  # create a copy of fieldnames values.
 	table = helpers.query_sanitizer(table)
-	sink_fieldnames = [helpers.query_sanitizer(fieldname) for fieldname in sink_fieldnames]
+	sink_fieldnames = [helpers.query_sanitizer(fieldname_) for fieldname_ in sink_fieldnames]
 	
 	with sqlite3.connect(sink_db_path) as sink_conn:
 		sink_queries = helpers.make_queries(table=table, fieldnames=sink_fieldnames)
@@ -106,9 +112,10 @@ def write_new_database(sink_db_path: PathInfo,
 			sink_conn.executemany(sink_queries['insert'], source_records)
 		except Exception as excep:
 			table_exists_text = f'table {table}already exists'
-			
+			''' Workaround for more granular exception handling. 
+			Addresses SQLite3's broad exceptions, in-lieu of custom exception classes.
+			'''
 			if 'UNIQUE constraint failed:' in str(excep):
-				# print(f'{"-"*20} \n {excep}')
 				raise (excep)
 			elif table_exists_text in str(excep):
 				print(f'{table_exists_text}.')
@@ -118,13 +125,3 @@ def write_new_database(sink_db_path: PathInfo,
 			else:
 				print('Unanticipated exception:')
 				raise (excep)
-				# print(f'{"-"*20} \n {excep}')
-			
-"""
-sqlite3.OperationalError: database is locked
-sqlite3.OperationalError: table moz_places already exists
-
-excep ==
-UNIQUE constraint failed: moz_places.id
-table moz_places already exists
-"""
