@@ -79,6 +79,7 @@ def _run_search(db_ref: PathInfo, sql_query: Text, query_bindings: Iterable[Text
 		with sqlite3.connect(db_ref) as sink_conn:
 			sink_conn.row_factory = sqlite3.Row
 			query_results = sink_conn.execute(sql_query, query_bindings)
+	return query_results
 	return [DBRecord(*result) for result in query_results]
 
 
@@ -96,6 +97,29 @@ def _print_search(search_results: Iterable, show_only_id=False):
 			result_rec = result.title if result.title else result.url
 		formatted_results.append(f'{human_readable_date}, . , {result_rec}')
 		pprint(formatted_results)
+
+
+def parse_and_or_not(query):
+	query = query.lower()
+	query = helpers.query_sanitizer(query,allowed_chars=' ')
+
+	words = query.split()
+	words_dict = {idx: word for idx, word in enumerate(words)}
+	words_succeeding_term = dict.fromkeys(['or', 'not', 'and'])
+
+	not_words_indices = [idx+1 for idx, word_ in words_dict.items() if word_ == 'not']
+	words_succeeding_term['not'] = [words_dict.pop(idx) for idx in not_words_indices]
+	[words_dict.pop(idx-1) for idx in not_words_indices]
+
+	or_words_indices = [idx + 1 for idx, word_ in enumerate(words) if word_ == 'or']
+	words_succeeding_term['or'] = [words_dict.pop(idx) for idx in or_words_indices]
+	[words_dict.pop(idx - 1) for idx in or_words_indices]
+
+	and_indices = [idx for idx, word_ in enumerate(words) if word_ == 'and']
+	[words_dict.pop(idx) for idx in and_indices]
+	words_succeeding_term['and'] = list(words_dict.values())
+
+	return words_succeeding_term
 
 
 def search(db_path: PathInfo,

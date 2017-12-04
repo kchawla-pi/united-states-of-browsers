@@ -30,12 +30,8 @@ def establish_benchmark(profile_dbs):
 		except sqlite3.OperationalError:
 			pass
 		else:
-			
-			# row_dict['id'] = next(incr)
 			profile_records_dict.update({profile_name: [dict(row) for row in cur]})
-			for record in profile_records_dict[profile_name]:
-				record['id'] = next(incr)
-			
+
 		finally:
 			conn.close()
 	merged_as_dict = odict({
@@ -57,6 +53,8 @@ print(len(benchmark_merged_dict))
 @pytest.mark.parametrize(('usb_merged_elem', 'benchmark_merged_elem'), [(merged_using_usb[url_hash], benchmark_merged_dict[url_hash]) for url_hash in merged_using_usb])
 def test_merge(usb_merged_elem, benchmark_merged_elem):
 		if 'place:' not in usb_merged_elem['url']:
+			benchmark_merged_elem.pop('id')
+			usb_merged_elem.pop('id')
 			for field in usb_merged_elem:
 				bench_info = benchmark_merged_elem.get(field, None)
 				actual_info = usb_merged_elem.get(field, None)

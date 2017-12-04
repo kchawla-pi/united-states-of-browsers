@@ -15,8 +15,8 @@ SearchRecord = []
 
 def setup_paths():
 	root = Path(__file__).parents[2]
-	src_db_path = Path.joinpath(root, 'united_states_of_browsers', 'db_merge', 'all_merged.sqlite')
-	sink_db_path = Path.joinpath(root, 'tests', 'data', 'db_for_testing_search.sqlite')
+	src_db_path = root.joinpath('united_states_of_browsers', 'appdata', 'all_merged.sqlite')
+	sink_db_path = root.joinpath('tests', 'data', 'db_for_testing_search.sqlite')
 	url_log_path = Path.joinpath(sink_db_path.parent,
 	                             f'{sink_db_path.stem}_written_url_hashes.json')
 	return src_db_path, sink_db_path, url_log_path
@@ -46,6 +46,7 @@ def get_fieldnames():
 	                           "last_visit_date",
 	                           "url_hash",
 	                           "description",
+	                           "guid",
 	                           ]
 	global DBRecord, SearchRecord
 	DBRecord = namedtuple('DBRecord', firefox_fieldnames)
@@ -78,14 +79,18 @@ def make_test_db(sink_db_path, firefox_fieldnames, chosen_records):
 	return written_url_hashes
 	
 	
-def make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder):
+def make_search_table(sink_db_path, search_table_fieldnames, search_records_yielder=None):
 	fx_incl_fieldnames_str = ', '.join(search_table_fieldnames)
+	query_bindings_placeholder = '?, ' * len(search_table_fieldnames)
 	with sqlite3.connect(str(sink_db_path)) as sink_conn:
 		try:
 			sink_conn.execute(f'''CREATE VIRTUAL TABLE search_table USING fts5({fx_incl_fieldnames_str});''')
 		except sqlite3.OperationalError as excep:
 			print(excep)
-		search_insert_query = f'''INSERT INTO search_table ({fx_incl_fieldnames_str}) VALUES (?, ?, ?, ?, ?, ?, ?)'''
+		if not search_records_yielder:
+			search_records_yielder = sink_conn.execute(f"SELECT {fx_incl_fieldnames_str} FROM moz_places")
+			search_records_yielder.row_factory = sqlite3.Row
+		search_insert_query = f'''INSERT INTO search_table ({fx_incl_fieldnames_str}) VALUES ({query_bindings_placeholder[:-2]})'''
 		sink_conn.executemany(search_insert_query, tuple(search_records_yielder))
 
 
@@ -125,8 +130,27 @@ def retrieve_record_using_id(primary_key):
 		return query_result.fetchall()[:]
 
 
+def recreate_search_table():
+	_, search_table_fieldnames = get_fieldnames()
+	# with sqlite3.connect('db_for_testing_search.sqlite') as conn:
+	# 	all_records = conn.execute("SELECT * FROM moz_places")
+	# 	conn.row_factory = sqlite3.Row
+	make_search_table('db_for_testing_search.sqlite', search_table_fieldnames)
+
+
+def log_guids_file():
+	with sqlite3.connect('db_for_testing_search.sqlite') as conn:
+		query = conn.execute("SELECT guid FROM moz_places")
+		all_guids = query.fetchall()
+	guids = [guid_[0] for guid_ in all_guids]
+	with open('test_db_guids.txt', 'w') as write_guids:
+		write_guids.write(', '.join(guids))
+
+
 if __name__ == '__main__':
 	# create_test_db(100)
-	selected_primary_keys = [7787]
-	for primary_key in selected_primary_keys:
-		print(retrieve_record_using_id(primary_key), end='\n')
+	recreate_search_table()
+
+# selected_primary_keys = [7787]
+	# for primary_key in selected_primary_keys:
+	# 	print(retrieve_record_using_id(primary_key), end='\n')

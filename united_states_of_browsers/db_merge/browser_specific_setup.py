@@ -22,7 +22,7 @@ def firefox(profiles: Optional[Union[Text, Sequence[Text]]]=None) -> Tuple[List[
 	                       'url_hash', 'description', 'preview_image_url',
 	                       ]
 	fx_search_fieldnames = ['id', 'url', 'title', 'visit_count', 'last_visit_date', 'url_hash',
-	                        'description',
+	                        'description', 'guid',
 	                        ]
 	profile_paths = paths_setup.setup_profile_paths(browser_ref='firefox', profiles=profiles)
 	file_paths = paths_setup.db_filepath(profile_paths=profile_paths, filenames='places', ext='sqlite')
