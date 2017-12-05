@@ -35,7 +35,8 @@ def merge_records(output_db: Union[Text, None],
 	app_inf = db_ops.make_database_filepaths(output_db=output_db, profiles=profiles)
 	
 	source_records_yielder = db_ops.yield_source_records(source_db_paths=app_inf['source'],
-	                                              source_fieldnames=app_inf['source_fieldnames'])
+	                                                     source_fieldnames=app_inf['source_fieldnames']
+	                                                     )
 	if app_inf['sink']:  # if a sink db path is present then write to that db, e if not return the info.
 		db_ops.write_new_database(sink_db_path=app_inf['sink'],
 		                   table=table,

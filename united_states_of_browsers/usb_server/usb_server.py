@@ -59,10 +59,11 @@ def show_entries():
 def search():
 	db = get_db()
 	search_results = db_search.search(db,
-	                                        request.args["query"],
-	                                        request.args["date-from"],
-	                                        request.args["date-to"]
-	                                        )
+	                                  request.args["query"],
+	                                  request.args["date-from"],
+	                                  request.args["date-to"]
+	                                  )
+
 	return render_template('main.html', entries=search_results)
 	# return search_results
 
