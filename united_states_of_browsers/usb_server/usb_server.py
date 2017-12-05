@@ -47,11 +47,9 @@ def connect_db():
 @app.route('/', methods=['GET', 'POST'])
 def show_entries():
 	db = get_db()
-	select_query = '''SELECT url, title,visit_count, last_visit_date, description FROM search_table'''
+	select_query = '''SELECT url, title,visit_count, last_visit_date_readable, description FROM search_table'''
 	cur = db.execute(select_query)
 	entries = cur.fetchmany(1000)
-	# entries = (record for record in cur)
-	# search_results = db_search.flask_search(db_connection=db, word_query=request.form["search"])
 	return render_template('main.html', entries=entries )
 
 

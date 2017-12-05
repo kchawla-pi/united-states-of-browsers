@@ -81,7 +81,7 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 					# Couldn't figure out how to make AUTOINCREMENT PRIMARY KEY work in SQL, hence this serial# generator.
 					source_records_template['id'] = next(incr)
 					try:
-						source_records_template['last_visit_date_readable'] = dt.fromtimestamp(source_records_template['last_visit_date'] // 10**6).strftime('%c')
+						source_records_template['last_visit_date_readable'] = dt.fromtimestamp(source_records_template['last_visit_date'] // 10**6).strftime('%x %X')
 					except TypeError:
 						pass
 					# OrderedDict converted to NamedTuple as tuples easily convert to SQL query bindings.

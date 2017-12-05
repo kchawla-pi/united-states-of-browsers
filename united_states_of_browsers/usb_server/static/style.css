@@ -3,6 +3,7 @@ h1 {
     font-family: Roboto, sans-serif;
     font-size: 12px;
     }
+#app-name {color: inherit;}
 
 #search-box {
     margin-left: 7%;
@@ -29,9 +30,10 @@ td {
     text-overflow: ellipsis;
     white-space: nowrap;
     }
+.right-text { text-align: right;}
 
 .td-crit {
-    max-width: 500px;
+    max-width: 970px;
     overflow: auto;
     text-overflow: ellipsis;
     white-space: normal;
