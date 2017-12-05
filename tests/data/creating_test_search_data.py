@@ -146,10 +146,36 @@ def log_guids_file():
 	with open('test_db_guids.txt', 'w') as write_guids:
 		write_guids.write(', '.join(guids))
 
+def edit_table():
+	from datetime import datetime as dt
+	from collections import OrderedDict as odict
+	moz_places_fields = ('id', 'url', 'title', 'rev_host', 'visit_count', 'hidden', 'typed', 'favicon_id', 'frecency',
+	                     'last_visit_date', 'guid', 'foreign_count', 'url_hash', 'description', 'preview_image_url',
+	                     'last_visit_date_readable'
+	                     )
+	bindings_placeholders = '?, ' * len(moz_places_fields)
+	with sqlite3.connect('db_for_testing_search.sqlite') as source_conn:
+		source_conn.row_factory = sqlite3.Row
+		query_source_result = source_conn.execute('SELECT * FROM moz_places')
+		with sqlite3.connect('db_for_testing_search_new.sqlite') as sink_conn:
+			try:
+				query_sink_result = sink_conn.execute(f"CREATE TABLE moz_places ({', '.join(moz_places_fields)})")
+			except Exception as excep:
+				print(excep)
+			finally:
+				for row in query_source_result :
+					row = odict(row)
+					row.setdefault('last_visit_date_readable', None)
+					try:
+						row['last_visit_date_readable'] = dt.fromtimestamp(row['last_visit_date'] // 10**6).strftime('%x %X')
+					except TypeError:
+						pass
+					sink_conn.execute(f'INSERT INTO moz_places VALUES ({bindings_placeholders[:-2]})', row)
 
 if __name__ == '__main__':
 	# create_test_db(100)
-	recreate_search_table()
+	edit_table()
+	# recreate_search_table()
 
 # selected_primary_keys = [7787]
 	# for primary_key in selected_primary_keys:
