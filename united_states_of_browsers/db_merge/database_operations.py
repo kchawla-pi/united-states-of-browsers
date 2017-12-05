@@ -9,6 +9,7 @@ Avaliable functions:
 """
 import sqlite3
 from collections import namedtuple, OrderedDict as odict
+from datetime import datetime as dt
 
 from united_states_of_browsers.db_merge import (browser_specific_setup,
                                                 helpers,
@@ -40,7 +41,7 @@ def make_database_filepaths(output_db: Union[None, Text],
 	source_db_paths, source_fieldnames, source_search_fields = browser_specific_setup.firefox(profiles=profiles)
 	appdata_path, sink_db_path, url_hash_log_file = paths_setup.setup_output_db_paths(output_db)
 	file_paths = {'source': source_db_paths,
-	              'source_fieldnames': source_fieldnames,
+	              'source_fieldnames': [*source_fieldnames, 'last_visit_date_readable'],
 	              'search_fieldnames': source_search_fields,
 	              'sink': sink_db_path,
 	              'hash': url_hash_log_file,
@@ -79,6 +80,10 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 									for key in source_records_template)
 					# Couldn't figure out how to make AUTOINCREMENT PRIMARY KEY work in SQL, hence this serial# generator.
 					source_records_template['id'] = next(incr)
+					try:
+						source_records_template['last_visit_date_readable'] = dt.fromtimestamp(source_records_template['last_visit_date'] // 10**6).strftime('%c')
+					except TypeError:
+						pass
 					# OrderedDict converted to NamedTuple as tuples easily convert to SQL query bindings.
 					yield DBRecord(*source_records_template.values())
 			except sqlite3.OperationalError:
@@ -111,7 +116,7 @@ def write_new_database(sink_db_path: PathInfo,
 		try:
 			sink_conn.executemany(sink_queries['insert'], source_records)
 		except Exception as excep:
-			table_exists_text = f'table {table}already exists'
+			table_exists_text = f'table {table} already exists'
 			''' Workaround for more granular exception handling. 
 			Addresses SQLite3's broad exceptions, in-lieu of custom exception classes.
 			'''
