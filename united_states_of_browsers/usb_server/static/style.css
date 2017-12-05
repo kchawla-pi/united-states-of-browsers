@@ -16,15 +16,15 @@ h1 {
     }
 
 .table {
-    max-height: 490px;
-    max-width: 93.5%;
+    max-height: 540px;
+    max-width: 96%;
     overflow-x: hidden;
     display: block;
-    margin-left: 7%;
+    margin-left: 4%;
     }
 
 td {
-    max-width: 400px;
+    max-width: 420px;
     overflow: auto;
     text-overflow: ellipsis;
     white-space: nowrap;
