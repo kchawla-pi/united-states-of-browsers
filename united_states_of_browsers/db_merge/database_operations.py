@@ -46,6 +46,7 @@ def make_database_filepaths(output_db: Union[None, Text],
 	              'sink': sink_db_path,
 	              'hash': url_hash_log_file,
 	              'appdata_path': str(appdata_path),
+	              'utc_offset': (dt.timestamp(dt.now()) - dt.timestamp(dt.utcnow()))/3600,
 	              }
 	return file_paths  # collected in a dict, to be written to a JSON file.
 

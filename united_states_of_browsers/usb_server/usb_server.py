@@ -47,7 +47,7 @@ def connect_db():
 @app.route('/', methods=['GET', 'POST'])
 def show_entries():
 	db = get_db()
-	select_query = '''SELECT url, title,visit_count, last_visit_date_readable, description FROM search_table'''
+	select_query = '''SELECT url, title,visit_count, last_visit_date_readable FROM search_table'''
 	cur = db.execute(select_query)
 	entries = cur.fetchmany(1000)
 	return render_template('main.html', entries=entries )
