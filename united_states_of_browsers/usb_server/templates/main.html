@@ -17,7 +17,7 @@
 <body>
 <div class="container-fluid">
 
-    <h1 class="text-right"> United States of Browsers </h1>
+    <h1 class="text-right"> <a id="app-name" href="/">United States of Browsers </a> </h1>
     <form action="{{ url_for('search') }}" method="GET">
         <input id="search-box" type="text" name="query" placeholder="Enter search query here">
         <button class="btn btn-primary" type="submit">Search Firefox History</button>
@@ -36,20 +36,20 @@
         <caption>Firefox broswer history across all profiles.</caption>
         <thead>
         <tr>
-            <th scope="col"> Page Title</th>
-            <th scope="col"> Address</th>
+            <!--<th scope="col"> Address</th>-->
             <th scope="col"> Last Visit</th>
-            <th scope="col"> Visits</th>
+            <th scope="col" class="right-text"> Visits</th>
+            <th scope="col"> Page Title</th>
             <!--<th scope="col"> Description </th>-->
         </tr>
         </thead>
         <tbody>
         {% for entry in entries %}
         <tr>
-            <td class="td-crit">{{ entry['title'] }}</td>
-            <td>{{ entry['url'] }}</td>
+            <!--<td>{{ entry['url'] }}</td>-->
             <td>{{ entry['last_visit_date_readable'] }}</td>
-            <td>{{ entry['visit_count'] }}</td>
+            <td class="right-text">{{ entry['visit_count'] }}</td>
+            <td class="td-crit"> <a href="{{ entry['url'] }}">{{ entry['title'] }}</a> </td>
             <!--<td>{{ entry['description'] }}</td>-->
         </tr>
         {% endfor %}

@@ -8,7 +8,6 @@ Avaliable functions:
  - write_new_write_new_database: Creates or/and populates a database.
 """
 import sqlite3
-
 from collections import namedtuple, OrderedDict as odict
 from datetime import datetime as dt
 
@@ -47,6 +46,7 @@ def make_database_filepaths(output_db: Union[None, Text],
 	              'sink': sink_db_path,
 	              'hash': url_hash_log_file,
 	              'appdata_path': str(appdata_path),
+	              'utc_offset': (dt.timestamp(dt.now()) - dt.timestamp(dt.utcnow()))/3600,
 	              }
 	return file_paths  # collected in a dict, to be written to a JSON file.
 
@@ -73,20 +73,17 @@ def yield_source_records(source_db_paths: Dict[Text, PathInfo],
 			source_conn.row_factory = sqlite3.Row
 			try:
 				for db_record_yielder in source_conn.execute("""SELECT * FROM moz_places WHERE title IS NOT NULL"""):
-					''' Creates an OrderedDict from a collection of tuples of the format (fieldname, fieldvalue) as 
-					required by OrderedDict(key, value).
-					If the fieldname is absent, inserts it as a new key with default key None.
-					This prevents field mismatches among profiles, ex: favicon_url in Firefox exists in some profiles not in others.
+					''' Prevents adding additional keys, only updates keys/fields specified in source_fieldnames.
+					Prevents field mismatches among profiles, ex: favicon_url in Firefox exists in some profiles not in others.
 					'''
-					source_records_template = odict(  #
-								(fieldname_as_key, dict(db_record_yielder).setdefault(fieldname_as_key, None))
-									for fieldname_as_key in source_records_template)
+					source_records_template = odict(
+								(key, dict(db_record_yielder).setdefault(key, None))
+									for key in source_records_template)
 					# Couldn't figure out how to make AUTOINCREMENT PRIMARY KEY work in SQL, hence this serial# generator.
 					source_records_template['id'] = next(incr)
 					try:
-						source_records_template['last_visit_date_readable'] = dt.fromtimestamp(source_records_template['last_visit_date'] // 10**6).strftime('%c')
-					except TypeError as excep:
-						source_records_template['last_visit_date_readable'] = None
+						source_records_template['last_visit_date_readable'] = dt.fromtimestamp(source_records_template['last_visit_date'] // 10**6).strftime('%x %X')
+					except TypeError:
 						pass
 					# OrderedDict converted to NamedTuple as tuples easily convert to SQL query bindings.
 					yield DBRecord(*source_records_template.values())
@@ -120,7 +117,7 @@ def write_new_database(sink_db_path: PathInfo,
 		try:
 			sink_conn.executemany(sink_queries['insert'], source_records)
 		except Exception as excep:
-			table_exists_text = f'table {table}already exists'
+			table_exists_text = f'table {table} already exists'
 			''' Workaround for more granular exception handling. 
 			Addresses SQLite3's broad exceptions, in-lieu of custom exception classes.
 			'''

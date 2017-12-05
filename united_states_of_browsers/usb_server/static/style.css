@@ -3,6 +3,7 @@ h1 {
     font-family: Roboto, sans-serif;
     font-size: 12px;
     }
+#app-name {color: inherit;}
 
 #search-box {
     margin-left: 7%;
@@ -16,22 +17,24 @@ h1 {
     }
 
 .table {
-    max-height: 490px;
-    max-width: 93.5%;
+    max-height: 540px;
+    max-width: 96%;
     overflow-x: hidden;
     display: block;
-    margin-left: 7%;
+    margin-left: 4%;
     }
 
 td {
-    max-width: 400px;
+    max-width: 420px;
     overflow: auto;
     text-overflow: ellipsis;
     white-space: nowrap;
     }
+.right-text { text-align: right;}
 
 .td-crit {
-    max-width: 500px;
+    max-width: 970px;
+    min-width: 969px;
     overflow: auto;
     text-overflow: ellipsis;
     white-space: normal;
