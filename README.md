@@ -18,7 +18,7 @@ Following functionality has been implemented as of Dec 2, 2017:
 
 ##### To Check it out: (Currently, instructions for command line only)
 
-0. Install the required software if it is not already installed.
+0. Install the required software if it is not already installed.  
      - Install python 3.6 for windows x64 from https://www.python.org/downloads/release/python-363/.
      During setup, choose to add python to the PATH variable, if it is not already chosen by default.
      - Install git from https://git-scm.com/downloads.
