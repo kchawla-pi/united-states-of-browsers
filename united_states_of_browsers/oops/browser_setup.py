@@ -5,6 +5,7 @@ Object Oriented version of browser_setup.py . Ease of handling for multiple brow
 import sys
 
 from pathlib import Path
+from pprint import pprint
 
 
 class Browser:
@@ -20,7 +21,8 @@ class Browser:
 	def setup_paths(self):
 		profile_root = Path(*self.pathcrumbs).expanduser()
 		profile_paths = {profile.name.split(sep='.', maxsplit=1)[1]: profile for profile in profile_root.iterdir()}
-		# db_paths = for file in self.files
+		db_paths = {(profile, file): path.joinpath(file) for profile, path in profile_paths.items() for file in self.files}
+		return db_paths
 
 	def get_table_info(self):
 		pass
