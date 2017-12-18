@@ -1,0 +1,34 @@
+browser names
+browser profile root pathcrumbs
+Class:
+ - Browser
+  . browser name
+  . browser profiles root
+  . browser profiles names
+  . browser profiles paths
+
+  . pathcrumbs -> profile root path ()
+  . profile root path -> iterdir () -> profile names, profile paths
+  . -> pass on to Profile obj ()
+
+ - Profile
+  . profile name
+  . profile path
+  . profile file paths
+
+  . profile paths + file list -> file paths ()
+  . -> pass on to File obj
+
+
+ - File
+  . file name
+  . file path
+  . file tables names
+  . file tables info
+ - Table
+  . table name
+  . table fields names
+  . table fields data
+ - Data
+  . data fields names
+  . data fields values
