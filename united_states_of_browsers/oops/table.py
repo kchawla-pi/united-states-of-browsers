@@ -71,10 +71,10 @@ def test_firefox():
 	               file='places.sqlite',
 	               profile='test_profile0',
 	               )
-	table4.get_records()
-	for record_yielder in table4.records_yielder:
-		pass
-		print(dict(record_yielder))
+	# table4.get_records()
+	# for record_yielder in table4.records_yielder:
+	# 	pass
+	# 	print(dict(record_yielder))
 
 	table5 = Table(table='moz_places',
 	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
@@ -85,7 +85,7 @@ def test_firefox():
 	table5.get_records()
 	for record_yielder in table5.records_yielder:
 		pass
-		print(dict(record_yielder))
+		print(dict(record_yielder)['url'])
 
 def test_chrome():
 	table2 = Table(table='urls',
