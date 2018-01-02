@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+
 import sqlite3
 
 
@@ -13,40 +14,70 @@ class Table(dict):
 		self.records_yielder = None
 		self._connection = None
 
-	def connect(self):
+	def _connect(self):
 		""" Connects to the database file using self.path.
 		"""
 		connection_arg = f'file:{self.path}?mode=ro'
 		try:
-			with sqlite3.connect(connection_arg) as self._connection:
+			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
 			if 'database is locked' in str(excep).lower():
-				print('database is locked')
+				print('database is locked', '\n', str(self.path))
+			else:
+				print('\n', str(self.path))
+				raise excep
 
-	def make_records_yielder(self):
+	def _make_records_yielder(self):
 		cursor = self._connection.cursor()
 		query = f'SELECT * FROM {self.table}'
 		self.records_yielder = cursor.execute(query)
 
+	def get_records(self):
+		self._connect()
+		self._make_records_yielder()
+
 
 def test_table():
 	table = Table('1', '2', '3', '4', '5')
-	attrs = ('table', 'path', 'browser', 'file', 'profile')
-	table2 = Table(table = 'moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing',
+
+
+def test_firefox():
+	table2 = Table(table='moz_places',
+	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
 	               browser='firefox',
 	               file='places.sqlite',
 	               profile='RegularSurfing',
 	               )
-	print([table[attr_] for attr_ in attrs])
-	print(table2)
-	print('__str__:', repr(table2))
-	print('__repr__:', table2.table)
+	table2.get_records()
+	for record_yielder in table2.records_yielder:
+		print(dict(record_yielder))
+
+
+def test_chrome():
+	table2 = Table(table='urls',
+	               path='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history',
+	               browser='chrome',
+	               file='history',
+	               profile='Default',
+	               )
+	table2.get_records()
+	for record_yielder in table2.records_yielder:
+		print(dict(record_yielder))
+
+
+def print_table_attr(obj):
+	attrs = ('table', 'path', 'browser', 'file', 'profile')
+	print([obj[attr_] for attr_ in attrs])
+	print(obj)
+	print('__str__:', repr(obj))
+	print('__repr__:', obj.table)
 
 
 def test():
 	test_table()
+	# test_firefox()
+	test_chrome()
 
 
 if __name__ == '__main__':
