@@ -51,8 +51,41 @@ def test_firefox():
 	               )
 	table2.get_records()
 	for record_yielder in table2.records_yielder:
+		pass
+		# print(dict(record_yielder))
+
+	table3 = Table(table='moz_places',
+	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
+	               browser='firefox',
+	               file='places.sqlite',
+	               profile='test_profile0',
+	               )
+	table3.get_records()
+	for record_yielder in table3.records_yielder:
+		pass
+		# print(dict(record_yielder))
+
+	table4 = Table(table='moz_places',
+	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+	               browser='firefox',
+	               file='places.sqlite',
+	               profile='test_profile0',
+	               )
+	table4.get_records()
+	for record_yielder in table4.records_yielder:
+		pass
 		print(dict(record_yielder))
 
+	table5 = Table(table='moz_places',
+	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
+	               browser='firefox',
+	               file='places.sqlite',
+	               profile='test_profile0',
+	               )
+	table5.get_records()
+	for record_yielder in table5.records_yielder:
+		pass
+		print(dict(record_yielder))
 
 def test_chrome():
 	table2 = Table(table='urls',
@@ -76,8 +109,8 @@ def print_table_attr(obj):
 
 def test():
 	test_table()
-	# test_firefox()
-	test_chrome()
+	test_firefox()
+	# test_chrome()
 
 
 if __name__ == '__main__':
