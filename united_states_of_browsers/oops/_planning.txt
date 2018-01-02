@@ -1,3 +1,8 @@
+---------- Update: 20180102 ----------
+The fundamental class structure that has emerged is a table class, with indeendent connections.
+A Browser class to orchestrate the steps.
+
+---------- initial ideas ----------
 browser names
 browser profile root pathcrumbs
 Class:
