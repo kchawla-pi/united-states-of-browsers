@@ -8,6 +8,7 @@ from pathlib import Path
 from pprint import pprint
 
 from united_states_of_browsers.oops.recon_browsers import print_objects
+from united_states_of_browsers.oops import exceptions_handling
 
 class BrowserPaths(dict):
 	"""	Creates objects to create paths to browser profile and database files.
@@ -50,8 +51,11 @@ class BrowserPaths(dict):
 
 	def make_paths(self):
 		make_path_chooser = {'firefox': self._make_firefox_profile_paths, 'chrome': self._make_chrome_profile_paths}
-		make_path_chooser[self.browser]()
-		# self._make_file_paths()
+		try:
+			make_path_chooser[self.browser]()
+		except FileNotFoundError as excep:
+			invalid_path = exceptions_handling.invalid_path_in_tree(excep.filename)
+			print(f'In {excep.filename},\npath {invalid_path} does not exist.\n Moving on...')
 
 	def __repr__(self):
 		if self.profiles:

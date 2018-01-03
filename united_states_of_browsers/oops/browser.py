@@ -18,7 +18,6 @@ class Browser:
 		self.files = None
 		self.profiles = profiles
 		self.paths = None
-		self.table_yielders = []
 		self.tables = []
 
 	def make_paths(self):
@@ -40,12 +39,13 @@ class Browser:
 				elif 'no such table' in str(excep) and table.check_if_db_empty():
 					error_msg.add(f'Table {table.table} in database file {table.file} for profile {table.profile}.\n'
 					              f'Verify the table and filename.\nMoving on...')
+				else:
+					raise
 			else:
 				self.tables.append(table)
 		if error_msg:
 			for msg in error_msg:
 				print(msg)
-
 
 	def get_table_yielders(self, tables):
 		try:
@@ -68,15 +68,17 @@ def test_browser():
 	# pprint(firefox_all.paths)
 	firefox_all.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
 
+	firefox_glitch = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox_glitch\\Profiles')
+	firefox_glitch.make_paths()
 
-	quit()
+	# quit()
 	profiles_list = ['test_profile0', 'test_profile1']
-	firefox_some = BrowserPaths(browser='firefox', files=files,
+	firefox_some = BrowserPaths(browser='firefox',
 	                            profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
 	                            profiles=profiles_list)
 	firefox_some.make_paths()
 
-	chrome = BrowserPaths(browser='chrome', files=['history'],
+	chrome = BrowserPaths(browser='chrome',
 	                      profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
 
 	objects_list = [firefox_all, firefox_some]
