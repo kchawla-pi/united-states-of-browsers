@@ -12,18 +12,40 @@ from united_states_of_browsers.oops import recon_browsers as rb
 TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
 
 class Browser:
-	def __init__(self, browser, profile_root, files, profiles=None):
+	def __init__(self, browser, profile_root, profiles=None):
 		self.browser = browser
 		self.profile_root = profile_root
-		self.files = files
+		self.files = None
 		self.profiles = profiles
 		self.paths = None
 		self.table_yielders = []
 		self.tables = []
 
 	def make_paths(self):
-		pathmaker = BrowserPaths(self.browser, self.profile_root, self.files)
-		self.paths = pathmaker.filepaths
+		pathmaker = BrowserPaths(self.browser, self.profile_root)
+		self.paths = pathmaker.profilepaths
+
+	def make_table(self, file, tables):
+		error_msg = set()
+		current_batch = [Table(table, path.joinpath(file), self.browser, file, profile)
+		                 for profile, path in self.paths.items()
+		                 for table in tables
+		                 ]
+		for table in current_batch:
+			try:
+				table.get_records()
+			except sqlite3.OperationalError as excep:
+				if 'no such table' in str(excep) and table.check_if_db_empty():
+					error_msg.add(f'Profile "{table.profile}" may not have any data.\nMoving on...')
+				elif 'no such table' in str(excep) and table.check_if_db_empty():
+					error_msg.add(f'Table {table.table} in database file {table.file} for profile {table.profile}.\n'
+					              f'Verify the table and filename.\nMoving on...')
+			else:
+				self.tables.append(table)
+		if error_msg:
+			for msg in error_msg:
+				print(msg)
+
 
 	def get_table_yielders(self, tables):
 		try:
@@ -41,17 +63,13 @@ class Browser:
 
 
 def test_browser():
-	files = ['places.sqlite', 'permissions.sqlite']
-	firefox_all = Browser(browser='firefox', files=files,
-	                           profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
+	firefox_all = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
 	firefox_all.make_paths()
-	firefox_all.get_table_yielders(['moz_places','moz_bookmarks'])
-	firefox_all.get_table_yielders(['moz_hosts'])
-	pprint(firefox_all.table_yielders)
-	pprint(firefox_all.tables)
 	# pprint(firefox_all.paths)
+	firefox_all.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
 
 
+	quit()
 	profiles_list = ['test_profile0', 'test_profile1']
 	firefox_some = BrowserPaths(browser='firefox', files=files,
 	                            profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',

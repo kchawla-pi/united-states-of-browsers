@@ -14,16 +14,15 @@ class BrowserPaths(dict):
 	Accepts browser name, browser profiles directory path, database files list, browser profiles list (default: all).
 
 	"""
-	def __init__(self, browser, profile_root, files, profiles=None):
+	def __init__(self, browser, profile_root, profiles=None):
 		self.browser = browser
 		self.profile_root = Path(profile_root).expanduser()
 		self.profiles = profiles
-		self.files = files
 		self.profilepaths = None
 		self.filepaths = None
 		self.make_paths()
 		super().__init__(browser=browser, profile_root=self.profile_root, profiles=profiles, profilepaths=self.profilepaths,
-		                 files=files, filepaths=self.filepaths
+		                 filepaths=self.filepaths
 		                 )
 
 	def _make_firefox_profile_paths(self):
@@ -43,19 +42,22 @@ class BrowserPaths(dict):
 			self.profilepaths = {entry.name: entry for entry in self.profile_root.iterdir()
 			                     if entry.name.startswith('Profile') or entry.name == 'Default'}
 
-	def _make_file_paths(self):
-		self.filepaths = {(profile, file_name): profile_path.joinpath(file_name)
-		                  for profile, profile_path in self.profilepaths.items()
-		                  for file_name in self.files
-		                  }
+	# def _make_file_paths(self):
+	# 	self.filepaths = {(profile, file_name): profile_path.joinpath(file_name)
+	# 	                  for profile, profile_path in self.profilepaths.items()
+	# 	                  for file_name in self.files
+	# 	                  }
 
 	def make_paths(self):
 		make_path_chooser = {'firefox': self._make_firefox_profile_paths, 'chrome': self._make_chrome_profile_paths}
 		make_path_chooser[self.browser]()
-		self._make_file_paths()
+		# self._make_file_paths()
 
 	def __repr__(self):
-		return f'BrowserPaths({self.browser}, {self.files}, {self.profile_root}, {self.profiles})'
+		if self.profiles:
+			return f'BrowserPaths({self.browser}, {self.profile_root}, {self.profiles})'
+		else:
+			return f'BrowserPaths({self.browser}, {self.profile_root})'
 
 
 def browserpaths_test():

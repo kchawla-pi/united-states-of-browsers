@@ -55,6 +55,12 @@ class Table(dict):
 		else:
 			self._make_records_yielder()
 
+	def check_if_db_empty(self):
+		cursor = self._connection.cursor()
+		query = f'SELECT name FROM sqlite_master WHERE type = "table"'
+		query_results = cursor.execute(query).fetchall()
+		return False if query_results else True
+
 
 def test_table():
 	table = Table('1', '2', '3', '4', '5')
