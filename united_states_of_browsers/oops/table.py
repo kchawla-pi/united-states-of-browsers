@@ -2,6 +2,10 @@
 
 import sqlite3
 
+from pathlib import Path
+
+from united_states_of_browsers.oops.exceptions_handling import invalid_path_in_tree
+
 
 class Table(dict):
 	def __init__(self, table, path, browser, file, profile):
@@ -15,7 +19,8 @@ class Table(dict):
 		self._connection = None
 
 	def _connect(self):
-		""" Connects to the database file using self.path.
+		""" Creates TableObject.connection to the database file specified in TableObject.path.
+		Returns Exception on error.
 		"""
 		connection_arg = f'file:{self.path}?mode=ro'
 		try:
@@ -24,18 +29,31 @@ class Table(dict):
 		except sqlite3.OperationalError as excep:
 			if 'database is locked' in str(excep).lower():
 				print('database is locked', '\n', str(self.path))
-			else:
-				print('\n', str(self.path))
 				raise excep
+			elif 'unable to open database file' in str(excep).lower():
+				invalid_path = invalid_path_in_tree(self.path)
+				if invalid_path:
+					return OSError(f'Path does not exist: {invalid_path}')
+				elif not self.path.is_file():
+					return OSError(f'{self.path.name} is not a file')
+				else:
+					raise excep
 
 	def _make_records_yielder(self):
+		""" Yields a generator of all fields in TableObj.table
+		"""
 		cursor = self._connection.cursor()
 		query = f'SELECT * FROM {self.table}'
 		self.records_yielder = cursor.execute(query)
 
 	def get_records(self):
-		self._connect()
-		self._make_records_yielder()
+		""" Yields a generator to all fields in TableObj.table.
+		"""
+		exception_raised = self._connect()
+		if exception_raised:
+			print(f'{exception_raised}.\n Moving on ...')
+		else:
+			self._make_records_yielder()
 
 
 def test_table():
@@ -44,14 +62,14 @@ def test_table():
 
 def test_firefox():
 	table2 = Table(table='moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',
+	               path=Path('C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing_glitch\\places.sqlite'),
 	               browser='firefox',
 	               file='places.sqlite',
 	               profile='RegularSurfing',
 	               )
 	table2.get_records()
-	for record_yielder in table2.records_yielder:
-		pass
+	# for record_yielder in table2.records_yielder:
+	# 	pass
 		# print(dict(record_yielder))
 
 	table3 = Table(table='moz_places',
@@ -85,7 +103,7 @@ def test_firefox():
 	table5.get_records()
 	for record_yielder in table5.records_yielder:
 		pass
-		print(dict(record_yielder)['url'])
+		# print(dict(record_yielder)['url'])
 
 def test_chrome():
 	table2 = Table(table='urls',
