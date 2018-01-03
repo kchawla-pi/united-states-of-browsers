@@ -7,13 +7,14 @@ Classes: BrowserPaths
 from pathlib import Path
 from pprint import pprint
 
+from united_states_of_browsers.oops.recon_browsers import print_objects
 
 class BrowserPaths(dict):
 	"""	Creates objects to create paths to browser profile and database files.
 	Accepts browser name, browser profiles directory path, database files list, browser profiles list (default: all).
 
 	"""
-	def __init__(self, browser, files, profile_root, profiles=None):
+	def __init__(self, browser, profile_root, files, profiles=None):
 		self.browser = browser
 		self.profile_root = Path(profile_root).expanduser()
 		self.profiles = profiles
@@ -55,13 +56,6 @@ class BrowserPaths(dict):
 
 	def __repr__(self):
 		return f'BrowserPaths({self.browser}, {self.files}, {self.profile_root}, {self.profiles})'
-
-
-def print_objects(objects_list):
-	for obj in objects_list:
-		print('repr:', repr(obj))
-		pprint(obj)
-		print('-' * 25)
 
 
 def browserpaths_test():
