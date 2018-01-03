@@ -21,7 +21,7 @@ class Browser:
 		self.tables = []
 
 	def make_paths(self):
-		pathmaker = BrowserPaths(self.browser, self.profile_root)
+		pathmaker = BrowserPaths(self.browser, self.profile_root, self.profiles)
 		self.paths = pathmaker.profilepaths
 
 	def make_table(self, file, tables):
@@ -63,25 +63,36 @@ class Browser:
 
 
 def test_browser():
-	firefox_all = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
-	firefox_all.make_paths()
-	# pprint(firefox_all.paths)
-	firefox_all.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
+	def fx_all():
+		firefox_all = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
+		firefox_all.make_paths()
+		# pprint(firefox_all.paths)
+		firefox_all.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
 
-	firefox_glitch = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox_glitch\\Profiles')
-	firefox_glitch.make_paths()
+	def fx_glitched():
+		firefox_glitch = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox_glitch\\Profiles')
+		firefox_glitch.make_paths()
 
 	# quit()
-	profiles_list = ['test_profile0', 'test_profile1']
-	firefox_some = BrowserPaths(browser='firefox',
-	                            profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-	                            profiles=profiles_list)
-	firefox_some.make_paths()
+	def fx_some():
+		profiles_list = ['test_profile0', 'test_profile1']
+		firefox_some = Browser(browser='firefox',
+		                            profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
+		                            profiles=profiles_list)
+		firefox_some.make_paths()
+		pprint(firefox_some.paths)
+		firefox_some.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
+		for table in firefox_some.tables:
+			print(table.table)
+			pprint([dict(record) for record in table.records_yielder])
+			print(table.table)
 
-	chrome = BrowserPaths(browser='chrome',
-	                      profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
+	def chr():
+		chrome = BrowserPaths(browser='chrome',
+		                      profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
 
-	objects_list = [firefox_all, firefox_some]
+	fx_some()
+	# objects_list = [firefox_all, firefox_some]
 	# rb.print_objects(objects_list)
 	# rb.print_objects([chrome])
 

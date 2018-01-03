@@ -55,7 +55,7 @@ class BrowserPaths(dict):
 			make_path_chooser[self.browser]()
 		except FileNotFoundError as excep:
 			invalid_path = exceptions_handling.invalid_path_in_tree(excep.filename)
-			print(f'In {excep.filename},\npath {invalid_path} does not exist.\n Moving on...')
+			print(f'In {excep.filename},\npath {invalid_path} does not exist.\nMoving on...')
 
 	def __repr__(self):
 		if self.profiles:
