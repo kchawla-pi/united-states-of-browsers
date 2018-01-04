@@ -89,6 +89,8 @@ class Browser(dict):
 			for msg in error_msg:
 				print(msg)
 
+	def __repr__(self):
+		return f'Browser({self.browser}, {self.profile_root}, {self.profiles}, {self.file_tables})'
 
 def test_browser():
 	def fx_all():
@@ -110,18 +112,18 @@ def test_browser():
 		                            profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
 		                            profiles=profiles_list)
 		firefox_some.make_paths()
-		pprint(firefox_some.paths)
+		# pprint(firefox_some.paths)
 
-		pprint(firefox_some['tables'])
+		# pprint(firefox_some['tables'])
 
 		firefox_some.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
-		pprint(firefox_some['tables'])
+		# pprint(firefox_some['tables'])
 
 		firefox_some.make_table('permissions.sqlite', ['moz_hosts', 'moz_perms'])
-		pprint(firefox_some['tables'])
+		# pprint(firefox_some['tables'])
 
 		record_ids = [dict(record)['id'] for table in firefox_some.tables for record in table.records_yielder]
-		print(record_ids[::10])
+		# print(record_ids[::10])
 		return firefox_some
 		# pprint(firefox_some.tables)
 
@@ -144,10 +146,14 @@ def test_browser():
 		return firefox_auto
 
 	print('\n\tfx_auto()')
-	fx_auto()
+	fx_aut = fx_auto()
+	# pprint(fx_aut)
+	print(repr(fx_aut))
 
 	print('\n\tfx_some()')
-	fx_some()
+	fx_som = fx_some()
+	# pprint(fx_som)
+	print(repr(fx_som))
 
 	# print('\n\tfx_all()')
 	# fx_all()
