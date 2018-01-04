@@ -64,6 +64,9 @@ class Browser(dict):
 		self.paths = pathmaker.profilepaths
 
 	def make_table(self, file, tables):
+		""" Accepts name of file containing the tables and list of table names and creates corresponding Table objects.
+		Accessed via the tables attribute.
+		"""
 		error_msg = set()
 		current_batch = [Table(table, path.joinpath(file), self.browser, file, profile)
 		                 for profile, path in self.paths.items()
