@@ -25,3 +25,6 @@ def print_tables(table_yielders):
 		except (TypeError, AttributeError) as excep:
 			pass
 			# print('No records retrieved.')
+
+if __name__ == '__main__':
+	print(get_tablenames('C:/Users/kshit/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0/permissions.sqlite'))
