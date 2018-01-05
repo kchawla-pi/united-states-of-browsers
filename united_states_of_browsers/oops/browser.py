@@ -6,7 +6,7 @@ from pprint import pprint
 
 from united_states_of_browsers.oops.browserpaths import BrowserPaths
 from united_states_of_browsers.oops.table import Table
-from united_states_of_browsers.oops import recon_browsers as rb
+from united_states_of_browsers.oops import exceptions_handling as exceph
 
 
 TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
@@ -20,18 +20,17 @@ class Browser(dict):
 		file_tables: dict of database file name containing the tables as keys, list of tables to be accessed as values.
 	Methods-
 		make_paths()
-		make_table(file, tables)
+		access_table(file, tables)
 
 	Usage-
 		Using a single statement when creating a new Browser object.
 			browser_obj = Browser(browser, profile_root, profiles, {database_file1: [table1, table2], database_file2: [table3, table4]})
 		or
-		Adding additional file and tables to existing Browser objects using the make_table() method.
+		Adding additional file and tables to existing Browser objects using the access_table() method.
 
 			browser_obj = Browser(browser, profile_root, profiles)
-
-			browser_obj.make_table(database_file1, [table1, table2])
-			browser_obj.make_table(database_file2, [table3, table4])
+			browser_obj.access_table(database_file1, [table1, table2])
+			browser_obj.access_table(database_file2, [table3, table4])
 
 		Access each table by iterating through browser_obj.tables, get each record by iterating through
 		the records yielder for that table:
@@ -53,7 +52,17 @@ class Browser(dict):
 		self.tables = []
 		self.make_paths()
 		if self.file_tables:
-			[self.make_table(file, tables) for file, tables in file_tables.items()]
+			self.error_msgs = []
+			[self.access_table(file, tables) for file, tables in file_tables.items()]
+			if self.error_msgs:
+				self.error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=self.error_msgs)
+				print()
+				for error_msg_ in self.error_msgs:
+					try:
+						print(f'{error_msg_.strerror}\n{error_msg_.filename}')
+					except AttributeError as at_err:
+						print(error_msg_)
+				print()
 		super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
 		                 file_tables=self.file_tables, tables=self.tables)
 
@@ -63,31 +72,36 @@ class Browser(dict):
 		pathmaker = BrowserPaths(self.browser, self.profile_root, self.profiles)
 		self.paths = pathmaker.profilepaths
 
-	def make_table(self, file, tables):
+	def access_table(self, file, tables):
 		""" Accepts name of file containing the tables and list of table names and creates corresponding Table objects.
 		Accessed via the tables attribute.
 		"""
-		error_msg = set()
+		error_msg = []
 		current_batch = [Table(table, path.joinpath(file), self.browser, file, profile)
 		                 for profile, path in self.paths.items()
 		                 for table in tables
 		                 ]
 		for table in current_batch:
-			try:
-				table.get_records()
-			except sqlite3.OperationalError as excep:
-				if 'no such table' in str(excep) and table.check_if_db_empty():
-					error_msg.add(f'Profile "{table.profile}" may not have any data.\nMoving on...')
-				elif 'no such table' in str(excep) and table.check_if_db_empty():
-					error_msg.add(f'Table {table.table} in database file {table.file} for profile {table.profile}.\n'
-					              f'Verify the table and filename.\nMoving on...')
-				else:
-					raise
+			exception_raised = table.get_records()
+			if exception_raised:
+				error_msg.append(exception_raised)
 			else:
 				self.tables.append(table)
-		if error_msg:
-			for msg in error_msg:
-				print(msg)
+
+		try:
+			self.error_msgs.extend(error_msg)
+		except AttributeError:
+			if error_msg:
+				error_msg = exceph.exceptions_log_deduplicator(error_msg)
+				print()
+				for error_msg_ in error_msg:
+					try:
+						print(f'{error_msg_.strerror}\n{error_msg_.filename}')
+					except AttributeError as at_err:
+						print(error_msg_)
+
+	def merge_tables(self):
+		pass
 
 	def __repr__(self):
 		return f'Browser({self.browser}, {self.profile_root}, {self.profiles}, {self.file_tables})'
@@ -95,9 +109,9 @@ class Browser(dict):
 def test_browser():
 	def fx_all():
 		firefox_all = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
-		firefox_all.make_paths()
+		# firefox_all.make_paths()
 		# pprint(firefox_all.paths)
-		firefox_all.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
+		firefox_all.access_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
 		return firefox_all
 
 	def fx_glitched():
@@ -116,10 +130,10 @@ def test_browser():
 
 		# pprint(firefox_some['tables'])
 
-		firefox_some.make_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
+		firefox_some.access_table('places.sqlite', ['moz_places', 'moz_bookmarks'])
 		# pprint(firefox_some['tables'])
 
-		firefox_some.make_table('permissions.sqlite', ['moz_hosts', 'moz_perms'])
+		firefox_some.access_table('permissions.sqlite', ['moz_hosts', 'moz_perms'])
 		# pprint(firefox_some['tables'])
 
 		record_ids = [dict(record)['id'] for table in firefox_some.tables for record in table.records_yielder]
@@ -129,9 +143,9 @@ def test_browser():
 
 	def chr():
 		chrome = Browser(browser='chrome',
-		                      profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
+			                      profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
 		chrome.make_paths()
-		chrome.make_table('history', ['urls'])
+		chrome.access_table('history', ['urls'])
 		record_ids = [dict(record)['id'] for table in chrome.tables for record in table.records_yielder]
 		print(record_ids[::10])
 		return chrome
