@@ -31,7 +31,7 @@ class BrowserPaths(dict):
 		if self.profiles:
 			self.profilepaths = {get_profile_name(entry): entry for entry in self.profile_root.iterdir()
 			                     for profile in self.profiles
-			                     if str(profile).lower() in str(entry).lower()
+			                     if str(profile).lower() in str(entry).lower() and entry.is_dir()
 			                     }
 		else:
 			self.profilepaths = {get_profile_name(entry): entry for entry in self.profile_root.iterdir()}
