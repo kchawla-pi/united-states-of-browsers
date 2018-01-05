@@ -4,7 +4,9 @@ import sqlite3
 
 from pathlib import Path
 
-from united_states_of_browsers.oops.exceptions_handling import invalid_path_in_tree
+import errno
+
+from united_states_of_browsers.oops import exceptions_handling as exceph
 
 
 class Table(dict):
@@ -23,6 +25,7 @@ class Table(dict):
 		Returns Exception on error.
 		"""
 		connection_arg = f'file:{self.path}?mode=ro'
+		files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
 		try:
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
@@ -31,13 +34,18 @@ class Table(dict):
 				print('database is locked', '\n', str(self.path))
 				raise excep
 			elif 'unable to open database file' in str(excep).lower():
-				invalid_path = invalid_path_in_tree(self.path)
+				invalid_path = exceph.invalid_path_in_tree(self.path)
 				if invalid_path:
 					return OSError(f'Path does not exist: {invalid_path}')
 				elif not self.path.is_file():
-					return OSError(f'{self.path.name} is not a file')
+					return OSError(errno.ENOENT, f'"{self.path.name}" is not a file, or the file does not exist. The profile "{self.profile}" might not contain any data.', str(self.path))#excep, f'{self.path.name} is not a file, or the file does not exist. The profile might not contain any data. ({self.path})')
 				else:
-					raise excep
+					raise
+			else:
+				raise
+		finally:
+			# Cleans up any database files created uring failed connection attempt.
+			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
 
 	def _make_records_yielder(self):
 		""" Yields a generator of all fields in TableObj.table
@@ -51,15 +59,21 @@ class Table(dict):
 		"""
 		exception_raised = self._connect()
 		if exception_raised:
-			print(f'{exception_raised}.\n Moving on ...')
+			return exception_raised
 		else:
-			self._make_records_yielder()
-
+			try:
+				self._make_records_yielder()
+			except sqlite3.OperationalError as excep:
+				if 'no such table' in str(excep):
+					return ValueError(f'Table "{self.table}" does not exist in database file "{self.file}" in {self.browser} profile "{self.profile}". The profile may be empty.')
+				return None
+# f'"{self.path.name}" is not a file, or the file does not exist. The profile "{self.profile}" might not contain any data.', str(self.path))#excep, f'{self.path.name} is not a file, or the file does not exist. The profile might not contain any data. ({self.path})')
 	def check_if_db_empty(self):
 		cursor = self._connection.cursor()
 		query = f'SELECT name FROM sqlite_master WHERE type = "table"'
 		query_results = cursor.execute(query).fetchall()
-		return False if query_results else True
+		all_tables = [tuple(result_)[0] for result_ in query_results]
+		return False if all_tables else True
 
 
 def test_table():
