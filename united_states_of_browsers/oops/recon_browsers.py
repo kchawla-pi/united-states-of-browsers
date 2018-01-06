@@ -41,9 +41,12 @@ def print_tables(table_yielders):
 			pass
 			# print('No records retrieved.')
 
-
-if __name__ == '__main__':
+def recon_firefox():
 	path = 'C:/Users/kshit/AppData/Roaming/Mozilla/Firefox/Profiles/e0pj4lec.test_profile0/'
+	pprint(get_tablenames(path + 'favicons.sqlite'))
+	pprint(get_fieldnames(path + 'favicons.sqlite', 'moz_icons'))
+	quit()
+
 	pprint(get_sqlite_files(path))
 	print()
 	pprint(get_tablenames(path+'permissions.sqlite'))
@@ -55,8 +58,15 @@ if __name__ == '__main__':
 	pprint(get_fieldnames(path + 'favicons.sqlite', 'moz_icons'))
 	print()
 
+
+def recon_chrome():
 	path = 'C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history\\'
 	pprint(get_tablenames(path))
 	pprint(get_fieldnames(path, 'urls'))
 	pprint(get_fieldnames(path, 'meta'))
+
+if __name__ == '__main__':
+	recon_firefox()
+	recon_chrome()
+
 

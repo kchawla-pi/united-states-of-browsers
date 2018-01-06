@@ -100,11 +100,30 @@ class Browser(dict):
 					except AttributeError as at_err:
 						print(error_msg_)
 
+	def access_fields(self, table_fields):
+		additional_fields = ('browser', 'profile', 'file', 'table')
+		current_table_across_profiles = [table for current_tablename in table_fields
+		                                 for table in self.tables
+		                                 if table.table == current_tablename
+		                                 ]
+		for current_table in current_table_across_profiles:
+			fields = table_fields[current_table.table]
+			selected_fields_records = dict.fromkeys(fields, None)
+			selected_fields_records.update({field: current_table[field] for field in additional_fields})
+			for record in current_table.records_yielder:
+				selected_fields_records.update({field_: record[field_] for field_ in fields})
+				yield selected_fields_records
+			current_table.get_records()
+
+
 	def merge_tables(self):
 		pass
 
 	def __repr__(self):
-		return f'Browser({self.browser}, {self.profile_root}, {self.profiles}, {self.file_tables})'
+		return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'
+
+	def __str__(self):
+		return f'Browser: {self.browser}, files: {self.files}, profiles: {self.profiles}'
 
 def test_browser():
 	def fx_all():
@@ -147,8 +166,7 @@ def test_browser():
 		chrome.make_paths()
 		chrome.access_table('history', ['urls'])
 		record_ids = [dict(record)['id'] for table in chrome.tables for record in table.records_yielder]
-		print(record_ids[::10])
-		return chrome
+		return chrome, record_ids[::10]
 
 	def fx_auto():
 		profiles_list = ['test_profile0', 'test_profile1']
@@ -164,10 +182,14 @@ def test_browser():
 	# pprint(fx_aut)
 	print(repr(fx_aut))
 
+
 	print('\n\tfx_some()')
 	fx_som = fx_some()
 	# pprint(fx_som)
 	print(repr(fx_som))
+	# pprint(fx_som)
+	print('***', fx_som)
+	# pprint(fx_som.tables)
 
 	# print('\n\tfx_all()')
 	# fx_all()
@@ -175,8 +197,9 @@ def test_browser():
 	# print('\n\tfx_glitched()')
 	# fx_glitched()
 	#
-	# print('\n\tchr()')
-	# chr()
+	print('\n\tchr()')
+	chrm, ids = chr()
+	print(repr(chrm))
 	# objects_list = [firefox_all, firefox_some]
 	# rb.print_objects(objects_list)
 	# rb.print_objects([chrome])

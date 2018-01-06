@@ -52,7 +52,8 @@ class Table(dict):
 		"""
 		cursor = self._connection.cursor()
 		query = f'SELECT * FROM {self.table}'
-		self.records_yielder = cursor.execute(query)
+		records_yielder = cursor.execute(query)
+		self.records_yielder = (dict(record) for record in records_yielder)
 
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
