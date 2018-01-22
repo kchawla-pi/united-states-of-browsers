@@ -22,11 +22,11 @@ def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
 	return ''.join([char for char in query if char.isalnum() or char in allowed_chars])  #, '?', '(', ')', ','}])
 
 
-def define_not_null_fields(table_obj):
+def define_non_null_fields(table_obj):
 	BrowserFileTableFields = namedtuple('BrowserFileTable', 'browser file table')
-	not_null_fields_info = {
+	non_null_fields_info = {
 		BrowserFileTableFields(browser='firefox', file='places.sqlite', table='moz_places'): ('title', 'last_visit_date'),
 		BrowserFileTableFields(browser='chrome', file='history', table='urls'): ('title', 'last_visit_time'),
 		}
 	query = BrowserFileTableFields(table_obj['browser'], table_obj['file'], table_obj['table'])
-	return not_null_fields_info.get(query, None)
+	return non_null_fields_info.get(query, None)

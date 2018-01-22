@@ -6,11 +6,11 @@ import sqlite3
 from pathlib import Path
 
 from united_states_of_browsers.oops import exceptions_handling as exceph
-from united_states_of_browsers.oops.helpers import define_not_null_fields
+from united_states_of_browsers.oops.helpers import define_non_null_fields
 
 class Table(dict):
 	def __init__(self, table, path, browser, file, profile):
-		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile)
+		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile, non_null_fields=None)
 		self.table = table
 		self.path = Path(path)
 		self.browser = browser
@@ -18,7 +18,8 @@ class Table(dict):
 		self.profile = profile
 		self.records_yielder = None
 		self._connection = None
-
+		self.non_null_fields = define_non_null_fields(self)
+		self.update(non_null_fields=self.non_null_fields)
 
 	def _connect(self):
 		""" Creates TableObject.connection to the database file specified in TableObject.path.
@@ -51,9 +52,10 @@ class Table(dict):
 		""" Yields a generator of all fields in TableObj.table
 		"""
 		cursor = self._connection.cursor()
-		not_null_fields = define_not_null_fields(self)
-		if not_null_fields:
-			not_null_query_string = ' AND '.join([f'{field_} IS NOT NULL' for field_ in not_null_fields])
+		non_null_fields = define_non_null_fields(self)
+		if non_null_fields:
+			self.non_null_fields = non_null_fields
+			not_null_query_string = ' AND '.join([f'{field_} IS NOT NULL' for field_ in self.non_null_fields])
 			query = f'SELECT * FROM {self.table} WHERE {not_null_query_string}'
 		else:
 			query = f'SELECT * FROM {self.table}'
@@ -138,29 +140,29 @@ def test_chrome():
 	               file='history',
 	               profile='Default',
 	               )
-	not_null_fieldnames = define_not_null_fields(table2)
+	not_null_fieldnames = define_non_null_fields(table2)
 
 	table2.get_records()
 	for record_yielder in table2.records_yielder:
 		print(dict(record_yielder))
 
-def test_define_not_null_fields():
+def test_define_non_null_fields():
 	table_fx = Table(table='moz_places',
 	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
 	               browser='firefox',
 	               file='places.sqlite',
 	               profile='test_profile0',
 	               )
-	not_null_fieldnames = define_not_null_fields(table_fx)
-	print(not_null_fieldnames)
+	not_null_fieldnames = define_non_null_fields(table_fx)
+	print(not_null_fieldnames, table_fx['non_null_fields'], table_fx.non_null_fields)
 	table_cr = Table(table='urls',
 	               path='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history',
 	               browser='chrome',
 	               file='history',
 	               profile='Default',
 	               )
-	not_null_fieldnames = define_not_null_fields(table_cr)
-	print(not_null_fieldnames)
+	not_null_fieldnames = define_non_null_fields(table_cr)
+	print(not_null_fieldnames, table_cr['non_null_fields'], table_cr.non_null_fields)
 
 
 def print_table_attr(obj):
@@ -175,7 +177,7 @@ def test():
 	test_table()
 	test_firefox()
 	test_chrome()
-	test_define_not_null_fields()
+	test_define_non_null_fields()
 
 
 if __name__ == '__main__':
