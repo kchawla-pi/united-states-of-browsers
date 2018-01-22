@@ -87,7 +87,11 @@ class Browser(dict):
 				error_msg.append(exception_raised)
 			else:
 				self.tables.append(table)
-
+				try:
+					self.profiles.add(table.profile)
+				except AttributeError:
+					self.profiles = set()
+					self.profiles.add(table.profile)
 		try:
 			self.error_msgs.extend(error_msg)
 		except AttributeError:
@@ -112,12 +116,24 @@ class Browser(dict):
 			selected_fields_records.update({field: current_table[field] for field in additional_fields})
 			for record in current_table.records_yielder:
 				selected_fields_records.update({field_: record[field_] for field_ in fields})
+				# self.selected_fields_records = selected_fields_records
 				yield selected_fields_records
 			current_table.get_records()
 
 
-	def merge_tables(self):
-		pass
+	def combine_tables(self, table_fields):
+		# create the template which has all the fields defaulting to None, this means preselecting the fields and
+		# the tables and not using a loop.
+		# use if to check for records from same profile, pause when a new one starts then
+		# switch to another table from prevous profile.
+
+
+		access_table_generators = {}
+		for table, fields in table_fields.items():
+			# table, fields = tuple(table_field_.items())[0]
+			access_table_generators.update(table=self.access_fields({table: fields}))
+			# for
+
 
 	def __repr__(self):
 		return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'

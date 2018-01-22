@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
 
+import errno
 import sqlite3
 
 from pathlib import Path
-
-import errno
 
 from united_states_of_browsers.oops import exceptions_handling as exceph
 
@@ -13,7 +12,7 @@ class Table(dict):
 	def __init__(self, table, path, browser, file, profile):
 		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile)
 		self.table = table
-		self.path = path
+		self.path = Path(path)
 		self.browser = browser
 		self.file = file
 		self.profile = profile
