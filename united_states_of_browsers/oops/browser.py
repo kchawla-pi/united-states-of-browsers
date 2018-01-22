@@ -42,13 +42,14 @@ class Browser(dict):
 			[dict(record) for table in browser_obj.tables for record in table.records_yielder]
 	"""
 
-	def __init__(self, browser, profile_root, profiles=None, file_tables=None):
+	def __init__(self, browser, profile_root, profiles=None, file_tables=None, not_null_fields=None):
 		self.browser = browser
 		self.profile_root = profile_root
-		self.files = None
 		self.profiles = profiles
-		self.paths = None
 		self.file_tables = file_tables
+		self.not_null_fields = not_null_fields
+		self.files = None
+		self.paths = None
 		self.tables = []
 		self.make_paths()
 		if self.file_tables:
@@ -60,7 +61,7 @@ class Browser(dict):
 				for error_msg_ in self.error_msgs:
 					try:
 						print(f'{error_msg_.strerror}\n{error_msg_.filename}')
-					except AttributeError as at_err:
+					except AttributeError as attr_err:
 						print(error_msg_)
 				print()
 		super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,

@@ -9,8 +9,8 @@ from united_states_of_browsers.oops import exceptions_handling as exceph
 
 
 class Table(dict):
-	def __init__(self, table, path, browser, file, profile):
-		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile)
+	def __init__(self, table, path, browser, file, profile, not_null_fields=None):
+		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile, not_null_fields=not_null_fields)
 		self.table = table
 		self.path = Path(path)
 		self.browser = browser
@@ -18,6 +18,7 @@ class Table(dict):
 		self.profile = profile
 		self.records_yielder = None
 		self._connection = None
+		self.not_null_fields = not_null_fields
 
 	def _connect(self):
 		""" Creates TableObject.connection to the database file specified in TableObject.path.
@@ -50,7 +51,11 @@ class Table(dict):
 		""" Yields a generator of all fields in TableObj.table
 		"""
 		cursor = self._connection.cursor()
-		query = f'SELECT * FROM {self.table}'
+		if self.not_null_fields:
+			not_null_query_string = ' AND '.join([f'{field_} IS NOT NULL' for field_ in self.not_null_fields])
+			query = f'SELECT * FROM {self.table} WHERE {not_null_query_string}'
+		else:
+			query = f'SELECT * FROM {self.table}'
 		records_yielder = cursor.execute(query)
 		self.records_yielder = (dict(record) for record in records_yielder)
 
