@@ -23,10 +23,10 @@ def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
 
 
 def define_not_null_fields(table_obj):
-	BrowserFileTableFields = namedtuple('BrowserFileTable', 'browser file tablename')
+	BrowserFileTableFields = namedtuple('BrowserFileTable', 'browser file table')
 	not_null_fields_info = {
 		BrowserFileTableFields(browser='firefox', file='places.sqlite', table='moz_places'): ('title', 'last_visit_date'),
 		BrowserFileTableFields(browser='chrome', file='history', table='urls'): ('title', 'last_visit_time'),
 		}
 	query = BrowserFileTableFields(table_obj['browser'], table_obj['file'], table_obj['table'])
-	return not_null_fields_info[query]
+	return not_null_fields_info.get(query, None)
