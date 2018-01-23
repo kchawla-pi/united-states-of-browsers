@@ -30,8 +30,8 @@ class Orchestrator:
 		self.records_yielders = (records_yielder_fx_moz_places, records_yielder_cr_urls, records_yielder_op_urls, records_yielder_viv)
 		# self.records_yielders = (records_yielder_op_urls,)
 
-	def write_records(self, tablename, fieldnames):
-		queries = make_queries(tablename, fieldnames)
+	def write_records(self, tablename, primary_key_name , fieldnames):
+		queries = make_queries(tablename, primary_key_name, fieldnames)
 
 		with sqlite3.connect('combined_db_fx_cr.sqlite') as connection:
 			cursor = connection.cursor()
@@ -42,7 +42,7 @@ class Orchestrator:
 		self.make_records_yielders()
 		fieldnames = ['id', 'url', 'title', 'last_visit_date', 'browser', 'profile', 'file', 'tablename']
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
-		self.write_records(tablename='history', fieldnames=fieldnames)
+		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=fieldnames)
 
 
 if __name__ == '__main__':

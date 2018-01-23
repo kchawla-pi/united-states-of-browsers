@@ -2,14 +2,14 @@ from collections import namedtuple
 from typing import Text, Sequence, Dict, Union, Iterable
 
 
-def make_queries(tablename: Text, fieldnames: Sequence[Text]) -> Dict:
+def make_queries(tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]) -> Dict:
 	""" Constructs the queries necessary for specific purposes.
 	Returns them as dict['purpose': 'query']
 	"""
-	filednames_str = ', '.join(fieldnames)
+	fieldnames_str = ', '.join(fieldnames)
 	query_placeholder = '?, ' * len(fieldnames)
-	queries = {'create': f'''CREATE TABLE IF NOT EXISTS {tablename} ({filednames_str[:]})'''}
-	queries.update({'insert': f"INSERT INTO {tablename} VALUES ({query_placeholder[:-2]})"})
+	queries = {'create': f'''CREATE TABLE IF NOT EXISTS {tablename} ({primary_key_name} integer PRIMARY KEY, {fieldnames_str[:]})'''}
+	queries.update({'insert': f"INSERT INTO {tablename}({fieldnames_str}) VALUES ({query_placeholder[:-2]})"})
 	return queries
 
 
