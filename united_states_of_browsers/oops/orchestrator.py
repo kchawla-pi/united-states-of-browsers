@@ -50,19 +50,22 @@ class Orchestrator:
 				else:
 					raise excep
 
-			for browser_record_yielder in self.records_yielders:
-				for record in browser_record_yielder:
-					# if not record.get('last_visit_date', record.get('last_visit_time', None)):
-					# 	continue
-					try:
-						cursor.execute(queries['insert'], tuple(record.values()))
-					except ValueError as excep:
-						print(excep)
-						print(record)
-					except sqlite3.ProgrammingError as excep:
-						print(excep)
-						print(record)
-						raise excep
+			[cursor.executemany(queries['insert'], browser_record_yielder) for browser_record_yielder in self.records_yielders]
+				# record_tuple = (tuple(record.values()) for record in browser_record_yielder)
+
+				#
+				# for record in browser_record_yielder:
+				# 	# if not record.get('last_visit_date', record.get('last_visit_time', None)):
+				# 	# 	continue
+				# 	try:
+				# 		cursor.execute(queries['insert'], tuple(record.values()))
+				# 	except ValueError as excep:
+				# 		print(excep)
+				# 		print(record)
+				# 	except sqlite3.ProgrammingError as excep:
+				# 		print(excep)
+				# 		print(record)
+				# 		raise excep
 
 	def orchestrate(self):
 		self.make_records_yielders()

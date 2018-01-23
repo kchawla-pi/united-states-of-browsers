@@ -105,7 +105,7 @@ class Browser(dict):
 					except AttributeError as at_err:
 						print(error_msg_)
 
-	def access_fields(self, table_fields):
+	def access_fields(self, table_fields, ):
 		additional_fields = ('browser', 'profile', 'file', 'table')
 		current_table_across_profiles = [table for current_tablename in table_fields
 		                                 for table in self.tables
@@ -118,7 +118,7 @@ class Browser(dict):
 			for record in current_table.records_yielder:
 				selected_fields_records.update({field_: record[field_] for field_ in fields})
 				# self.selected_fields_records = selected_fields_records
-				yield selected_fields_records
+				yield tuple(selected_fields_records.values())
 			current_table.get_records()
 
 
