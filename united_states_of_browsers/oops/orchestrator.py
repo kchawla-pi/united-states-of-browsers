@@ -30,13 +30,11 @@ class Orchestrator:
 		self.records_yielders = (records_yielder_fx_moz_places, records_yielder_cr_urls, records_yielder_op_urls, records_yielder_viv)
 		# self.records_yielders = (records_yielder_op_urls,)
 
-	def write_records(self, fieldnames):
-		queries = make_queries('history', fieldnames)
+	def write_records(self, tablename, fieldnames):
+		queries = make_queries(tablename, fieldnames)
 
 		with sqlite3.connect('combined_db_fx_cr.sqlite') as connection:
 			cursor = connection.cursor()
-			table = 'history'
-			fieldnames_str = ', '.join(fieldnames)
 			cursor.execute(queries['create'])
 			[cursor.executemany(queries['insert'], browser_record_yielder) for browser_record_yielder in self.records_yielders]
 
@@ -44,10 +42,7 @@ class Orchestrator:
 		self.make_records_yielders()
 		fieldnames = ['id', 'url', 'title', 'last_visit_date', 'browser', 'profile', 'file', 'tablename']
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
-		fieldnames_str = ', '.join(fieldnames)
-
-		# write_new_database('C:\\Users\\kshit\\desktop\\combined_db_fx_cr.sqlite',fieldnames,[records_yielder_fx_moz_places, records_yielder_cr_urls],table='history')
-		self.write_records(fieldnames)
+		self.write_records(tablename='history', fieldnames=fieldnames)
 
 
 if __name__ == '__main__':
