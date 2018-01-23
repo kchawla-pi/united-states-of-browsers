@@ -8,7 +8,7 @@ def make_queries(tablename: Text, fieldnames: Sequence[Text]) -> Dict:
 	"""
 	filednames_str = ', '.join(fieldnames)
 	query_placeholder = '?, ' * len(fieldnames)
-	queries = {'create': f'''CREATE TABLE {tablename} ({filednames_str[:]})'''}
+	queries = {'create': f'''CREATE TABLE IF NOT EXISTS {tablename} ({filednames_str[:]})'''}
 	queries.update({'insert': f"INSERT INTO {tablename} VALUES ({query_placeholder[:-2]})"})
 	return queries
 

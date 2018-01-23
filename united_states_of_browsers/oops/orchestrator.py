@@ -42,13 +42,13 @@ class Orchestrator:
 			# cursor.execute(f'''CREATE TABLE {table} ({fieldnames_str[:-1]})''')
 			# create_query = f'''CREATE TABLE {table} ({fieldnames})'''
 			# write_query = ''
-			try:
-				cursor.execute(queries['create'])
-			except sqlite3.OperationalError as excep:
-				if f'table {table} already exists' in str(excep):
-					pass
-				else:
-					raise excep
+			cursor.execute(queries['create'])
+			# try:
+			# except sqlite3.OperationalError as excep:
+			# 	if f'table {table} already exists' in str(excep):
+			# 		pass
+			# 	else:
+			# 		raise excep
 
 			[cursor.executemany(queries['insert'], browser_record_yielder) for browser_record_yielder in self.records_yielders]
 				# record_tuple = (tuple(record.values()) for record in browser_record_yielder)
