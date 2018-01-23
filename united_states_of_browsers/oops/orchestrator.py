@@ -13,9 +13,22 @@ class Orchestrator:
 		records_yielder_fx_moz_places = firefox.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date']})
 		# records_yielder_fx_moz_icons = firefox.access_fields({'moz_icons': ['id', 'icon_url', 'width']})
 		chrome = Browser(browser='chrome', profile_root='~\\AppData\\Local\\Google\\Chrome\\User Data', profiles=None,
-		             file_tables={'history': ['urls']})
+		                 file_tables={'history': ['urls']}
+		                 )
 		records_yielder_cr_urls = chrome.access_fields({'urls': ['id', 'url', 'title', 'last_visit_time']})
-		self.records_yielders = (records_yielder_fx_moz_places, records_yielder_cr_urls)
+
+		opera = Browser(browser='opera', profile_root='~\\AppData\\Roaming\\Opera Software', profiles=['Opera Stable'],
+		                file_tables={'History': ['urls']}
+		                )
+		records_yielder_op_urls = opera.access_fields({'urls': ['id', 'url', 'title', 'last_visit_time']})
+
+		vivaldi = Browser(browser='vivaldi', profile_root='~\\AppData\\Local\\Vivaldi\\User Data', profiles=None,
+		                  file_tables={'History': ['urls']}
+		                  )
+		records_yielder_viv = vivaldi.access_fields({'urls': ['id', 'url', 'title', 'last_visit_time']})
+
+		self.records_yielders = (records_yielder_fx_moz_places, records_yielder_cr_urls, records_yielder_op_urls, records_yielder_viv)
+		# self.records_yielders = (records_yielder_op_urls,)
 
 	def write_records(self, fieldnames):
 		queries = make_queries('history', fieldnames)

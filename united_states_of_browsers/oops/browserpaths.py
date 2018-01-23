@@ -43,14 +43,10 @@ class BrowserPaths(dict):
 			self.profilepaths = {entry.name: entry for entry in self.profile_root.iterdir()
 			                     if entry.name.startswith('Profile') or entry.name == 'Default'}
 
-	# def _make_file_paths(self):
-	# 	self.filepaths = {(profile, file_name): profile_path.joinpath(file_name)
-	# 	                  for profile, profile_path in self.profilepaths.items()
-	# 	                  for file_name in self.files
-	# 	                  }
-
 	def make_paths(self):
-		make_path_chooser = {'firefox': self._make_firefox_profile_paths, 'chrome': self._make_chrome_profile_paths}
+		make_path_chooser = {'firefox': self._make_firefox_profile_paths, 'chrome': self._make_chrome_profile_paths,
+		                     'opera': self._make_chrome_profile_paths, 'vivaldi': self._make_chrome_profile_paths,
+		                     }
 		try:
 			make_path_chooser[self.browser]()
 		except FileNotFoundError as excep:
