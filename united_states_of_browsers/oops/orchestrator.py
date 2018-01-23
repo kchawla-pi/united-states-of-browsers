@@ -37,35 +37,8 @@ class Orchestrator:
 			cursor = connection.cursor()
 			table = 'history'
 			fieldnames_str = ', '.join(fieldnames)
-
-
-			# cursor.execute(f'''CREATE TABLE {table} ({fieldnames_str[:-1]})''')
-			# create_query = f'''CREATE TABLE {table} ({fieldnames})'''
-			# write_query = ''
 			cursor.execute(queries['create'])
-			# try:
-			# except sqlite3.OperationalError as excep:
-			# 	if f'table {table} already exists' in str(excep):
-			# 		pass
-			# 	else:
-			# 		raise excep
-
 			[cursor.executemany(queries['insert'], browser_record_yielder) for browser_record_yielder in self.records_yielders]
-				# record_tuple = (tuple(record.values()) for record in browser_record_yielder)
-
-				#
-				# for record in browser_record_yielder:
-				# 	# if not record.get('last_visit_date', record.get('last_visit_time', None)):
-				# 	# 	continue
-				# 	try:
-				# 		cursor.execute(queries['insert'], tuple(record.values()))
-				# 	except ValueError as excep:
-				# 		print(excep)
-				# 		print(record)
-				# 	except sqlite3.ProgrammingError as excep:
-				# 		print(excep)
-				# 		print(record)
-				# 		raise excep
 
 	def orchestrate(self):
 		self.make_records_yielders()
