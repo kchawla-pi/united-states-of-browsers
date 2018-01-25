@@ -1,13 +1,15 @@
 import sqlite3
 
+from collections import namedtuple
+
 from united_states_of_browsers.oops.browser import Browser
 from united_states_of_browsers.oops.helpers import make_queries
-
+from united_states_of_browsers.db_merge.db_search import build_search_table
 
 class Orchestrator:
 	def make_records_yielders(self):
 		firefox = Browser(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles', profiles=None,
-		                  file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'], 'favicons.sqlite': ['moz_icons']}
+		                  file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'], 'favicons.sqlite': ['moz_icons']},
 		                  )
 
 		records_yielder_fx_moz_places = firefox.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date']})
@@ -48,3 +50,4 @@ class Orchestrator:
 if __name__ == '__main__':
 	write_combi_db = Orchestrator()
 	write_combi_db.orchestrate()
+	# build_search_table('combined_db_fx_cr.sqlite', ['id', 'url', 'title', 'last_visit_time'])

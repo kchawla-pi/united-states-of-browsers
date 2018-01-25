@@ -73,7 +73,7 @@ class Browser(dict):
 		pathmaker = BrowserPaths(self.browser, self.profile_root, self.profiles)
 		self.paths = pathmaker.profilepaths
 
-	def access_table(self, file, tables):
+	def access_table(self, file, tables, non_null_fields=None):
 		""" Accepts name of file containing the tables and list of table names and creates corresponding Table objects.
 		Accessed via the tables attribute.
 		"""
@@ -105,7 +105,7 @@ class Browser(dict):
 					except AttributeError as at_err:
 						print(error_msg_)
 
-	def access_fields(self, table_fields, ):
+	def access_fields(self, table_fields):
 		additional_fields = ('browser', 'profile', 'file', 'table')
 		current_table_across_profiles = [table for current_tablename in table_fields
 		                                 for table in self.tables
@@ -223,6 +223,14 @@ def test_browser():
 
 
 if __name__ == '__main__':
-	test_browser()
-	# rb.get_tablenames('C:/Users/kshit/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default/places.sqlite')
+	# test_browser()
+	chrome = Browser(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
+
+	firefox_auto = Browser(browser='firefox',
+	                       profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
+	                       profiles=['test_profile0', 'test_profile1'],
+	                       file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
+	                                    'permissions.sqlite': ['moz_hosts']})
+
+# rb.get_tablenames('C:/Users/kshit/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default/places.sqlite')
 

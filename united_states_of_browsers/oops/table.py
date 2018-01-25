@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import errno
+import shutil
 import sqlite3
 
 from pathlib import Path
@@ -13,6 +14,7 @@ class Table(dict):
 		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile, non_null_fields=None)
 		self.table = table
 		self.path = Path(path)
+		self.orig_path = Path(path)
 		self.browser = browser
 		self.file = file
 		self.profile = profile
@@ -25,6 +27,7 @@ class Table(dict):
 		""" Creates TableObject.connection to the database file specified in TableObject.path.
 		Returns Exception on error.
 		"""
+
 		connection_arg = f'file:{self.path}?mode=ro'
 		files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
 		try:
@@ -55,19 +58,32 @@ class Table(dict):
 		non_null_fields = define_non_null_fields(self)
 		if non_null_fields:
 			self.non_null_fields = non_null_fields
-			not_null_query_string = ' AND '.join([f'{field_} IS NOT NULL' for field_ in self.non_null_fields])
+			not_null_query_string = ' OR '.join([f'{field_} IS NOT NULL' for field_ in self.non_null_fields])
 			query = f'SELECT * FROM {self.table} WHERE {not_null_query_string}'
 		else:
 			query = f'SELECT * FROM {self.table}'
 		records_yielder = cursor.execute(query)
 		self.records_yielder = (dict(record) for record in records_yielder)
 
+	def _create_db_copy(self):
+		dst = Path('~', 'USB', 'AppData', 'Profile Copies', self.browser, self.profile).expanduser()
+		dst.mkdir(parents=True,exist_ok=True)
+		try:
+			self.path = Path(shutil.copy2(self.path, dst))
+		except FileNotFoundError as excep:
+			return FileNotFoundError(f'File {self.path.name} does not exist for {self.browser} profile "{self.profile}". The profile may be empty.'), excep
+		except shutil.SameFileError as excep:
+			self.path = dst.joinpath(self.path.name)
+
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
 		"""
-		exception_raised = self._connect()
-		if exception_raised:
-			return exception_raised
+		file_copy_exception_raised = self._create_db_copy()
+		if file_copy_exception_raised:
+			return file_copy_exception_raised
+		db_connect_exception_raised = self._connect()
+		if db_connect_exception_raised:
+			return db_connect_exception_raised
 		else:
 			try:
 				self._make_records_yielder()
@@ -75,7 +91,7 @@ class Table(dict):
 				if 'no such table' in str(excep):
 					return ValueError(f'Table "{self.table}" does not exist in database file "{self.file}" in {self.browser} profile "{self.profile}". The profile may be empty.')
 				return None
-# f'"{self.path.name}" is not a file, or the file does not exist. The profile "{self.profile}" might not contain any data.', str(self.path))#excep, f'{self.path.name} is not a file, or the file does not exist. The profile might not contain any data. ({self.path})')
+
 	def check_if_db_empty(self):
 		cursor = self._connection.cursor()
 		query = f'SELECT name FROM sqlite_master WHERE type = "table"'
