@@ -122,20 +122,6 @@ class Browser(dict):
 			current_table.get_records()
 
 
-	def combine_tables(self, table_fields):
-		# create the template which has all the fields defaulting to None, this means preselecting the fields and
-		# the tables and not using a loop.
-		# use if to check for records from same profile, pause when a new one starts then
-		# switch to another table from prevous profile.
-
-
-		access_table_generators = {}
-		for table, fields in table_fields.items():
-			# table, fields = tuple(table_field_.items())[0]
-			access_table_generators.update(table=self.access_fields({table: fields}))
-			# for
-
-
 	def __repr__(self):
 		return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'
 
