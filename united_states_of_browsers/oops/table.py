@@ -10,7 +10,7 @@ from united_states_of_browsers.oops import exceptions_handling as exceph
 from united_states_of_browsers.oops.helpers import define_non_null_fields
 
 class Table(dict):
-	def __init__(self, table, path, browser, file, profile):
+	def __init__(self, table, path, browser, file, profile, copies_subpath=None):
 		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile, non_null_fields=None)
 		self.table = table
 		self.path = Path(path)
@@ -18,10 +18,23 @@ class Table(dict):
 		self.browser = browser
 		self.file = file
 		self.profile = profile
+		self.copies_subpath = copies_subpath
 		self.records_yielder = None
 		self._connection = None
 		self.non_null_fields = define_non_null_fields(self)
 		self.update(non_null_fields=self.non_null_fields)
+
+	def _create_db_copy(self):
+		dst = Path(self.copies_subpath, 'Profile Copies', self.browser, self.profile).expanduser()
+		dst.mkdir(parents=True, exist_ok=True)
+		try:
+			self.path = Path(shutil.copy2(self.path, dst))
+		except FileNotFoundError as excep:
+			return FileNotFoundError(errno.ENOENT,
+			                         f'File {self.path.name} does not exist for {self.browser} profile "{self.profile}". The profile may be empty.',
+			                         str(self.path))
+		except shutil.SameFileError as excep:
+			self.path = dst.joinpath(self.path.name)
 
 	def _connect(self):
 		""" Creates TableObject.connection to the database file specified in TableObject.path.
@@ -65,22 +78,13 @@ class Table(dict):
 		records_yielder = cursor.execute(query)
 		self.records_yielder = (dict(record) for record in records_yielder)
 
-	def _create_db_copy(self):
-		dst = Path('~', 'USB', 'AppData', 'Profile Copies', self.browser, self.profile).expanduser()
-		dst.mkdir(parents=True,exist_ok=True)
-		try:
-			self.path = Path(shutil.copy2(self.path, dst))
-		except FileNotFoundError as excep:
-			return FileNotFoundError(errno.ENOENT, f'File {self.path.name} does not exist for {self.browser} profile "{self.profile}". The profile may be empty.', str(self.path))
-		except shutil.SameFileError as excep:
-			self.path = dst.joinpath(self.path.name)
-
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
 		"""
-		file_copy_exception_raised = self._create_db_copy()
-		if file_copy_exception_raised:
-			return file_copy_exception_raised
+		if self.copies_subpath:
+			file_copy_exception_raised = self._create_db_copy()
+			if file_copy_exception_raised:
+				return file_copy_exception_raised
 		db_connect_exception_raised = self._connect()
 		if db_connect_exception_raised:
 			return db_connect_exception_raised

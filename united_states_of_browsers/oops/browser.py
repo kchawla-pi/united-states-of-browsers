@@ -42,7 +42,7 @@ class Browser(dict):
 			[dict(record) for table in browser_obj.tables for record in table.records_yielder]
 	"""
 
-	def __init__(self, browser, profile_root, profiles=None, file_tables=None, not_null_fields=None):
+	def __init__(self, browser, profile_root, profiles=None, file_tables=None, not_null_fields=None, copies_subpath=None):
 		self.browser = browser
 		self.profile_root = profile_root
 		self.profiles = profiles
@@ -51,6 +51,7 @@ class Browser(dict):
 		self.files = None
 		self.paths = None
 		self.tables = []
+		self.copies_subpath = copies_subpath
 		self.make_paths()
 		if self.file_tables:
 			self.error_msgs = []
@@ -78,7 +79,7 @@ class Browser(dict):
 		Accessed via the tables attribute.
 		"""
 		error_msg = []
-		current_batch = [Table(table, path.joinpath(file), self.browser, file, profile)
+		current_batch = [Table(table, path.joinpath(file), self.browser, file, profile, copies_subpath=self.copies_subpath)
 		                 for profile, path in self.paths.items()
 		                 for table in tables
 		                 ]
