@@ -224,8 +224,14 @@ def test_browser():
 
 if __name__ == '__main__':
 	# test_browser()
-	chrome = Browser(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
+	# chrome = Browser(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
 
+	firefox_auto = Browser(browser='firefox',
+	                       profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
+	                       profiles=['test_profile2'],
+	                       file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
+	                                    'permissions.sqlite': ['moz_hosts']})
+	quit()
 	firefox_auto = Browser(browser='firefox',
 	                       profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
 	                       profiles=['test_profile0', 'test_profile1'],

@@ -71,7 +71,7 @@ class Table(dict):
 		try:
 			self.path = Path(shutil.copy2(self.path, dst))
 		except FileNotFoundError as excep:
-			return FileNotFoundError(f'File {self.path.name} does not exist for {self.browser} profile "{self.profile}". The profile may be empty.'), excep
+			return FileNotFoundError(errno.ENOENT, f'File {self.path.name} does not exist for {self.browser} profile "{self.profile}". The profile may be empty.', str(self.path))
 		except shutil.SameFileError as excep:
 			self.path = dst.joinpath(self.path.name)
 
@@ -197,4 +197,11 @@ def test():
 
 
 if __name__ == '__main__':
-	test()
+	table4 = Table(table='moz_places',
+	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+	               browser='firefox',
+	               file='places.sqlite',
+	               profile='test_profile0',
+	               )
+
+	# test()
