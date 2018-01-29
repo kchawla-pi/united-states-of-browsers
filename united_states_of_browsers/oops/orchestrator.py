@@ -75,7 +75,18 @@ class Orchestrator:
 			cursor.execute(queries['create'])
 			[cursor.executemany(queries['insert'], browser_record_yielder) for browser_record_yielder in self.records_yielders]
 
-
+	def build_search_table(self):
+		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit_date', 'browser', 'profile', 'file',
+		                 'tablename']
+		# search_fields = ["url", "title", "visit_count", "last_visit_date"]
+		search_fields_str = ", ".join(search_fields)
+		create_virtual_query = f'CREATE VIRTUAL TABLE IF NOT EXISTS search_table USING fts5({search_fields_str})'
+		read_query = 'SELECT * FROM history WHERE title IS NOT NULL'
+		insert_virtual_query = f'INSERT INTO search_table {read_query}'
+		with sqlite3.connect(str(self.output_db)) as connection:
+			cursor = connection.cursor()
+			cursor.execute(create_virtual_query)
+			cursor.execute(insert_virtual_query)
 
 	def orchestrate(self):
 		self.check_browser_presence()
