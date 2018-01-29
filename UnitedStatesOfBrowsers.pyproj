@@ -19,6 +19,26 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="oops\AppData\Profile Copies\firefox\test_profile0\permissions.sqlite\permissions.sqlite" />
+    <Content Include="oops\AppData\Profile Copies\firefox\test_profile0\places.sqlite\places.sqlite" />
+    <Content Include="oops\AppData\Profile Copies\firefox\test_profile1\permissions.sqlite\permissions.sqlite" />
+    <Content Include="oops\AppData\Profile Copies\firefox\test_profile1\places.sqlite\places.sqlite" />
+    <Content Include="oops\AppData\Profile Copies\history" />
+    <Content Include="oops\AppData\Profile Copies\permissions.sqlite" />
+    <Content Include="oops\AppData\Profile Copies\places.sqlite" />
+    <Content Include="oops\combined_db_fx_cr.sqlite" />
+    <Content Include="oops\History" />
+    <Content Include="oops\_planning.txt" />
+    <Content Include="oops\__pycache__\browser.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\browserpaths.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\exceptions_handling.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\helpers.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\recon_browsers.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\table.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\test_table.cpython-36-PYTEST.pyc" />
+    <Content Include="oops\__pycache__\test_table_data.cpython-36-PYTEST.pyc" />
+    <Content Include="oops\__pycache__\test_table_data.cpython-36.pyc" />
+    <Content Include="oops\__pycache__\__init__.cpython-36.pyc" />
     <Content Include="TODO.txt" />
     <Content Include="united_states_of_browsers\usb_server\templates\show_records.html" />
     <Content Include="united_states_of_browsers\usb_server\templates\show_records2.html" />
@@ -30,6 +50,34 @@
     <Content Include="usb.egg-info\top_level.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="oops\browser.py" />
+    <Compile Include="oops\browserpaths.py" />
+    <Compile Include="oops\clean_test.py" />
+    <Compile Include="oops\clean_test2.py" />
+    <Compile Include="oops\exceptions_handling.py" />
+    <Compile Include="oops\fields_reconciler.py" />
+    <Compile Include="oops\helpers.py" />
+    <Compile Include="oops\orchestrator.py" />
+    <Compile Include="oops\recon_browsers.py" />
+    <Compile Include="oops\table.py" />
+    <Compile Include="oops\testing.py" />
+    <Compile Include="oops\test_table.py" />
+    <Compile Include="oops\test_table_data.py" />
+    <Compile Include="oops\_archive\Browser.py" />
+    <Compile Include="oops\_archive\BrowserData.py" />
+    <Compile Include="oops\_archive\browser_setup.py" />
+    <Compile Include="oops\_archive\collator.py" />
+    <Compile Include="oops\_archive\database_file.py" />
+    <Compile Include="oops\_archive\database_table.py" />
+    <Compile Include="oops\_archive\group_by.py" />
+    <Compile Include="oops\_archive\helpers.py" />
+    <Compile Include="oops\_archive\new_browser_setup.py" />
+    <Compile Include="oops\_archive\runner.py" />
+    <Compile Include="oops\_archive\tempfile.py" />
+    <Compile Include="oops\_archive\testing_old.py" />
+    <Compile Include="oops\_archive\troubleshooting.py" />
+    <Compile Include="oops\_archive\__init__.py" />
+    <Compile Include="oops\__init__.py" />
     <Compile Include="setup.py" />
     <Compile Include="tests\comparing_fts_vs_python_search.py" />
     <Compile Include="tests\data\creating_test_search_data.py" />
@@ -54,6 +102,24 @@
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="oops\" />
+    <Folder Include="oops\AppData\" />
+    <Folder Include="oops\AppData\Profile Copies\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\test_profile0\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\test_profile0\permissions.sqlite\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\test_profile0\places.sqlite\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\test_profile1\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\test_profile1\permissions.sqlite\" />
+    <Folder Include="oops\AppData\Profile Copies\firefox\test_profile1\places.sqlite\" />
+    <Folder Include="oops\_archive\" />
+    <Folder Include="oops\__pycache__\" />
+    <Folder Include="oops\~\" />
+    <Folder Include="oops\~\USB\" />
+    <Folder Include="oops\~\USB\AppData\" />
+    <Folder Include="oops\~\USB\AppData\Profile Copies\" />
+    <Folder Include="oops\~\USB\AppData\Profile Copies\firefox\" />
+    <Folder Include="oops\~\USB\AppData\Profile Copies\firefox\test_profile0\" />
     <Folder Include="tests" />
     <Folder Include="tests\data" />
     <Folder Include="united_states_of_browsers" />

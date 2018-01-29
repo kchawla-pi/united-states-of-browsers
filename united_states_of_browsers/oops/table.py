@@ -9,6 +9,7 @@ from pathlib import Path
 from united_states_of_browsers.oops import exceptions_handling as exceph
 from united_states_of_browsers.oops.helpers import define_non_null_fields
 
+
 class Table(dict):
 	def __init__(self, table, path, browser, file, profile, copies_subpath=None):
 		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile, non_null_fields=None)
