@@ -42,8 +42,9 @@ class Orchestrator:
 		with sqlite3.connect(str(self.output_db)) as connection:
 			cursor = connection.cursor()
 			cursor.execute(queries['create'])
-			[cursor.executemany(queries['insert'], browser_record_yielder) for browser_record_yielder in
-			 self.records_yielders]
+			[cursor.executemany(queries['insert'], browser_record_yielder)
+			 for browser_record_yielder in self.records_yielders
+			 ]
 	
 	def build_search_table(self):
 		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit_date', 'browser', 'profile', 'file',
@@ -61,7 +62,7 @@ class Orchestrator:
 	def orchestrate(self):
 		self.find_installed_browsers()
 		self.make_records_yielders()
-		fieldnames = ['id', 'url', 'title', 'last_visit_date', 'browser', 'profile', 'file', 'tablename']
+		fieldnames = ['id', 'url', 'title', 'last_visit', 'browser', 'profile', 'file', 'tablename']
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
 		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=fieldnames)
 		self.build_search_table()

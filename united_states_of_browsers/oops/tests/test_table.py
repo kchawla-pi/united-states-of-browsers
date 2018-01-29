@@ -2,7 +2,8 @@ import pytest
 
 from pprint import pprint
 
-from united_states_of_browsers.oops.tests import table, test_table_data as ttd
+from united_states_of_browsers.oops.tests import test_table_data as ttd
+from united_states_of_browsers.oops import table
 
 
 @pytest.mark.parametrize(('test_case_in', 'test_case_expected'), [(test_case_in, test_case_expected)
