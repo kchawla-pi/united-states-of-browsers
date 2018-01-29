@@ -1,11 +1,7 @@
-import sqlite3
-
 from collections import namedtuple
-from pathlib import Path
-from pprint import pprint
 
 from united_states_of_browsers.oops.browserpaths import BrowserPaths
-from united_states_of_browsers.oops.table import Table
+from united_states_of_browsers.oops.tests.table import Table
 from united_states_of_browsers.oops import exceptions_handling as exceph
 
 

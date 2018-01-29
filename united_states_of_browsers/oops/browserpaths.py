@@ -7,7 +7,7 @@ Classes: BrowserPaths
 from pathlib import Path
 from pprint import pprint
 
-from united_states_of_browsers.oops.recon_browsers import print_objects
+from united_states_of_browsers.oops.others.recon_browsers import print_objects
 from united_states_of_browsers.oops import exceptions_handling
 
 class BrowserPaths(dict):

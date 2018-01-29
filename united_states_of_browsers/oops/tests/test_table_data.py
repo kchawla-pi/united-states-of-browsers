@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from united_states_of_browsers.oops.table import Table
+from united_states_of_browsers.oops.tests.table import Table
 
 TableData = namedtuple('TableData','table, path, browser, file, profile')
 
