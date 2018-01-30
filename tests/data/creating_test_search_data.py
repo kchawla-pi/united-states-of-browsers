@@ -15,7 +15,7 @@ SearchRecord = []
 
 def setup_paths():
 	root = Path(__file__).parents[2]
-	src_db_path = root.joinpath('united_states_of_browsers', 'appdata', 'all_merged.sqlite')
+	src_db_path = root.joinpath('united_states_of_browsers', 'AppData', 'all_merged.sqlite')
 	sink_db_path = root.joinpath('tests', 'data', 'db_for_testing_search.sqlite')
 	url_log_path = Path.joinpath(sink_db_path.parent,
 	                             f'{sink_db_path.stem}_written_url_hashes.json')

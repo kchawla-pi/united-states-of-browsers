@@ -19,7 +19,7 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 debug = 0
 
-appdata_path = Path(__file__).parents[1].joinpath('appdata')
+appdata_path = Path(__file__).parents[1].joinpath('AppData')
 app_inf_path = str(appdata_path.joinpath('app_inf.json'))
 
 def _choose_browser_paths(browser_ref: Union[str, PathLike]) -> Union[PathLike, Dict[str, PathLike]]:
