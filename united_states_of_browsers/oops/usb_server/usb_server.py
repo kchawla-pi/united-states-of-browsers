@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
-import json
 import sqlite3
-import werkzeug
 
 from pathlib import Path
 from flask import (Flask,
@@ -10,19 +8,18 @@ from flask import (Flask,
                    request,
                    )
 
-from united_states_of_browsers.db_merge import db_search
-from united_states_of_browsers.db_merge.paths_setup import app_inf_path
+from united_states_of_browsers.oops import db_search
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-app_root_path = Path(app.root_path).parents[0]
-
-with open(app_inf_path, 'r') as json_obj:
-	app_inf = json.load(json_obj)
+app_root_path_parts = Path(app.root_path).parts
+root_idx = Path(app.root_path).parts.index('united_states_of_browsers')
+app_root_path_parts = Path(*app_root_path_parts[:root_idx + 1])
+app_db_path = app_root_path_parts.joinpath('AppData', 'merged_db_path.txt').read_text()
 
 app.config.update(dict(
-		DATABASE=app_inf['sink'],
+		DATABASE=app_db_path,
 		SECRET_KEY='development key',
 		USERNAME='admin',
 		PASSWORD='default',
@@ -47,7 +44,7 @@ def connect_db():
 @app.route('/', methods=['GET', 'POST'])
 def show_entries():
 	db = get_db()
-	select_query = '''SELECT url, title,visit_count, last_visit_date_readable FROM search_table'''
+	select_query = '''SELECT url, title, 'last_visit', 'browser', 'profile' FROM search_table'''
 	cur = db.execute(select_query)
 	entries = cur.fetchmany(1000)
 	return render_template('main.html', entries=entries )
