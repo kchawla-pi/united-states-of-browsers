@@ -5,10 +5,10 @@ Module containing classes to setup browser profile and dtaabase file paths.
 Classes: BrowserPaths
 """
 from pathlib import Path
-from pprint import pprint
 
 from united_states_of_browsers.oops.others.recon_browsers import print_objects
-from united_states_of_browsers.oops import exceptions_handling
+from united_states_of_browsers.oops.db_merge import exceptions_handling
+
 
 class BrowserPaths(dict):
 	"""	Creates objects to create paths to browser profile and database files.

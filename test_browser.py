@@ -1,6 +1,4 @@
-from collections import namedtuple
-
-from united_states_of_browsers.oops.browser import Browser
+from united_states_of_browsers.oops.db_merge.browser import Browser
 
 
 def test_firefox():

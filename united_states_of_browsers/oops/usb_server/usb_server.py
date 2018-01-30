@@ -8,7 +8,7 @@ from flask import (Flask,
                    request,
                    )
 
-from united_states_of_browsers.oops import db_search
+from united_states_of_browsers.oops.db_merge import db_search
 
 app = Flask(__name__)
 app.config.from_object(__name__)

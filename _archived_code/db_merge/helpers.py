@@ -10,8 +10,6 @@ import os
 import string
 import sys
 
-from united_states_of_browsers.oops.imported_annotations import *
-
 
 def safetychecks_deprecated(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:
 	""" Checks the names being inserted using string formatting for suspicious characters.
@@ -82,7 +80,6 @@ def retrieve_record(db_path: PathInfo, key: Union[Text, int, Iterable[Union[Text
 		query = f'''SELECT * from moz_places WHERE {key_type} IN ({binding_placeholders[:-2]})'''
 		query_result = conn.execute(query, [*key])
 		return query_result.fetchall()[:]
-
 
 filepath_from_another = lambda filename, filepath=__file__: os.path.realpath(os.path.join(os.path.dirname(filepath), filename))
 
