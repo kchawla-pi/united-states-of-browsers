@@ -10,7 +10,7 @@ import os
 import string
 import sys
 
-from united_states_of_browsers.db_merge.imported_annotations import *
+from united_states_of_browsers.oops.imported_annotations import *
 
 
 def safetychecks_deprecated(record: Union[Dict[Text, Dict], Iterable[Text]]) -> True:

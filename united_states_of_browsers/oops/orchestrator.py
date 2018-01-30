@@ -5,7 +5,7 @@ from united_states_of_browsers.oops import browser_data
 from united_states_of_browsers.oops.browser import Browser
 from united_states_of_browsers.oops.helpers import make_queries
 
-from united_states_of_browsers.db_merge.imported_annotations import *
+from united_states_of_browsers.oops.imported_annotations import *
 
 
 class Orchestrator:

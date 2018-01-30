@@ -5,7 +5,7 @@ from pprint import pprint
 
 from united_states_of_browsers.db_merge import helpers
 
-from united_states_of_browsers.db_merge.imported_annotations import *
+from united_states_of_browsers.oops.imported_annotations import *
 
 
 def _make_sql_statement(word_query: Optional[Text],
