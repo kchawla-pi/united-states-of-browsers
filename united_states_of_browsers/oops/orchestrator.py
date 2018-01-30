@@ -47,11 +47,8 @@ class Orchestrator:
 			 ]
 	
 	def build_search_table(self):
-		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit', 'last_visit_readable', 'browser', 'profile', 'file',
-		                 'tablename']
-		# search_fields = ["url", "title", "visit_count", "last_visit_date"]
-		search_fields_str = ", ".join(search_fields)
-		create_virtual_query = f'CREATE VIRTUAL TABLE IF NOT EXISTS search_table USING fts5({search_fields_str})'
+		search_table_fields_str = ", ".join(browser_data.search_table_fields)
+		create_virtual_query = f'CREATE VIRTUAL TABLE IF NOT EXISTS search_table USING fts5({search_table_fields_str})'
 		read_query = 'SELECT * FROM history WHERE title IS NOT NULL'
 		insert_virtual_query = f'INSERT INTO search_table {read_query}'
 		with sqlite3.connect(str(self.output_db)) as connection:
@@ -68,9 +65,8 @@ class Orchestrator:
 	def orchestrate(self):
 		self.find_installed_browsers()
 		self.make_records_yielders()
-		fieldnames = ['id', 'url', 'title', 'last_visit', 'last_visit_readable', 'browser', 'profile', 'file', 'tablename']
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
-		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=fieldnames)
+		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=browser_data.history_table_fieldnames)
 		self.build_search_table()
 		self.write_db_path_to_file()
 

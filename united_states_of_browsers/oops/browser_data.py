@@ -32,3 +32,7 @@ all_browsers = [BrowserData(os='nt',
                             table_fields={'urls': ['id', 'url', 'title', 'last_visit_time', 'last_visit_readable']},
                             ),
                 ]
+
+history_table_fieldnames = ['id', 'url', 'title', 'last_visit', 'last_visit_readable', 'browser', 'profile', 'file', 'tablename']
+search_table_fields = ['rec_id', 'id', 'url', 'title', 'last_visit', 'last_visit_readable', 'browser', 'profile', 'file',
+		                 'tablename']
