@@ -9,7 +9,6 @@ from pathlib import Path
 from pprint import pprint
 
 from united_states_of_browsers.oops.db_merge import exceptions_handling as exceph
-from united_states_of_browsers.oops.db_merge.helpers import define_non_null_fields
 
 
 class Table(dict):

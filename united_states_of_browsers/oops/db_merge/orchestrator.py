@@ -57,7 +57,7 @@ class Orchestrator:
 			cursor.execute(insert_virtual_query)
 			
 	def write_db_path_to_file(self):
-		db_path_store = Path(__file__).parents[1].joinpath('AppData', 'merged_db_path.txt')
+		db_path_store = Path(__file__).parents[2].joinpath('AppData', 'merged_db_path.txt')
 		with open(db_path_store, 'w') as file_obj:
 			file_obj.write(f'{self.output_db.as_posix()}')
 			
