@@ -6,6 +6,7 @@ import sqlite3
 
 from datetime import datetime as dt
 from pathlib import Path
+from pprint import pprint
 
 from united_states_of_browsers.oops import exceptions_handling as exceph
 from united_states_of_browsers.oops.helpers import define_non_null_fields
@@ -219,6 +220,8 @@ if __name__ == '__main__':
 	               file='places.sqlite',
 	               profile='Employment',
 	               )
+	table4.get_records()
+	pprint(list(table4.records_yielder))
 	quit()
 # [record for browser_record_yielder in self.browser_yielder for record in browser_record_yielder]
 	# test()

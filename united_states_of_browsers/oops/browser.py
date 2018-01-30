@@ -213,6 +213,7 @@ if __name__ == '__main__':
 	                       profiles=['Employment'],
 	                       file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
 	                                    'permissions.sqlite': ['moz_hosts']})
+	firefox_auto.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date', 'last_visit_readable']})
 	quit()
 	firefox_auto = Browser(browser='firefox',
 	                       profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
