@@ -1,13 +1,10 @@
-import json
 import sqlite3
 
 from datetime import datetime as dt
-from collections import namedtuple
 from pprint import pprint
 
 from united_states_of_browsers.db_merge import helpers
 
-from united_states_of_browsers.db_merge.paths_setup import app_inf_path
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
@@ -47,9 +44,6 @@ def _run_search(db_ref: PathInfo, sql_query: Text, query_bindings: Iterable[Text
 	sql_query: a formed SQL query,
 	query_bindings: list of attributes for the query.
 	"""
-	with open(app_inf_path, 'r') as read_json_obj:
-		app_inf = json.load(read_json_obj)
-	DBRecord = namedtuple('DBRecord', app_inf['search_fieldnames'])
 	try:
 		query_results = db_ref.execute(sql_query, query_bindings)
 	except AttributeError:
@@ -57,7 +51,6 @@ def _run_search(db_ref: PathInfo, sql_query: Text, query_bindings: Iterable[Text
 			sink_conn.row_factory = sqlite3.Row
 			query_results = sink_conn.execute(sql_query, query_bindings)
 	return query_results
-	return [DBRecord(*result) for result in query_results]
 
 
 def _print_search(search_results: Iterable, show_only_id=False):
@@ -184,9 +177,6 @@ if __name__ == '__main__':
 	root = Path(__file__).parents[2]
 	db_test = str(root.joinpath('tests\\data\\db_for_testing_search.sqlite'))
 	db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
-
-	with open(app_inf_path, 'r') as json_obj:
-		app_inf = json.load(json_obj)
 
 	queries = [
 			# 'checkio', # works
