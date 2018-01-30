@@ -1,11 +1,9 @@
 import setuptools
 
-from pathlib import Path
-
 
 setuptools.setup(
 		name='usb',
-		version='0.55dev',
+		version='0.6dev',
 		packages=['united_states_of_browsers',
 		          'united_states_of_browsers.db_merge',
 		          'united_states_of_browsers.usb_server'

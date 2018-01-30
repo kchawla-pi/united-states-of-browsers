@@ -1,20 +1,18 @@
 # united-states-of-browsers
-A project to combine &amp; organize history and bookmarks across multiple browsers and browser profiles.
-
-
+A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
 
  - Built with python3.6
- - using Pycharm 2017.2.3 CE
- - On Windows 10 x64 Creators Update
- - For Mozilla Firefox.
+ - using Pycharm 2017.3 CE
+ - On Windows 10 x64 Fall Creators Update
+ - For Mozilla Firefox, Chrome, Opera, Vivaldi
  - May work with other Windows versions.
 
-Does not support other OS and browsers YET. Easy to make it work for other OSes.
-Changing path locations for Mozilla profile folder should make it work on other OS. (TODO)
+Does not support other OSes YET. Easy to make it work for other OSes.
+Changing path locations for browser profile folder should make it work on other OS. (TODO)
 
-Following functionality has been implemented as of Dec 2, 2017:
- - The merging firefox browser history databases functionality has been implemented.
- - Keyword and Date range search available via the UI.
+Following functionality has been implemented as of Jan 30, 2018:
+ - Browser histories of Firefox, Chrome, Opera and Vivaldi can be combined into one database.
+ - Keyword and Date range search available via the web-based UI.
 
 ##### To Check it out: (Currently, instructions for command line only)
 
@@ -46,26 +44,31 @@ Following functionality has been implemented as of Dec 2, 2017:
 8. Install the project:
 
         pip install .
+      or if you wanna play with the code;
+        
+        pip install --editable .
+        
 9. To merge the databases, run:
 
-        python .\united_states_of_browsers\db_merge\merge_browser_databases.py
+        python .\united_states_of_browsers\db_merge\orchestrator.py
 
 10. To launch the user interface, run:
 
         python .\united_states_of_browsers\usb_server\usb_server.py
-11. Then go to the browser and visit:
+11. Then go to your browser of choice and visit:
 
         localhost:5000
 12. To stop, go back to the same terminal window  where the program is running and press `Ctrl+C`.
 13. Deactivate the virtual environment by typing `deactivate` and pressing ENTER.
 
-Merging the database will generate an sqlite file in the \united_states_of_browsers\appdata directory/folder.
+Merging the database will generate an sqlite file in the `~\USB\` directory/folder, where `~` is the user directory/folder.  
+In windows this is typically `C:\Users\<user name>`
+
+Currently tests are not available.
 
 To run tests (requires pytest), type:
 
     pytest
-
-Currently some tests are broken.
 
 The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
 
@@ -80,9 +83,8 @@ THIS IS A USE AT YOUR OWN RISK SOFTWARE.
 
 Future Plans:
 
- - Update duplicate entries.
- - CLI, then GUI. (Front End JS?)
- - Search. (Elastic Search?)
+ - Update duplicate entries. (?)
+ - Refine the GUI using JS & AJAX.
  - Scraping the URL and getting the text back.
  - ML to pick out keywords from text and title.
  - Use that to tag and categorize the history entries
