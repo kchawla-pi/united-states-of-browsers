@@ -1,8 +1,8 @@
 from collections import namedtuple
 
-from united_states_of_browsers.oops.db_merge.browserpaths import BrowserPaths
-from united_states_of_browsers.oops.db_merge.table import Table
-from united_states_of_browsers.oops.db_merge import exceptions_handling as exceph
+from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
+from united_states_of_browsers.db_merge.table import Table
+from united_states_of_browsers.db_merge import exceptions_handling as exceph
 
 TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
 

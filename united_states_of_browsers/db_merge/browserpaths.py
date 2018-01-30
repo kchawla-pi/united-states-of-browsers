@@ -6,7 +6,7 @@ Classes: BrowserPaths
 """
 from pathlib import Path
 
-from united_states_of_browsers.oops.db_merge import exceptions_handling
+from united_states_of_browsers.db_merge import exceptions_handling
 
 
 class BrowserPaths(dict):
