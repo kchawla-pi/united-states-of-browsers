@@ -34,8 +34,8 @@ class Orchestrator:
 			                       profiles=browser_datum.profiles,
 			                       file_tables=browser_datum.file_tables,
 			                       copies_subpath=self.app_path)
-			each_bowser_records_yielder = each_browser.access_fields(browser_datum.table_fields)
-			self.browser_yielder.append(each_bowser_records_yielder)
+			each_browser_records_yielder = each_browser.access_fields(browser_datum.table_fields)
+			self.browser_yielder.append(each_browser_records_yielder)
 	
 	def write_records(self, tablename, primary_key_name, fieldnames):
 		queries = make_queries(tablename, primary_key_name, fieldnames)

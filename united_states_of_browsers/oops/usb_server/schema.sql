@@ -6,4 +6,5 @@ create table HISTORY (
     title text,
     visit_count integer,
     last_visit integer,
+    last_visit_readable text,
     );
