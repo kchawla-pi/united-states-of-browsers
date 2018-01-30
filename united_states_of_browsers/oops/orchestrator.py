@@ -1,8 +1,8 @@
 import os
 import sqlite3
 
-from united_states_of_browsers.oops.browser import Browser
 from united_states_of_browsers.oops import browser_data
+from united_states_of_browsers.oops.browser import Browser
 from united_states_of_browsers.oops.helpers import make_queries
 
 from united_states_of_browsers.db_merge.imported_annotations import *
@@ -16,7 +16,7 @@ class Orchestrator:
 			self.app_path = Path(*app_path).expanduser()
 		self.db_name = db_name
 		self.profile_paths = None
-		self.records_yielders = []
+		self.browser_yielder = []
 		self.output_db = self.app_path.joinpath(db_name)
 		self.installed_browsers_data = None
 	
@@ -35,7 +35,7 @@ class Orchestrator:
 			                       file_tables=browser_datum.file_tables,
 			                       copies_subpath=self.app_path)
 			each_bowser_records_yielder = each_browser.access_fields(browser_datum.table_fields)
-			self.records_yielders.append(each_bowser_records_yielder)
+			self.browser_yielder.append(each_bowser_records_yielder)
 	
 	def write_records(self, tablename, primary_key_name, fieldnames):
 		queries = make_queries(tablename, primary_key_name, fieldnames)
@@ -43,11 +43,11 @@ class Orchestrator:
 			cursor = connection.cursor()
 			cursor.execute(queries['create'])
 			[cursor.executemany(queries['insert'], browser_record_yielder)
-			 for browser_record_yielder in self.records_yielders
+			 for browser_record_yielder in self.browser_yielder
 			 ]
 	
 	def build_search_table(self):
-		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit', 'browser', 'profile', 'file',
+		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit', 'last_visit_readable', 'browser', 'profile', 'file',
 		                 'tablename']
 		# search_fields = ["url", "title", "visit_count", "last_visit_date"]
 		search_fields_str = ", ".join(search_fields)
@@ -68,7 +68,7 @@ class Orchestrator:
 	def orchestrate(self):
 		self.find_installed_browsers()
 		self.make_records_yielders()
-		fieldnames = ['id', 'url', 'title', 'last_visit', 'browser', 'profile', 'file', 'tablename']
+		fieldnames = ['id', 'url', 'title', 'last_visit', 'last_visit_readable', 'browser', 'profile', 'file', 'tablename']
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
 		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=fieldnames)
 		self.build_search_table()

@@ -56,7 +56,7 @@ def _make_sql_statement(word_query: Optional[Text],
 		             ' (SELECT rec_id'
 		             ' FROM search_table'
 		             ' WHERE search_table'
-		             ' MATCH ? ORDER BY bm25(search_table, 0, 7, 9, 0, 0, 0, 10)) AND last_visit BETWEEN ? AND ?'
+		             ' MATCH ? ORDER BY bm25(search_table, 0, 0, 7, 9, 10, 0, 0, 0, 0)) AND last_visit BETWEEN ? AND ?'
 		             )
 		query_bindings = [word_query, date_start, date_stop]
 	return sql_query, query_bindings

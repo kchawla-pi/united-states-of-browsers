@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
 	firefox_auto = Browser(browser='firefox',
 	                       profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-	                       profiles=['test_profile2'],
+	                       profiles=['Employment'],
 	                       file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
 	                                    'permissions.sqlite': ['moz_hosts']})
 	quit()

@@ -70,7 +70,17 @@ class Table(dict):
 		cursor = self._connection.cursor()
 		query = f'SELECT * FROM {self.table}'
 		records_yielder = cursor.execute(query)
-		self.records_yielder = (dict(record) for record in records_yielder)
+		# self.records_yielder = (dict(record) for record in records_yielder)
+		for record in records_yielder:
+			record_dict = dict(record)
+			timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
+			try:
+				human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
+			except TypeError:
+				pass
+			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
+			yield record_dict
+	
 		
 	def make_human_readable_timestamp(self, records_yielder):
 		for record in records_yielder:
@@ -92,7 +102,7 @@ class Table(dict):
 			return db_connect_exception_raised
 		else:
 			try:
-				self._make_records_yielder()
+				self.records_yielder = self._make_records_yielder()
 			except sqlite3.OperationalError as excep:
 				if 'no such table' in str(excep):
 					return ValueError(f'Table "{self.table}" does not exist in database file "{self.file}" in {self.browser} profile "{self.profile}". The profile may be empty.')
@@ -204,10 +214,11 @@ def test():
 
 if __name__ == '__main__':
 	table4 = Table(table='moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\a2o7b88n.Employment\\places.sqlite',
 	               browser='firefox',
 	               file='places.sqlite',
-	               profile='test_profile0',
+	               profile='Employment',
 	               )
-
+	quit()
+# [record for browser_record_yielder in self.browser_yielder for record in browser_record_yielder]
 	# test()
