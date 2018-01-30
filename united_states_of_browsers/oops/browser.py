@@ -38,12 +38,11 @@ class Browser(dict):
 			[dict(record) for table in browser_obj.tables for record in table.records_yielder]
 	"""
 
-	def __init__(self, browser, profile_root, profiles=None, file_tables=None, not_null_fields=None, copies_subpath=None):
+	def __init__(self, browser, profile_root, profiles=None, file_tables=None, copies_subpath=None):
 		self.browser = browser
 		self.profile_root = profile_root
 		self.profiles = profiles
 		self.file_tables = file_tables
-		self.not_null_fields = not_null_fields
 		self.files = None
 		self.paths = None
 		self.tables = []

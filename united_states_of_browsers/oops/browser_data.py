@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+
 BrowserData = namedtuple('BrowserData', 'os browser path profiles file_tables table_fields')
 
 all_browsers = [BrowserData(os='nt',

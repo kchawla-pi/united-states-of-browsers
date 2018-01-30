@@ -4,6 +4,7 @@ import errno
 import shutil
 import sqlite3
 
+from datetime import datetime as dt
 from pathlib import Path
 
 from united_states_of_browsers.oops import exceptions_handling as exceph
@@ -12,7 +13,7 @@ from united_states_of_browsers.oops.helpers import define_non_null_fields
 
 class Table(dict):
 	def __init__(self, table, path, browser, file, profile, copies_subpath=None):
-		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile, non_null_fields=None)
+		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile)
 		self.table = table
 		self.path = Path(path)
 		self.orig_path = Path(path)
@@ -22,11 +23,9 @@ class Table(dict):
 		self.copies_subpath = copies_subpath
 		self.records_yielder = None
 		self._connection = None
-		self.non_null_fields = define_non_null_fields(self)
-		self.update(non_null_fields=self.non_null_fields)
-
+		
 	def _create_db_copy(self):
-		dst = Path(self.copies_subpath, 'Profile Copies', self.browser, self.profile).expanduser()
+		dst = Path(self.copies_subpath, 'AppData', 'Profile Copies', self.browser, self.profile).expanduser()
 		dst.mkdir(parents=True, exist_ok=True)
 		try:
 			self.path = Path(shutil.copy2(self.path, dst))
@@ -69,15 +68,17 @@ class Table(dict):
 		""" Yields a generator of all fields in TableObj.table
 		"""
 		cursor = self._connection.cursor()
-		non_null_fields = define_non_null_fields(self)
-		if non_null_fields:
-			self.non_null_fields = non_null_fields
-			not_null_query_string = ' OR '.join([f'{field_} IS NOT NULL' for field_ in self.non_null_fields])
-			query = f'SELECT * FROM {self.table} WHERE {not_null_query_string}'
-		else:
-			query = f'SELECT * FROM {self.table}'
+		query = f'SELECT * FROM {self.table}'
 		records_yielder = cursor.execute(query)
 		self.records_yielder = (dict(record) for record in records_yielder)
+		
+	def make_human_readable_timestamp(self, records_yielder):
+		for record in records_yielder:
+			record_dict = dict(record)
+			timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
+			human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
+			record.update('human_time', human_readable)
+			yield record
 
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.

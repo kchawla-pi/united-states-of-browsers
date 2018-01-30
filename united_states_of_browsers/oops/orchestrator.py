@@ -9,15 +9,15 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 class Orchestrator:
-	def __init__(self, appdata_subpath, db_name):
+	def __init__(self, app_path, db_name):
 		try:
-			self.output_dir = Path(appdata_subpath).expanduser()
+			self.app_path = Path(app_path).expanduser()
 		except TypeError as excep:
-			self.output_dir = Path(*appdata_subpath).expanduser()
+			self.app_path = Path(*app_path).expanduser()
 		self.db_name = db_name
 		self.profile_paths = None
 		self.records_yielders = []
-		self.output_db = self.output_dir.joinpath(db_name)
+		self.output_db = self.app_path.joinpath(db_name)
 		self.installed_browsers_data = None
 	
 	def find_installed_browsers(self):
@@ -33,7 +33,7 @@ class Orchestrator:
 			                       profile_root=browser_datum.path,
 			                       profiles=browser_datum.profiles,
 			                       file_tables=browser_datum.file_tables,
-			                       copies_subpath=self.output_dir)
+			                       copies_subpath=self.app_path)
 			each_bowser_records_yielder = each_browser.access_fields(browser_datum.table_fields)
 			self.records_yielders.append(each_bowser_records_yielder)
 	
@@ -47,7 +47,7 @@ class Orchestrator:
 			 ]
 	
 	def build_search_table(self):
-		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit_date', 'browser', 'profile', 'file',
+		search_fields = ['rec_id', 'id', 'url', 'title', 'last_visit', 'browser', 'profile', 'file',
 		                 'tablename']
 		# search_fields = ["url", "title", "visit_count", "last_visit_date"]
 		search_fields_str = ", ".join(search_fields)
@@ -58,6 +58,12 @@ class Orchestrator:
 			cursor = connection.cursor()
 			cursor.execute(create_virtual_query)
 			cursor.execute(insert_virtual_query)
+			
+	def write_db_path_to_file(self):
+		db_path_store = Path(__file__).parents[1].joinpath('AppData', 'merged_db_path.txt')
+		with open(db_path_store, 'w') as file_obj:
+			file_obj.write(f'{self.output_db.as_posix()}')
+			
 	
 	def orchestrate(self):
 		self.find_installed_browsers()
@@ -66,10 +72,11 @@ class Orchestrator:
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
 		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=fieldnames)
 		self.build_search_table()
+		self.write_db_path_to_file()
 
 
 if __name__ == '__main__':
-	appdata_subpath = ('~', 'USB', 'AppData')
-	write_combi_db = Orchestrator(appdata_subpath=appdata_subpath, db_name='usb_db.sqlite')
+	app_path = ('~', 'USB')
+	write_combi_db = Orchestrator(app_path=app_path, db_name='usb_db.sqlite')
 	write_combi_db.orchestrate()
 # build_search_table('combined_db_fx_cr.sqlite', ['id', 'url', 'title', 'last_visit_time'])
