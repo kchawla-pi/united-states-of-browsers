@@ -1,6 +1,16 @@
 # united-states-of-browsers
 A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
 
+The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
+
+Whenever I wish to search something, I have to go through them all until I find them. I wish to build a tool which will read browser profile files and combine the history and bookmarks list, ready to be searched and organized automatically.
+
+Initial idea is to read the broswer's sqlite3 database files and copy and combine the data in one place, then allow simultaneous keyword and date range search on it. More features for searching and organization and maybe an ML algo to recommend from within the combined history and the web will be implemented.
+
+Note: Play with it, I haven't made it Demo-ready yet.
+It shouldn't damage anything, but if it is does...
+THIS IS A USE AT YOUR OWN RISK SOFTWARE.
+
  - Built with python3.6
  - using Pycharm 2017.3 CE
  - On Windows 10 x64 Fall Creators Update
@@ -12,7 +22,16 @@ Changing path locations for browser profile folder should make it work on other 
 
 Following functionality has been implemented as of Jan 30, 2018:
  - Browser histories of Firefox, Chrome, Opera and Vivaldi can be combined into one database.
- - Keyword and Date range search available via the web-based UI.
+ - A web UI served by Flask.
+ - Keyword and Date range search.
+  
+  
+Future Plans:  
+ - Update duplicate entries. (?)
+ - Refine the GUI using JS & AJAX.
+ - Scraping the URL and getting the text back.
+ - ML to pick out keywords from text and title.
+ - Use that to tag and categorize the history entries
 
 ##### To Check it out: (Currently, instructions for command line only)
 
@@ -70,21 +89,3 @@ To run tests (requires pytest), type:
 
     pytest
 
-The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
-
-Whenever I wish to search something, I have to go through them all until I find them. I wish to build a tool which will read browser profile files and combine the history and bookmarks list, ready to be searched and organized automatically.
-
-Initial idea is to read the broswer's sqlite3 database files and copy and combine the data in one place, maybe a json. More features for searching and organization and maybe an ML algo to recommend from within the combined history and the web will be implemented.
-
-Note: Play with it, I haven't made it Demo-ready yet.
-It shouldn't damage anything, but if it is does...
-THIS IS A USE AT YOUR OWN RISK SOFTWARE.
-
-
-Future Plans:
-
- - Update duplicate entries. (?)
- - Refine the GUI using JS & AJAX.
- - Scraping the URL and getting the text back.
- - ML to pick out keywords from text and title.
- - Use that to tag and categorize the history entries
