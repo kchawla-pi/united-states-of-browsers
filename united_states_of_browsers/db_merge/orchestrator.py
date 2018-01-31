@@ -37,6 +37,19 @@ class Orchestrator:
 			each_browser_records_yielder = each_browser.access_fields(browser_datum.table_fields)
 			self.browser_yielder.append(each_browser_records_yielder)
 	
+	def rename_existing_db(self):
+		previous_db_path = self.output_db.with_name('_previous_' + self.output_db.name)
+		
+		try:
+			self.output_db.rename(previous_db_path)
+		except FileNotFoundError:
+			pass
+		except FileExistsError:
+			previous_db_path.unlink()
+			self.output_db.rename(previous_db_path)
+		
+		
+	
 	def write_records(self, tablename, primary_key_name, fieldnames):
 		queries = make_queries(tablename, primary_key_name, fieldnames)
 		with sqlite3.connect(str(self.output_db)) as connection:
@@ -66,6 +79,7 @@ class Orchestrator:
 		self.find_installed_browsers()
 		self.make_records_yielders()
 		# using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
+		self.rename_existing_db()
 		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=browser_data.history_table_fieldnames)
 		self.build_search_table()
 		self.write_db_path_to_file()
