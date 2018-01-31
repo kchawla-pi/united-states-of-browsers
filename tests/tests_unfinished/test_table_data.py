@@ -124,3 +124,98 @@ make_records_testdata_expected = (
 	'https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&service=mail&sacu=1&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin',
 	    ]),
 	)
+
+def additional_tests_drafts():
+	def test_table():
+		table = Table('1', '2', '3', '4', '5')
+	
+	def test_firefox():
+		table2 = Table(table='moz_places',
+		               path=Path(
+			               'C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing_glitch\\places.sqlite'),
+		               browser='firefox',
+		               file='places.sqlite',
+		               profile='RegularSurfing',
+		               )
+		table2.get_records()
+		# for record_yielder in table2.records_yielder:
+		# 	pass
+		# print(dict(record_yielder))
+		
+		table3 = Table(table='moz_places',
+		               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
+		               browser='firefox',
+		               file='places.sqlite',
+		               profile='test_profile0',
+		               )
+		table3.get_records()
+		for record_yielder in table3.records_yielder:
+			pass
+		# print(dict(record_yielder))
+		
+		table4 = Table(table='moz_places',
+		               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+		               browser='firefox',
+		               file='places.sqlite',
+		               profile='test_profile0',
+		               )
+		# table4.get_records()
+		# for record_yielder in table4.records_yielder:
+		# 	pass
+		# 	print(dict(record_yielder))
+		
+		table5 = Table(table='moz_places',
+		               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
+		               browser='firefox',
+		               file='places.sqlite',
+		               profile='test_profile0',
+		               )
+		table5.get_records()
+		for record_yielder in table5.records_yielder:
+			pass
+	
+	# print(dict(record_yielder)['url'])
+	
+	def test_chrome():
+		table2 = Table(table='urls',
+		               path='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history',
+		               browser='chrome',
+		               file='history',
+		               profile='Default',
+		               )
+		not_null_fieldnames = define_non_null_fields(table2)
+		
+		table2.get_records()
+		for record_yielder in table2.records_yielder:
+			print(dict(record_yielder))
+	
+	def test_define_non_null_fields():
+		table_fx = Table(table='moz_places',
+		                 path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+		                 browser='firefox',
+		                 file='places.sqlite',
+		                 profile='test_profile0',
+		                 )
+		not_null_fieldnames = define_non_null_fields(table_fx)
+		print(not_null_fieldnames, table_fx['non_null_fields'], table_fx.non_null_fields)
+		table_cr = Table(table='urls',
+		                 path='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history',
+		                 browser='chrome',
+		                 file='history',
+		                 profile='Default',
+		                 )
+		not_null_fieldnames = define_non_null_fields(table_cr)
+		print(not_null_fieldnames, table_cr['non_null_fields'], table_cr.non_null_fields)
+	
+	def print_table_attr(obj):
+		attrs = ('table', 'path', 'browser', 'file', 'profile')
+		print([obj[attr_] for attr_ in attrs])
+		print(obj)
+		print('__str__:', repr(obj))
+		print('__repr__:', obj.table)
+	
+	def test():
+		test_table()
+		test_firefox()
+		test_chrome()
+		test_define_non_null_fields()

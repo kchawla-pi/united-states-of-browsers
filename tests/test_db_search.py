@@ -9,7 +9,7 @@ from tests.data.test_db_search_data import TestFields
 
 
 root = Path(__file__).parents[1]
-db_for_testing = Path.joinpath(root, 'tests', 'data', 'db_for_testing_search.sqlite')
+db_for_testing = Path.joinpath(root, 'tests_unfinished', 'data', 'db_for_testing_search.sqlite')
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in dbs_data.search_testdata['keywords only']])

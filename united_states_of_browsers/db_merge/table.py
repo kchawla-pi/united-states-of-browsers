@@ -81,14 +81,6 @@ class Table(dict):
 			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
 			yield record_dict
 	
-		
-	def make_human_readable_timestamp(self, records_yielder):
-		for record in records_yielder:
-			record_dict = dict(record)
-			timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
-			human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
-			record.update('human_time', human_readable)
-			yield record
 
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
@@ -114,102 +106,6 @@ class Table(dict):
 		query_results = cursor.execute(query).fetchall()
 		all_tables = [tuple(result_)[0] for result_ in query_results]
 		return False if all_tables else True
-
-
-def test_table():
-	table = Table('1', '2', '3', '4', '5')
-
-
-def test_firefox():
-	table2 = Table(table='moz_places',
-	               path=Path('C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing_glitch\\places.sqlite'),
-	               browser='firefox',
-	               file='places.sqlite',
-	               profile='RegularSurfing',
-	               )
-	table2.get_records()
-	# for record_yielder in table2.records_yielder:
-	# 	pass
-		# print(dict(record_yielder))
-
-	table3 = Table(table='moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
-	               browser='firefox',
-	               file='places.sqlite',
-	               profile='test_profile0',
-	               )
-	table3.get_records()
-	for record_yielder in table3.records_yielder:
-		pass
-		# print(dict(record_yielder))
-
-	table4 = Table(table='moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
-	               browser='firefox',
-	               file='places.sqlite',
-	               profile='test_profile0',
-	               )
-	# table4.get_records()
-	# for record_yielder in table4.records_yielder:
-	# 	pass
-	# 	print(dict(record_yielder))
-
-	table5 = Table(table='moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
-	               browser='firefox',
-	               file='places.sqlite',
-	               profile='test_profile0',
-	               )
-	table5.get_records()
-	for record_yielder in table5.records_yielder:
-		pass
-		# print(dict(record_yielder)['url'])
-
-def test_chrome():
-	table2 = Table(table='urls',
-	               path='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history',
-	               browser='chrome',
-	               file='history',
-	               profile='Default',
-	               )
-	not_null_fieldnames = define_non_null_fields(table2)
-
-	table2.get_records()
-	for record_yielder in table2.records_yielder:
-		print(dict(record_yielder))
-
-def test_define_non_null_fields():
-	table_fx = Table(table='moz_places',
-	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
-	               browser='firefox',
-	               file='places.sqlite',
-	               profile='test_profile0',
-	               )
-	not_null_fieldnames = define_non_null_fields(table_fx)
-	print(not_null_fieldnames, table_fx['non_null_fields'], table_fx.non_null_fields)
-	table_cr = Table(table='urls',
-	               path='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\history',
-	               browser='chrome',
-	               file='history',
-	               profile='Default',
-	               )
-	not_null_fieldnames = define_non_null_fields(table_cr)
-	print(not_null_fieldnames, table_cr['non_null_fields'], table_cr.non_null_fields)
-
-
-def print_table_attr(obj):
-	attrs = ('table', 'path', 'browser', 'file', 'profile')
-	print([obj[attr_] for attr_ in attrs])
-	print(obj)
-	print('__str__:', repr(obj))
-	print('__repr__:', obj.table)
-
-
-def test():
-	test_table()
-	test_firefox()
-	test_chrome()
-	test_define_non_null_fields()
 
 
 if __name__ == '__main__':
