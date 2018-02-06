@@ -9,16 +9,42 @@ from pathlib import Path
 from pprint import pprint
 
 from united_states_of_browsers.db_merge import exceptions_handling as exceph
-
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 class Table(dict):
-	def __init__(self, table, path, browser, file, profile, copies_subpath=None):
-		super().__init__(table=table, path=path, browser=browser, file=file, profile=profile)
+	""" Table object for SQLite database files.
+	
+	Usage:
+		table_obj = Table(table, path, browser, filename, profile)
+		
+		table_obj.get_records()
+		
+		for record in **table_obj.records_yielder**:  # a records yielding generator
+			print(record)
+	
+	:param: table: Name of the target table in the sqlite database file.
+	:param: path: Path to the sqlite database file, **including filename**.
+	:param: browser: Browser name, to which the database file belongs.
+	:param: filename: name of the sqlite database file.
+	:param: profile: Name of the browser profile who's data is being accessed.
+	:param: copies_subpath: Optional. If a valid directory path is given, creates a copy of the SQLite database to read from.
+	
+	
+	"""
+	def __init__(self,
+	             table: Text,
+	             path: PathInfo,
+	             browser: Text,
+	             filename: Text,
+	             profile: Text,
+	             copies_subpath: Optional[PathInfo]=None
+	             ):
+		super().__init__(table=table, path=path, browser=browser, file=filename, profile=profile)
 		self.table = table
 		self.path = Path(path)
 		self.orig_path = Path(path)
 		self.browser = browser
-		self.file = file
+		self.filename = filename
 		self.profile = profile
 		self.copies_subpath = copies_subpath
 		self.records_yielder = None
@@ -61,10 +87,10 @@ class Table(dict):
 			else:
 				raise
 		finally:
-			# Cleans up any database files created uring failed connection attempt.
+			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
 
-	def _make_records_yielder(self):
+	def _make_records_yielder(self) -> Generator:
 		""" Yields a generator of all fields in TableObj.table
 		"""
 		cursor = self._connection.cursor()
@@ -97,7 +123,8 @@ class Table(dict):
 				self.records_yielder = self._make_records_yielder()
 			except sqlite3.OperationalError as excep:
 				if 'no such table' in str(excep):
-					return ValueError(f'Table "{self.table}" does not exist in database file "{self.file}" in {self.browser} profile "{self.profile}". The profile may be empty.')
+					return ValueError(
+						f'Table "{self.table}" does not exist in database file "{self.filename}" in {self.browser} profile "{self.profile}". The profile may be empty.')
 				return None
 
 	def check_if_db_empty(self):
@@ -112,7 +139,7 @@ if __name__ == '__main__':
 	table4 = Table(table='moz_places',
 	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\a2o7b88n.Employment\\places.sqlite',
 	               browser='firefox',
-	               file='places.sqlite',
+	               filename='places.sqlite',
 	               profile='Employment',
 	               )
 	table4.get_records()

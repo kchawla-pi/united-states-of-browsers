@@ -1,7 +1,9 @@
 from pathlib import Path
 from pprint import pprint
+from united_states_of_browsers.db_merge.imported_annotations import *
 
-def invalid_path_in_tree(path_to_test):
+
+def invalid_path_in_tree(path_to_test: PathInfo):
 	""" Accepts a path and returns the first invalid parent.
 	"""
 	path_to_test = Path(path_to_test)
@@ -9,14 +11,14 @@ def invalid_path_in_tree(path_to_test):
 	return first_invalid_path_in_tree[-1] if first_invalid_path_in_tree else None
 
 
-def remove_new_empty_files(dirpath, existing_files):
+def remove_new_empty_files(dirpath: PathInfo, existing_files: Iterable[Text]):
 	dirpath = Path(dirpath)
 	files_post_connection_attempt = set(entry for entry in dirpath.iterdir() if entry.is_file())
 	extra_files = files_post_connection_attempt.difference(existing_files)
 	[file_.unlink() for file_ in extra_files if file_.stat().st_size == 0]
 
 
-def exceptions_log_deduplicator(exceptions_log):
+def exceptions_log_deduplicator(exceptions_log: Iterable):
 	unique_exception_strings = {str(excep_): excep_ for excep_ in exceptions_log}
 	return list(unique_exception_strings.values())
 

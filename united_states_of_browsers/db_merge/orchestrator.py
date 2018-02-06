@@ -9,7 +9,7 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 class Orchestrator:
-	def __init__(self, app_path, db_name):
+	def __init__(self, app_path: PathInfo, db_name: Text):
 		try:
 			self.app_path = Path(app_path).expanduser()
 		except TypeError as excep:
@@ -48,9 +48,8 @@ class Orchestrator:
 			previous_db_path.unlink()
 			self.output_db.rename(previous_db_path)
 		
-		
-	
-	def write_records(self, tablename, primary_key_name, fieldnames):
+			
+	def write_records(self, tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]):
 		queries = make_queries(tablename, primary_key_name, fieldnames)
 		with sqlite3.connect(str(self.output_db)) as connection:
 			cursor = connection.cursor()

@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 """
-Module containing classes to setup browser profile and dtaabase file paths.
+Module containing classes to setup browser profile paths and database file paths.
 
 Classes: BrowserPaths
 """
