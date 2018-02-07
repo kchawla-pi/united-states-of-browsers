@@ -7,6 +7,7 @@ Classes: BrowserPaths
 from pathlib import Path
 
 from united_states_of_browsers.db_merge import exceptions_handling
+from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 class BrowserPaths(dict):
@@ -14,7 +15,7 @@ class BrowserPaths(dict):
 	Accepts browser name, browser profiles directory path, database files list, browser profiles list (default: all).
 
 	"""
-	def __init__(self, browser, profile_root, profiles=None):
+	def __init__(self, browser: Text, profile_root: PathInfo, profiles: Optional[Iterable[Text]]=None):
 		self.browser = browser
 		self.profile_root = Path(profile_root).expanduser()
 		self.profiles = profiles

@@ -38,7 +38,7 @@ class Table(dict):
 	             filename: Text,
 	             profile: Text,
 	             copies_subpath: Optional[PathInfo]=None
-	             ):
+	             ) -> None:
 		super().__init__(table=table, path=path, browser=browser, file=filename, profile=profile)
 		self.table = table
 		self.path = Path(path)

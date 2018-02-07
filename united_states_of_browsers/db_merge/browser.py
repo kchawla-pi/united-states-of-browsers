@@ -3,6 +3,8 @@ from collections import namedtuple
 from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge import exceptions_handling as exceph
+from united_states_of_browsers.db_merge.imported_annotations import *
+
 
 TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
 
@@ -37,7 +39,8 @@ class Browser(dict):
 			[dict(record) for table in browser_obj.tables for record in table.records_yielder]
 	"""
 
-	def __init__(self, browser, profile_root, profiles=None, file_tables=None, copies_subpath=None):
+	def __init__(self, browser: Text, profile_root: PathInfo, profiles: Optional[Iterable[Text]]=None,
+	             file_tables: Dict[Text, Iterable[Text]]=None, copies_subpath: Optional[PathInfo]=None):
 		self.browser = browser
 		self.profile_root = profile_root
 		self.profiles = profiles

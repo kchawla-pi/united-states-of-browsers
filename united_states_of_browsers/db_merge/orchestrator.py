@@ -9,7 +9,7 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 
 class Orchestrator:
-	def __init__(self, app_path: PathInfo, db_name: Text):
+	def __init__(self, app_path: PathInfo, db_name: Text) -> None:
 		try:
 			self.app_path = Path(app_path).expanduser()
 		except TypeError as excep:
