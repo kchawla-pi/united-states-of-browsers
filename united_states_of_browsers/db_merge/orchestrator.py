@@ -1,7 +1,7 @@
 # -*- ecnoding: utf-8 -*-
 """
 Main file of the United States of Browsers
-To run:
+To create a merged database, run:
 	$python orchestrator.py
 """
 import os
