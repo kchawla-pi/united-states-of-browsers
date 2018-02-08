@@ -1,6 +1,8 @@
 # United States of Browsers
 ##### A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
 
+*The wiki has more info about the project's philosophy.*
+
 I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
 
 Whenever I wish to search something, I have to go through them all until I find them. I wish to build a tool which will read browser profile files and combine the history and bookmarks list, ready to be searched and organized automatically.
