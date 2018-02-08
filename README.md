@@ -1,7 +1,7 @@
-# united-states-of-browsers
-A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
+# United States of Browsers
+##### A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
 
-The project idea is, essentially, I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
+I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
 
 Whenever I wish to search something, I have to go through them all until I find them. I wish to build a tool which will read browser profile files and combine the history and bookmarks list, ready to be searched and organized automatically.
 
@@ -11,13 +11,15 @@ Note: Play with it, I haven't made it Demo-ready yet.
 It shouldn't damage anything, but if it is does...
 THIS IS A USE AT YOUR OWN RISK SOFTWARE.
 
+###### Installation instructions are further down.
+
  - Built with python3.6
  - using Pycharm 2017.3 CE
  - On Windows 10 x64 Fall Creators Update
  - For Mozilla Firefox, Chrome, Opera, Vivaldi
  - May work with other Windows versions.
 
-Does not support other OSes YET. Easy to make it work for other OSes.
+It is Windows ONLY for now. Easy to make it work for other OSes.
 Changing path locations for browser profile folder should make it work on other OS. (TODO)
 
 Following functionality has been implemented as of Jan 30, 2018:
