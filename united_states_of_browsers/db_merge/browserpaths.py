@@ -74,8 +74,8 @@ def browserpaths_test():
 	chrome = BrowserPaths(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
 
 	objects_list = [firefox_all, firefox_some]
-	print_objects(objects_list)
-	print_objects([chrome])
+	# print_objects(objects_list)
+	# print_objects([chrome])
 
 
 

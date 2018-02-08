@@ -1,3 +1,7 @@
+# -*- encoding: utf-8 -*-
+"""
+The Browser class
+"""
 from collections import namedtuple
 
 from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
