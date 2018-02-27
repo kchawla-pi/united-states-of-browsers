@@ -73,22 +73,7 @@ class Table(dict):
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
-			return exceph.sqlite3_operational_errors(excep, self.path)  # returns a loggable error or raises a fatal one.
-			"""
-			if 'database is locked' in str(excep).lower():
-				print('database is locked', '\n', str(self.path))
-				raise excep
-			elif 'unable to open database file' in str(excep).lower():
-				invalid_path = exceph.invalid_path_in_tree(self.path)
-				if invalid_path:
-					return OSError(f'Path does not exist: {invalid_path}')
-				elif not self.path.is_file():
-					return OSError(errno.ENOENT, f'"{self.path.name}" is not a file, or the file does not exist. The profile "{self.profile}" might not contain any data.', str(self.path))#excep, f'{self.path.name} is not a file, or the file does not exist. The profile might not contain any data. ({self.path})')
-				else:
-					raise
-			else:
-				raise
-			"""
+			return exceph.sqlite3_operational_errors(excep, self.path, self.profile)  # returns a loggable error or raises a fatal one.
 		finally:
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
@@ -129,7 +114,9 @@ class Table(dict):
 			except sqlite3.OperationalError as excep:
 				if 'no such table' in str(excep):
 					return ValueError(
-						f'Table "{self.table}" does not exist in database file "{self.filename}" in {self.browser} profile "{self.profile}". The profile may be empty.')
+						f'Table "{self.table}" does not exist in database file "{self.filename}" in '
+						f'{self.browser} profile "{self.profile}". The profile may be empty.'
+							)
 				return None
 
 	def check_if_db_empty(self):

@@ -29,7 +29,7 @@ def exceptions_log_deduplicator(exceptions_log: Iterable):
 	return list(unique_exception_strings.values())
 
 
-def sqlite3_operational_errors(exception_obj: Exception, path: PathInfo) -> Optional[Exception]:
+def sqlite3_operational_errors(exception_obj: Exception, path: PathInfo, profilename: Text) -> Optional[Exception]:
 	""" Returns or raises useful exception subtype from sqlite3.OperationalError .
 	Accepts sqlite3.OperationalError exception object and path of the sqlite3 database file.
 	"""
@@ -45,7 +45,10 @@ def sqlite3_operational_errors(exception_obj: Exception, path: PathInfo) -> Opti
 	if 'unable to open database' in msg and invalid_path:
 		return OSError(f'Path does not exist: {invalid_path}')
 	if 'unable to open database' in msg and not invalid_path:
-		return OSError(errno.ENOENT, f'"{self.path.name}" is not a sqlite3 database file, or the file does not exist.{path}')
+		return OSError(errno.ENOENT,
+		               f'"{self.path.name}" is not a sqlite3 database file, or the file does not exist.{path}'
+		               f'The profile "{profilename}" may be empty.',
+		               )
 	if 'database is locked' in msg:
 		raise DatabaseLockedError(path)	from sqlite3.OperationalError
 	raise exception_obj
