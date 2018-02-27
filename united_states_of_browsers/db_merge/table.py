@@ -73,6 +73,8 @@ class Table(dict):
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
+			return exceph.sqlite3_operational_errors(excep, self.path)
+			"""
 			if 'database is locked' in str(excep).lower():
 				print('database is locked', '\n', str(self.path))
 				raise excep
@@ -86,6 +88,7 @@ class Table(dict):
 					raise
 			else:
 				raise
+			"""
 		finally:
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
