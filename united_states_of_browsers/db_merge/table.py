@@ -73,7 +73,7 @@ class Table(dict):
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
-			return exceph.sqlite3_operational_errors(excep, self.path)
+			return exceph.sqlite3_operational_errors(excep, self.path)  # returns a loggable error or raises a fatal one.
 			"""
 			if 'database is locked' in str(excep).lower():
 				print('database is locked', '\n', str(self.path))
