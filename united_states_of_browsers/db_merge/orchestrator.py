@@ -18,12 +18,13 @@ class Orchestrator:
 	"""
 	Orchestrates the running of the app, calling the various functions.
 	"""
-	def __init__(self, app_path: PathInfo, db_name: Text) -> None:
+	def __init__(self, app_path: PathInfo, db_name: Text, browser_info: BrowserData) -> None:
 		try:
 			self.app_path = Path(app_path).expanduser()
 		except TypeError as excep:
 			self.app_path = Path(*app_path).expanduser()
 		self.db_name = db_name
+		self.browser_info = browser_info
 		self.profile_paths = None
 		self.browser_yielder = []
 		self.output_db = self.app_path.joinpath(db_name)
@@ -34,7 +35,7 @@ class Orchestrator:
 		Checks if the default browser paths exist on the system to determine if they are installed.
 		"""
 		self.installed_browsers_data = [browser_datum
-		                                for browser_datum in browser_data.all_browsers
+		                                for browser_datum in self.browser_info
 		                                if Path(browser_datum.path).expanduser().absolute().exists()
 		                                and browser_datum.os == os.name
 		                                ]
@@ -126,6 +127,7 @@ class Orchestrator:
 
 if __name__ == '__main__':
 	app_path = ('~', 'USB')
-	write_combi_db = Orchestrator(app_path=app_path, db_name='usb_db.sqlite')
+	all_browsers_info = browser_data.prep_browsers_info()
+	write_combi_db = Orchestrator(app_path=app_path, db_name='usb_db.sqlite', browser_info=all_browsers_info)
 	write_combi_db.orchestrate()
 # build_search_table('combined_db_fx_cr.sqlite', ['id', 'url', 'title', 'last_visit_time'])

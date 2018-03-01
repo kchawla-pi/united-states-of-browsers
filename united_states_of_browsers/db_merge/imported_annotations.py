@@ -9,6 +9,7 @@ from typing import (Any,
                     Generator,
                     Iterable,
                     List,
+                    Mapping,
                     NamedTuple,
                     Optional,
                     Sequence,
@@ -19,3 +20,12 @@ from typing import (Any,
                     )
 
 PathInfo = NewType('PathInfo', Union[Path, PathLike, Text, ByteString])
+
+
+class BrowserData(NamedTuple):
+	os: Text
+	browser: Text
+	path: PathInfo
+	profiles: Optional[Iterable[Text]]
+	file_tables: Mapping[Text, Iterable[Text]]
+	table_fields: Mapping[Text, Iterable[Text]]

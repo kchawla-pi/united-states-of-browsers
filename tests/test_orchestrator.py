@@ -1,24 +1,35 @@
+from pprint import pprint
+
 import pytest
 import sqlite3
 
 from collections import OrderedDict as odict
 from pathlib import Path
 
-from united_states_of_browsers.db_merge import merge_browser_databases
+from united_states_of_browsers.db_merge import orchestrator
 from united_states_of_browsers.db_merge import helpers
 
-home_dir = Path.home()
-profile_dbs = {'test_profile0':
-	               f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
-               'test_profile1':
-	               f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
-               'test_profile2':
-	               f'{home_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
-               }
+parent_dir = Path(__file__).parents[0].joinpath('data', 'browser_profiles_for_testing')
+
+
+def setup_test_data():
+	profile_dbs = {'test_profile0':
+		               f'{parent_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\e0pj4lec.test_profile0\\places.sqlite',
+	               'test_profile1':
+		               f'{parent_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\kceyj748.test_profile1\\places.sqlite',
+	               'test_profile2':
+		               f'{parent_dir}\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\udd5sttq.test_profile2\\places.sqlite',
+	               }
+	return profile_dbs
+	
+if __name__ == '__main__':
+	pprint(setup_test_data())
+
+quit()
+orchestrator.Orchestrator()
 
 
 def establish_benchmark(profile_dbs):
-	incr = helpers.incrementer()
 	profile_records_dict = odict()
 	for profile_name, profile_path in profile_dbs.items():
 		conn = sqlite3.connect(profile_path)
