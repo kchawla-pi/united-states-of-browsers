@@ -68,7 +68,22 @@ class Browser(dict):
 				print()
 		super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
 		                 file_tables=self.file_tables, tables=self.tables)
-
+	
+	def _errors_display_logging(self, error_msgs: List) -> List:
+		""" Adds error messages to the error log without duplication.
+		Accepts a collection of error messages and adds them to the error log
+		"""
+		error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=error_msgs)
+		print()
+		for error_msg_ in error_msgs:
+			try:
+				print(f'{error_msg_.strerror}\n{error_msg_.filename}')
+			except AttributeError as attr_err:
+				print(error_msg_)
+		print()
+		return error_msgs
+		
+		
 	def make_paths(self):
 		""" Creates the path to different browser profiles.
 		"""

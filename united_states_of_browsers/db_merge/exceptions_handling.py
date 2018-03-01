@@ -29,7 +29,7 @@ def exceptions_log_deduplicator(exceptions_log: Iterable):
 	return list(unique_exception_strings.values())
 
 
-def sqlite3_operational_errors(exception_obj: Exception, path: PathInfo, profilename: Text) -> Optional[Exception]:
+def sqlite3_operational_errors_handler(exception_obj: Exception, path: PathInfo, profilename: Text) -> Optional[Exception]:
 	""" Returns or raises useful exception subtype from sqlite3.OperationalError .
 	Accepts sqlite3.OperationalError exception object and path of the sqlite3 database file.
 	"""
