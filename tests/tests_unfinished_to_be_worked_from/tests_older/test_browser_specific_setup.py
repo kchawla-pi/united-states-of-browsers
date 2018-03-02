@@ -1,7 +1,7 @@
 import pytest
 
 from united_states_of_browsers.db_merge import browser_specific_setup
-from tests.data import test_browser_specific_setup_data as bss_data
+from tests.tests_unfinished_to_be_worked_from.test_data_older import test_browser_specific_setup_data as bss_data
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in bss_data.firefox_testdata['defaults']])

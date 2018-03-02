@@ -1,15 +1,14 @@
 import pytest
 
 from pathlib import Path
-from pprint import pprint
 
 from united_states_of_browsers.db_merge import db_search
-from tests.data import test_db_search_data as dbs_data
-from tests.data.test_db_search_data import TestFields
+from tests.tests_unfinished_to_be_worked_from.test_data_older import test_db_search_data as dbs_data
+from tests.tests_unfinished_to_be_worked_from.test_data_older.test_db_search_data import TestFields
 
 
 root = Path(__file__).parents[1]
-db_for_testing = Path.joinpath(root, 'tests_unfinished', 'data', 'db_for_testing_search.sqlite')
+db_for_testing = Path.joinpath(root, 'tests_unfinished_to_be_worked_from', 'data', 'db_for_testing_search.sqlite')
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in dbs_data.search_testdata['keywords only']])

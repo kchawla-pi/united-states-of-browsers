@@ -205,7 +205,7 @@ if __name__ == '__main__':
 		print(noargs_id, '\n')
 
 	root = Path(__file__).parents[2]
-	db_test = str(root.joinpath('tests_unfinished\\data\\db_for_testing_search.sqlite'))
+	db_test = str(root.joinpath('tests_unfinished_to_be_worked_from\\data\\db_for_testing_search.sqlite'))
 	db_main = str(root.joinpath('db_merge\\all_merged.sqlite'))
 
 	with open(app_inf_path, 'r') as json_obj:

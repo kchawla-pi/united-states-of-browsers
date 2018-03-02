@@ -2,7 +2,7 @@ import pytest
 
 from pprint import pprint
 
-from . import test_table_data as ttd
+from tests.tests_unfinished_to_be_worked_from.tests_unfinished import test_table_data as ttd
 from united_states_of_browsers.db_merge import table
 
 
