@@ -29,28 +29,42 @@ def exceptions_log_deduplicator(exceptions_log: Iterable):
 	return list(unique_exception_strings.values())
 
 
-def sqlite3_operational_errors_handler(exception_obj: Exception, path: PathInfo, profilename: Text) -> Optional[Exception]:
+def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: object) -> Optional[Exception]:
 	""" Returns or raises useful exception subtype from sqlite3.OperationalError .
 	Accepts sqlite3.OperationalError exception object and path of the sqlite3 database file.
 	"""
+	browsername = calling_obj['browser']
+	tablename = calling_obj['table']
+	profilename = calling_obj['profile']
+	path = calling_obj['path']
+	
 	class DatabaseLockedError(sqlite3.OperationalError):
 		def __str__(self):
-			return (f'Unable to open database file. '
+			return (f'Unable to open database file: `{path.name}`\n  for `{browsername}` \nat `{path.parent}`\n'
 			        f'Database is locked and in use by some other process.\n'
-			        f'{path}'
 			        )
+		
+	class InvalidTableError(sqlite3.OperationalError):
+		def __str__(self):
+			return (f'Table `{tablename}` does not exist in `{path.name}`\n'
+			        f'The `{browsername}` profile `{profilename}` may be empty.'
+			        )
+		
+						
 	msg = str(exception_obj).lower()
 	invalid_path = invalid_path_in_tree(path)
 	
 	if 'unable to open database' in msg and invalid_path:
-		return OSError(f'Path does not exist: {invalid_path}')
+		raise OSError(f'Path does not exist: {invalid_path}')
 	if 'unable to open database' in msg and not invalid_path:
-		return OSError(errno.ENOENT,
+		raise OSError(errno.ENOENT,
 		               f'"{self.path.name}" is not a sqlite3 database file, or the file does not exist.{path}'
 		               f'The profile "{profilename}" may be empty.',
 		               )
+	if 'no such table' in msg:
+		return InvalidTableError(exception_obj, path)
 	if 'database is locked' in msg:
-		raise DatabaseLockedError(path)	from sqlite3.OperationalError
+		raise DatabaseLockedError(exception_obj, path)	from sqlite3.OperationalError
 	raise exception_obj
 	
 	

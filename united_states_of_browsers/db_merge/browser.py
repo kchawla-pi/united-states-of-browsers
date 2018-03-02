@@ -138,7 +138,6 @@ class Browser(dict):
 				yield tuple(selected_fields_records.values())
 			current_table.get_records()
 
-
 	def __repr__(self):
 		return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'
 

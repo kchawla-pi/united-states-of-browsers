@@ -1,4 +1,5 @@
 from collections import namedtuple
+from pathlib import Path
 
 BrowserData = namedtuple('BrowserData', 'os browser path profiles file_tables table_fields')
 

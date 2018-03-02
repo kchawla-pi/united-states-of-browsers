@@ -73,7 +73,7 @@ class Table(dict):
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
-			return exceph.sqlite3_operational_errors_handler(excep, self.path, self.profile)  # returns a loggable error or raises a fatal one.
+			return exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)  # returns a loggable error or raises a fatal one.
 		finally:
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
@@ -83,20 +83,27 @@ class Table(dict):
 		"""
 		cursor = self._connection.cursor()
 		query = f'SELECT * FROM {self.table}'
-		records_yielder = cursor.execute(query)
-		# self.records_yielder = (dict(record) for record in records_yielder)
-		for record in records_yielder:
-			record_dict = dict(record)
-			timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
-			try:
-				human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
-			except TypeError as excep:
-				pass  # reocrds without valid timestamps are removed down the process
-			except OSError as excep:
-				pass  # reocrds without valid timestamps are removed down the process
-			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
-			yield record_dict
-	
+		try:
+			records_yielder = cursor.execute(query)
+		except sqlite3.OperationalError as excep:
+			exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)
+			return exception_raised
+		else:
+			for record in records_yielder:
+				record_dict = dict(record)
+				timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
+				try:
+					human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
+				except TypeError as excep:
+					human_readable = ''
+					pass  # records without valid timestamps are removed down the process
+				except OSError as excep:
+					human_readable = ''
+					pass  # records without valid timestamps are removed down the process
+				
+				record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
+				yield record_dict
+		
 
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
@@ -112,11 +119,9 @@ class Table(dict):
 			try:
 				self.records_yielder = self._make_records_yielder()
 			except sqlite3.OperationalError as excep:
-				if 'no such table' in str(excep):
-					return ValueError(
-						f'Table "{self.table}" does not exist in database file "{self.filename}" in '
-						f'{self.browser} profile "{self.profile}". The profile may be empty.'
-							)
+				exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)
+				return exception_raised
+			else:
 				return None
 
 	def check_if_db_empty(self):
