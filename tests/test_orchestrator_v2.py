@@ -10,7 +10,7 @@ app_path = '~/USB/for_tests'
 db_name = 'merged_db_for_testing.sqlite'
 
 read_from_path_prefix = Path(__file__).parents[1].joinpath('tests', 'data', 'browser_profiles_for_testing')
-compare_with_db_path = Path(__file__).parents[1].joinpath('tests', 'data', '~benchmark_merged_browser_db.sqlite')
+compare_with_db_path = Path(__file__).parents[1].joinpath('tests', 'data', '~benchmark_db_for_usb_testing.sqlite')
 
 browser_info = prep_browsers_info(parent_dir=read_from_path_prefix)
 test_orchestrator = Orchestrator(app_path=app_path, db_name=db_name, browser_info=browser_info)
@@ -18,7 +18,7 @@ test_orchestrator.orchestrate()
 
 newly_merged_test_db_path = Path(app_path, db_name).expanduser()
 
-print(newly_merged_test_db_path, compare_with_db_path, sep='\n')
+
 with sqlite3.connect(str(newly_merged_test_db_path)) as new_db_conn:
 	new_db_conn.row_factory = sqlite3.Row
 	new_db_cur = new_db_conn.cursor()
@@ -37,14 +37,21 @@ comparision_results = all([bench_record[bench_key] == new_record[bench_key]
                            for bench_record, new_record in zip(benchmark_db_records, new_db_records)
                            for bench_key in bench_record
                            ])
-if not comparision_results:
+try:
+	assert comparision_results
+except AssertionError:
+	assert benchmark_db_records.keys() == new_db_records.keys(), (benchmark_db_records.keys(), '**', new_db_records.keys())
+	assert len(benchmark_db_records) == len(new_db_records), (len(benchmark_db_records), '**', len(new_db_records))
+	
+	print(newly_merged_test_db_path, compare_with_db_path, sep='\n')
+	
 	for bench_record, new_record in zip(benchmark_db_records, new_db_records):
+		print('-' * 50)
 		for bench_key in bench_record:
-			if bench_key not in ('last_visit', 'title'):
-				# if bench_key['title']
-				if bench_record[bench_key] != new_record[bench_key]:
-					pprint((bench_key, bench_record[bench_key], new_record[bench_key]))
+			if bench_record[bench_key] != new_record[bench_key]:
+				pprint((bench_key, bench_record[bench_key], new_record[bench_key]))
+else:
+	print('Passed')
 				
-print(comparision_results)
 
 print()
