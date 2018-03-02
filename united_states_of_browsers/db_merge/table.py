@@ -95,10 +95,10 @@ class Table(dict):
 				try:
 					human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
 				except TypeError as excep:
-					human_readable = ''
+					continue
 					pass  # records without valid timestamps are removed down the process
 				except OSError as excep:
-					human_readable = ''
+					continue
 					pass  # records without valid timestamps are removed down the process
 				
 				record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
