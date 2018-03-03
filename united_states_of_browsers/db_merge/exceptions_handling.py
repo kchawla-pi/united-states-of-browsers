@@ -10,7 +10,8 @@ def invalid_path_in_tree(path_to_test: PathInfo) -> AnyStr:
 	""" Accepts a path and returns the first invalid parent.
 	"""
 	path_to_test = Path(path_to_test)
-	first_invalid_path_in_tree = [path_parent for path_parent in path_to_test.parents if not path_parent.exists() or not path_parent.is_dir()]
+	first_invalid_path_in_tree = [path_parent for path_parent in path_to_test.parents if
+	                              not path_parent.exists() or not path_parent.is_dir()]
 	return first_invalid_path_in_tree[-1] if first_invalid_path_in_tree else None
 
 
@@ -43,14 +44,13 @@ def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: ob
 			return (f'Unable to open database file: `{path.name}`\n  for `{browsername}` \nat `{path.parent}`\n'
 			        f'Database is locked and in use by some other process.\n'
 			        )
-		
+	
 	class InvalidTableError(sqlite3.OperationalError):
 		def __str__(self):
 			return (f'Table `{tablename}` does not exist in `{path.name}`\n'
 			        f'The `{browsername}` profile `{profilename}` may be empty.'
 			        )
-		
-						
+	
 	msg = str(exception_obj).lower()
 	invalid_path = invalid_path_in_tree(path)
 	
@@ -58,18 +58,20 @@ def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: ob
 		raise OSError(f'Path does not exist: {invalid_path}')
 	if 'unable to open database' in msg and not invalid_path:
 		raise OSError(errno.ENOENT,
-		               f'"{self.path.name}" is not a sqlite3 database file, or the file does not exist.{path}'
-		               f'The profile "{profilename}" may be empty.',
-		               )
+		              f'`{path.name}` is not a sqlite3 database file, or the file does not exist.\n'
+		              f'Attempted to open: {path} .\n'
+		              f'The profile `{profilename}` may be empty.',
+		              ) from sqlite3.OperationalError
 	if 'no such table' in msg:
 		return InvalidTableError(exception_obj, path)
 	if 'database is locked' in msg:
-		raise DatabaseLockedError(exception_obj, path)	from sqlite3.OperationalError
+		raise DatabaseLockedError(exception_obj, path) from sqlite3.OperationalError
 	raise exception_obj
-	
-	
+
+
 def test_path_tester():
-	paths_to_test = ('C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',)
+	paths_to_test = (
+	'C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',)
 	curr_path_to_test = paths_to_test[0]
 	print(repr(invalid_path_in_tree(curr_path_to_test)))
 
