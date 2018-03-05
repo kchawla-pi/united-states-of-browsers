@@ -19,6 +19,7 @@ class Browser(dict):
 		profile_root: path to directory/folder where the browser stores all of its profiles
 		profiles: list of profile, default is all profiles
 		file_tables: dict of database file name containing the tables as keys, list of tables to be accessed as values.
+		copies_subpath: path where a copy of the database files is created, and read from,instead of the original files.
 	Methods-
 		make_paths()
 		access_table(file, tables)
