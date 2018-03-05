@@ -1,6 +1,6 @@
 import sqlite3
 
-import test_table_setup as tts
+from tests.table import test_table_setup as tts
 from united_states_of_browsers.db_merge.table import Table
 
 
