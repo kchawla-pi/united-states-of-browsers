@@ -78,11 +78,26 @@ class Table(dict):
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
 
-	def _make_records_yielder(self) -> Generator:
+	def _make_records_yielder(self, records_yielder ) -> Generator:
 		""" Yields a generator of all fields in TableObj.table
 		"""
-		cursor = self._connection.cursor()
-		query = f'SELECT * FROM {self.table}'
+		
+		for record in records_yielder:
+			record_dict = dict(record)
+			timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
+			try:
+				human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6)
+			except TypeError as excep:
+				continue
+				pass  # records without valid timestamps are removed
+			except OSError as excep:
+				continue
+				pass  # records without valid timestamps are removed
+			
+			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
+			yield record_dict
+			
+		"""
 		try:
 			records_yielder = cursor.execute(query)
 		except sqlite3.OperationalError as excep:
@@ -103,7 +118,7 @@ class Table(dict):
 				
 				record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
 				yield record_dict
-		
+		"""
 
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
@@ -116,13 +131,22 @@ class Table(dict):
 		if db_connect_exception_raised:
 			return db_connect_exception_raised
 		else:
+			cursor = self._connection.cursor()
+			query = f'SELECT * FROM {self.table}'
 			try:
-				self.records_yielder = self._make_records_yielder()
+				records_yielder = cursor.execute(query)
 			except sqlite3.OperationalError as excep:
 				exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)
-				return exception_raised
 			else:
-				return None
+				self.records_yielder = self._make_records_yielder(records_yielder)
+				exception_raised = None
+				
+			try:
+				raise exception_raised
+			except TypeError:
+				return self.records_yielder
+			else:
+				return exception_raised
 
 	def check_if_db_empty(self):
 		cursor = self._connection.cursor()
