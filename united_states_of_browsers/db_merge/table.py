@@ -28,8 +28,6 @@ class Table(dict):
 	:param: filename: name of the sqlite database file.
 	:param: profile: Name of the browser profile who's data is being accessed.
 	:param: copies_subpath: Optional. If a valid directory path is given, creates a copy of the SQLite database to read from.
-	
-	
 	"""
 	def __init__(self,
 	             table: Text,
@@ -96,29 +94,6 @@ class Table(dict):
 			
 			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
 			yield record_dict
-			
-		"""
-		try:
-			records_yielder = cursor.execute(query)
-		except sqlite3.OperationalError as excep:
-			exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)
-			return exception_raised
-		else:
-			for record in records_yielder:
-				record_dict = dict(record)
-				timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
-				try:
-					human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6 )
-				except TypeError as excep:
-					continue
-					pass  # records without valid timestamps are removed
-				except OSError as excep:
-					continue
-					pass  # records without valid timestamps are removed
-				
-				record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
-				yield record_dict
-		"""
 
 	def get_records(self):
 		""" Yields a generator to all fields in TableObj.table.
@@ -140,14 +115,8 @@ class Table(dict):
 			else:
 				self.records_yielder = self._make_records_yielder(records_yielder)
 				exception_raised = None
-				
-			try:
-				raise exception_raised
-			except TypeError:
-				return self.records_yielder
-			else:
-				return exception_raised
-
+			return self.records_yielder, exception_raised
+			
 	def check_if_db_empty(self):
 		cursor = self._connection.cursor()
 		query = f'SELECT name FROM sqlite_master WHERE type = "table"'
@@ -168,3 +137,4 @@ if __name__ == '__main__':
 	quit()
 # [record for browser_record_yielder in self.browser_yielder for record in browser_record_yielder]
 	# test()
+

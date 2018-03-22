@@ -15,33 +15,28 @@ TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
 class Browser(dict):
 	""" Creates a generator of browser database records.
 	Accepts parameters-
-		browser: browser name
-		profile_root: path to directory/folder where the browser stores all of its profiles
-		profiles: list of profile, default is all profiles
-		file_tables: dict of database file name containing the tables as keys, list of tables to be accessed as values.
-		copies_subpath: path where a copy of the database files is created, and read from,instead of the original files.
-	Methods-
+		:param: browser: browser name
+		:param: profile_root: path to directory/folder where the browser stores all of its profiles
+		:param: profiles: list of profile, default is all profiles
+		:param: file_tables: dict of database file name containing the tables as keys, list of tables to be accessed as values.
+		:param: copies_subpath: path where a copy of the database files is created, and read from,instead of the original files.
+	
+	**Methods:**
 		make_paths()
+		
 		access_table(file, tables)
 
-	Usage-
-		Using a single statement when creating a new Browser object.
-			browser_obj = Browser(browser, profile_root, profiles, {database_file1: [table1, table2], database_file2: [table3, table4]})
-		or
-		Adding additional file and tables to existing Browser objects using the access_table() method.
+	**Usage:**
+		browser_obj = Browser(browser, profile_root, profiles, {database_file1: [table1, table2], database_file2: [table3, table4]})
 
-			browser_obj = Browser(browser, profile_root, profiles)
+	Add additional file and tables to existing Browser objects using the access_table() method.
 			browser_obj.access_table(database_file1, [table1, table2])
-			browser_obj.access_table(database_file2, [table3, table4])
-
-		Access each table by iterating through browser_obj.tables, get each record by iterating through
-		the records yielder for that table:
-			for table in browser_obj.tables:
-				for record in table.records_yielder:
-					dict(record)
-		or
-		Use a comprehension to obtain all records across all tables in a file using a single statement:
-			[dict(record) for table in browser_obj.tables for record in table.records_yielder]
+			
+	Access each table:
+		for table in browser_obj.tables:
+			for record in table.records_yielder:
+				dict(record)
+			
 	"""
 
 	def __init__(self, browser: Text, profile_root: PathInfo, profiles: Optional[Iterable[Text]]=None,
@@ -101,7 +96,7 @@ class Browser(dict):
 		                 for table in tables
 		                 ]
 		for table in current_batch:
-			exception_raised = table.get_records()
+			table_yielder, exception_raised = table.get_records()  # exception is returned here.
 			if exception_raised:
 				error_msg.append(exception_raised)
 			else:
@@ -155,8 +150,8 @@ if __name__ == '__main__':
 	                       profiles=['Employment'],
 	                       file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
 	                                    'permissions.sqlite': ['moz_hosts']})
-	firefox_auto.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date', 'last_visit_readable']})
 	quit()
+	firefox_auto.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date', 'last_visit_readable']})
 	firefox_auto = Browser(browser='firefox',
 	                       profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
 	                       profiles=['test_profile0', 'test_profile1'],
