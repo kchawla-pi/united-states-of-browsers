@@ -15,11 +15,11 @@ class Table(dict):
 	""" Table object for SQLite database files.
 	
 	Usage:
-		table_obj = Table(table, path, browser, filename, profile)
+		table_1 = Table(table, path, browser, filename, profile)
 		
-		table_obj.get_records()
+		table_1.get_records()
 		
-		for record in **table_obj.records_yielder**:  # a records yielding generator
+		for record in **table_1.records_yielder**:  # a records yielding generator
 			print(record)
 	
 	:param: table: Name of the target table in the sqlite database file.
@@ -76,10 +76,10 @@ class Table(dict):
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
 
-	def _make_records_yielder(self, records_yielder ) -> Generator:
-		""" Yields a generator of all fields in TableObj.table
+	def _yield_readable_timestamps(self, records_yielder) -> Generator:
+		""" Yields a generator of records for TableObj.table with a with a readable timestamp.
+		Accepts a generator of table records with a valid timestamp.
 		"""
-		
 		for record in records_yielder:
 			record_dict = dict(record)
 			timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
@@ -113,7 +113,7 @@ class Table(dict):
 			except sqlite3.OperationalError as excep:
 				exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)
 			else:
-				self.records_yielder = self._make_records_yielder(records_yielder)
+				self.records_yielder = self._yield_readable_timestamps(records_yielder)
 				exception_raised = None
 			return self.records_yielder, exception_raised
 			
