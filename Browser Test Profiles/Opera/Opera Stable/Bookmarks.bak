@@ -1,0 +1,200 @@
+{
+   "checksum": "f6305766b871828fed2d02ab184fdf66",
+   "roots": {
+      "bookmark_bar": {
+         "children": [  ],
+         "date_added": "13157002945975237",
+         "date_modified": "0",
+         "id": "1",
+         "name": "Bookmarks bar",
+         "type": "folder"
+      },
+      "custom_root": {
+         "speedDial": {
+            "children": [ {
+               "children": [ {
+                  "date_added": "13157002951505195",
+                  "id": "25",
+                  "meta_info": {
+                     "custom_keywords": "[\"Amazon\",\"Amazon.com\",\"Books\",\"Online Shopping\",\"Book Store\",\"Magazine\",\"Subscription\",\"Music\",\"CDs\",\"DVDs\",\"Videos\",\"Electronics\",\"Video Games\",\"Computers\",\"Cell Phones\",\"Toys\",\"Games\",\"Apparel\",\"Accessories\",\"Shoes\",\"Jewelry\",\"Watches\",\"Office Products\",\"Sports & Outdoors\",\"Sporting Goods\",\"Baby Products\",\"Health\",\"Personal Care\",\"Beauty\",\"Home\",\"Garden\",\"Bed & Bath\",\"Furniture\",\"Tools\",\"Hardware\",\"Vacuums\",\"Outdoor Living\",\"Automotive Parts\",\"Pet Supplies\",\"Broadband\",\"DSL\"]",
+                     "guid": "FABEA9C3-C55E-4EC8-ADEA-19A32908E6C6",
+                     "imageData": "http://redir.opera.com/speeddials/partner/amazon_us",
+                     "imageDataType": "2",
+                     "imageID": "EF2C9F7CEE1885578697DE640325E16BFDA0A35D79805CFCC1ED5DFA88C8813E",
+                     "imageType": "2",
+                     "partner_id": "amazon_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/amazon_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/amazon_us",
+                     "redirect": "1"
+                  },
+                  "name": "Amazon.com",
+                  "type": "url",
+                  "url": "http://www.amazon.com/"
+               }, {
+                  "date_added": "13157002951505842",
+                  "id": "26",
+                  "meta_info": {
+                     "custom_keywords": "[\"ebay\",\"electronics\",\"cars\",\"clothing\",\"apparel\",\"collectibles\",\"sporting goods\",\"digital cameras\",\"antiques\",\"tickets\",\"jewelry\",\"online shopping\",\"auction\",\"online auction\"]",
+                     "guid": "23502138-E3AE-4F1D-B75E-CC55AD4F25F9",
+                     "imageData": "http://redir.opera.com/speeddials/partner/ebay_us",
+                     "imageDataType": "2",
+                     "imageID": "5856580431A344785082CAC829A71C16B9512D415DF24B7F393D146CE0C12844",
+                     "imageType": "2",
+                     "partner_id": "ebay_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/ebay_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/ebay_us",
+                     "redirect": "1"
+                  },
+                  "name": "eBay",
+                  "type": "url",
+                  "url": "http://www.ebay.com/"
+               }, {
+                  "date_added": "13157002951506281",
+                  "id": "27",
+                  "meta_info": {
+                     "custom_keywords": "[\"hotel\",\"hotels\",\"hostel\",\"hostels\",\"holidays\",\"special offers\",\"specials\",\"packages\",\"weekend breaks\",\"city breaks\",\"deals\",\"budget\",\"cheap\",\"discount\",\"savings\"]",
+                     "guid": "9D10E3EC-D109-4279-8A32-81F4E131891A",
+                     "imageData": "http://redir.opera.com/speeddials/partner/booking_com_us",
+                     "imageDataType": "2",
+                     "imageID": "2927498828C5AE69F685B89AB2C78250E59651632542A7013555819175954B5B",
+                     "imageType": "2",
+                     "partner_id": "booking_com_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/booking_com_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/booking_com_us",
+                     "redirect": "1"
+                  },
+                  "name": "Booking.com: Cheap Hotels",
+                  "type": "url",
+                  "url": "http://www.booking.com/"
+               }, {
+                  "date_added": "13157002951506646",
+                  "id": "28",
+                  "meta_info": {
+                     "custom_keywords": "[]",
+                     "guid": "5126468C-56D7-11E5-99A2-70928BD11E5D",
+                     "imageData": "http://redir.opera.com/speeddials/partner/aliexpress_com_us",
+                     "imageDataType": "2",
+                     "imageID": "82909B926406328D2284882A01F1B0C7B86BE1724BDEE92E92B80490E683F7EE",
+                     "imageType": "2",
+                     "partner_id": "aliexpress_com_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/aliexpress_com_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/aliexpress_com_us",
+                     "redirect": "1"
+                  },
+                  "name": "AliExpress",
+                  "type": "url",
+                  "url": "http://aliexpress.com/"
+               }, {
+                  "date_added": "13157002951506991",
+                  "id": "29",
+                  "meta_info": {
+                     "custom_keywords": "[]",
+                     "guid": "CA5F450C-7E47-11E5-AD34-E5F468A460B9",
+                     "imageData": "http://redir.opera.com/speeddials/partner/wallmart_com_us",
+                     "imageDataType": "2",
+                     "imageID": "8CBD1C8B1AAC865139B117E964C4C60A4A50857331F802CFFAF57A51D1726749",
+                     "imageType": "2",
+                     "partner_id": "wallmart_com_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/wallmart_com_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/wallmart_com_us",
+                     "redirect": "1"
+                  },
+                  "name": "Walmart",
+                  "type": "url",
+                  "url": "http://www.walmart.com/"
+               }, {
+                  "date_added": "13157002951507333",
+                  "id": "30",
+                  "meta_info": {
+                     "custom_keywords": "[]",
+                     "guid": "9191393c-4e48-4e53-a417-e164a50cdebc",
+                     "imageData": "http://redir.opera.com/speeddials/partner/overstock_us",
+                     "imageDataType": "2",
+                     "imageID": "0F60A9650F90C374325D65AADD60D2DC0D8B83D995AB5122491FBBB4362B2D2E",
+                     "imageType": "2",
+                     "partner_id": "overstock_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/overstock_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/overstock_us",
+                     "redirect": "1"
+                  },
+                  "name": "Overstock",
+                  "type": "url",
+                  "url": "https://www.overstock.com/"
+               }, {
+                  "date_added": "13157002951507689",
+                  "id": "31",
+                  "meta_info": {
+                     "custom_keywords": "[]",
+                     "guid": "C92358C0-CB42-11E5-AAB4-E07E2AEC0665",
+                     "imageData": "http://redir.opera.com/speeddials/partner/tripadvisor_us",
+                     "imageDataType": "2",
+                     "imageID": "B21AD13FC1394F63B1F408E40FC2DD1B53B7FFD936EFD33EBFC1262B8667DA6B",
+                     "imageType": "2",
+                     "partner_id": "tripadvisor_us",
+                     "partner_image_download_url": "http://redir.opera.com/speeddials/partner/tripadvisor_us",
+                     "partner_url": "http://redir.opera.com/speeddials/partner/tripadvisor_us",
+                     "redirect": "1"
+                  },
+                  "name": "TripAdvisor",
+                  "type": "url",
+                  "url": "https://www.tripadvisor.com/"
+               } ],
+               "date_added": "13157002947043519",
+               "date_modified": "13157002951507689",
+               "id": "8",
+               "meta_info": {
+                  "speed_dial_root_folder_guid": "5f0cb9e8-b469-4ef0-9877-4d436f3b9508"
+               },
+               "name": "KCWINHP",
+               "type": "folder"
+            } ],
+            "date_added": "13157002947043363",
+            "date_modified": "0",
+            "id": "6",
+            "name": "Speed Dials",
+            "type": "folder"
+         },
+         "trash": {
+            "children": [  ],
+            "date_added": "13157002947043364",
+            "date_modified": "0",
+            "id": "7",
+            "name": "Trash",
+            "type": "folder"
+         },
+         "unsorted": {
+            "children": [  ],
+            "date_added": "13157002947043358",
+            "date_modified": "0",
+            "id": "4",
+            "name": "Unsorted bookmarks",
+            "type": "folder"
+         },
+         "userRoot": {
+            "children": [  ],
+            "date_added": "13157002947043362",
+            "date_modified": "0",
+            "id": "5",
+            "name": "All bookmarks",
+            "type": "folder"
+         }
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13157002945975263",
+         "date_modified": "0",
+         "id": "2",
+         "name": "Imported bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13157002945975267",
+         "date_modified": "0",
+         "id": "3",
+         "name": "Mobile bookmarks",
+         "type": "folder"
+      }
+   },
+   "version": 1
+}
