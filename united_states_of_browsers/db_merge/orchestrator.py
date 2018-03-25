@@ -7,10 +7,11 @@ To create a merged database, run:
 import os
 import sqlite3
 
+from pathlib import Path
+
 from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.browser import Browser
 from united_states_of_browsers.db_merge.helpers import make_queries
-
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
@@ -107,7 +108,9 @@ class Orchestrator:
 		Writes the complete path to the newly created sqlite database to a text file in
 				<UserDir>/AppData/merged_db_path.txt
 		"""
-		db_path_store = Path(__file__).parents[1].joinpath('AppData', 'merged_db_path.txt')
+		db_path_store_dir = Path(__file__).parents[1].joinpath('AppData')
+		db_path_store_dir.mkdir(parents=True, exist_ok=True)
+		db_path_store = db_path_store_dir.joinpath('merged_db_path.txt')
 		with open(db_path_store, 'w') as file_obj:
 			file_obj.write(f'{self.output_db.as_posix()}')
 			

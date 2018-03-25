@@ -49,7 +49,6 @@ search_table_fields = ['rec_id', 'id', 'url', 'title', 'visit_count', 'last_visi
 
 
 if __name__ == '__main__':
-	from pathlib import Path
 	from pprint import pprint
 	
 	
