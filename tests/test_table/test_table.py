@@ -17,12 +17,9 @@ class TestTable:
 		self.table_obj = self.make_test_table_obj()
 		self.test_table_init()
 		self.project_root = project_root
-		fullpath = Path(self.project_root, table_arg_no_excep.path)
+		fullpath = Path(self.project_root, self.test_data.path)
 		self.test_data = self.test_data._replace(path=fullpath)
 		self.table_obj.path = fullpath
-	# with sqlite3.connect(str(self.path)) as conn:
-		# 	print(conn)
-		# 	quit()
 	
 	def make_test_table_obj(self):
 		return Table(table=self.test_data.table,
@@ -105,17 +102,3 @@ def test_suite_no_exceptions_raised(table_obj):
 	table_obj.test_table_check_if_db_empty()
 
 
-table_arg_no_excep = TableArgs(table='urls',
-                               path=Path(
-		                               'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History'),
-                               browser='chrome',
-                               filename='History',
-                               profile='Profile 1',
-                               copies_subpath=None,
-                               empty=False,
-                               )
-
-
-project_root = Path(__file__).parents[2]
-table_chrome_history_urls_no_excep = TestTable(project_root, table_arg_no_excep)
-test_suite_no_exceptions_raised(table_chrome_history_urls_no_excep)
