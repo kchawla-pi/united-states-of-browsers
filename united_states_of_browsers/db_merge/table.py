@@ -133,8 +133,8 @@ if __name__ == '__main__':
 	               profile='Employment',
 	               )
 	table4.get_records()
-	pprint(list(table4.records_yielder))
-	quit()
-# [record for browser_record_yielder in self.browser_yielder for record in browser_record_yielder]
-	# test()
-
+	table4_records = list(table4.records_yielder)
+	print(len([record for record in table4_records if record['title'] and record['last_visit_date']]))
+	print(len([record for record in table4_records if not (record['title'] and record['last_visit_date'])]))
+	print(len([record for record in table4_records if not (record['last_visit_date'])]))
+	print(len([record for record in table4_records if not (record['title']  )]))
