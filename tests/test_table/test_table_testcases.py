@@ -1,7 +1,7 @@
 from pathlib import Path
-from pprint import pprint
 
-import test_table as tt
+from . import test_table as tt
+
 
 test_cases_no_excep = [
 	tt.TableArgs(table='urls',
@@ -54,7 +54,26 @@ test_cases_no_excep = [
 	
 	]
 
-project_root = Path(__file__).parents[2]
-for table_arg_no_excep in test_cases_no_excep:
-	table_no_excep = tt.TestTable(project_root, table_arg_no_excep)
-	print('Passed:', tt.test_suite_no_exceptions_raised(table_no_excep, True))
+test_cases_exception_no_such_table = [tt.TableArgs(table='moz_places',
+                                                    path=Path(
+		                                                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
+		                                                    'Firefox/Profiles/udd5sttq.test_profile2/places.sqlite'),
+                                                    browser='firefox',
+                                                    filename='places.sqlite',
+                                                    profile='test_profile2',
+                                                    copies_subpath=None,
+                                                    empty=True,
+                                                    ),
+                                       ]
+
+test_cases_exception_unable_to_open_database_file = [tt.TableArgs(table='moz_places',
+                                      path=Path(
+		                                      'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
+		                                      'Firefox/Profiles/udd5sttq.test_profile2/places.sqlite'),
+                                      browser='firefox',
+                                      filename='places.sqlite',
+                                      profile='test_profile2',
+                                      copies_subpath=None,
+                                      empty=True,
+                                      ),
+                         ]

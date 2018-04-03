@@ -1,13 +1,29 @@
 import sqlite3
 
-from collections import namedtuple
 from datetime import datetime as dt
 from pathlib import Path
-from pprint import pprint
 
 from united_states_of_browsers.db_merge.table import Table
 
-TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath empty')
+# TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath empty')
+
+class TableArgs:
+	def __init__(self, table, path, browser, filename, profile, copies_subpath, empty):
+		self.table = table
+		self.path = path
+		self.browser = browser
+		self.filename = filename
+		self.profile = profile
+		self.copies_subpath = copies_subpath
+		self.empty = empty
+		
+	def __repr__(self):
+		return f'TableArgs({self.table}, {self.path}, {self.browser}, {self.filename}, {self.profile}, {self.copies_subpath}, {self.empty}'
+		
+		
+	def _replace(self, path):
+		self.path = path
+		return self
 
 
 class TestTable:
@@ -17,20 +33,20 @@ class TestTable:
 	:param: project_root: root path of a project.
 	:param: test_table_data: info for Table test case instatitation.
 	**Available tests:**
-		test_table_init() is executed automatically.
+		test_init() is executed automatically.
 		
 		Tests for Cases with No Exceptions Raised:
-			test_table_connect()
-			test_table_yield_readable_timestamps()
-			test_table_get_records()
-			test_table_check_if_db_empty()
+			test_connect()
+			test_yield_readable_timestamps()
+			test_get_records()
+			test_check_if_db_empty()
 	"""
 	
 	def __init__(self, project_root, test_table_data):
 		self.test_data = test_table_data
 		self.table_empty = test_table_data.empty
 		self.table_obj = self.make_test_table_obj()
-		self.test_table_init()
+		self.test_init()
 		self.project_root = Path(project_root)
 		fullpath = Path(self.project_root, self.test_data.path)
 		self.test_data = self.test_data._replace(path=fullpath)
@@ -51,14 +67,14 @@ class TestTable:
 		             copies_subpath=self.test_data.copies_subpath,
 		             )
 	
-	def test_table_init(self):
+	def test_init(self):
 		assert self.table_obj.path == self.test_data.path, (repr(self.table_obj.path), repr(self.test_data.path))
 		assert self.table_obj.table == self.test_data.table
 		assert self.table_obj.browser == self.test_data.browser
 		assert self.table_obj.filename == self.test_data.filename
 		assert self.table_obj.profile == self.test_data.profile
 		assert self.table_obj.copies_subpath == self.test_data.copies_subpath
-		return 'test_table_init'
+		return 'test_init'
 	
 	def _get_table_row_yielder_using_table_connect(self):
 		connect_exception = self.table_obj._connect()
@@ -77,7 +93,7 @@ class TestTable:
 			query_results_direct_sql = query_direct_sql.fetchall()
 			return query_results_direct_sql
 	
-	def test_table_connect(self):
+	def test_connect(self):
 		row_yielder_sqlite = self._get_table_row_yielder_using_sqlite_connect()
 		row_yielder_table, exception_table_connect = self._get_table_row_yielder_using_table_connect()
 		assert len(row_yielder_sqlite) == len(row_yielder_table)
@@ -87,7 +103,7 @@ class TestTable:
 			assert row_table_method == row_direct_sql, (row_table_method, row_direct_sql)
 		return 'connect'
 	
-	def test_table_yield_readable_timestamps(self):
+	def test_yield_readable_timestamps(self):
 		row_yielder_raw_timestamps, connect_exception = self._get_table_row_yielder_using_table_connect()
 		row_yielder_readable_timestamps = self.table_obj._yield_readable_timestamps(row_yielder_raw_timestamps)
 		
@@ -103,7 +119,7 @@ class TestTable:
 		assert readable_timestamp_rows == updated_raw_timestamp_rows, self.table_obj.browser
 		return 'yield_readable_timestamps'
 	
-	def test_table_get_records(self):
+	def test_get_records(self):
 		self.table_obj.get_records()
 		
 		row_yielder_raw_timestamps, connect_exception = self._get_table_row_yielder_using_table_connect()
@@ -114,17 +130,9 @@ class TestTable:
 				records_using_get_records, records_directly_yielded)
 		return 'get_records'
 	
-	def test_table_check_if_db_empty(self):
+	def test_check_if_db_empty(self):
 		assert self.table_empty == self.table_obj.check_if_db_empty()
 		return 'check_if_db_empty'
-	
 
-def test_suite_no_exceptions_raised(table_obj, print_testcase=False):
-	test_results = [str(table_obj)]
-	test_results.append(table_obj.test_table_connect())
-	test_results.append(table_obj.test_table_yield_readable_timestamps())
-	test_results.append(table_obj.test_table_get_records())
-	test_results.append(table_obj.test_table_check_if_db_empty())
-	return test_results
 
 
