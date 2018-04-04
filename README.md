@@ -63,7 +63,7 @@ Future Plans:
         venv\Scripts\activate
 7. Install the required python packages:
 
-        pip install - r requirements.txt
+        pip install -r requirements.txt
 8. Install the project:
 
         pip install .
