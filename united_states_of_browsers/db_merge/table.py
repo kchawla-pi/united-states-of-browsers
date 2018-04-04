@@ -101,7 +101,7 @@ class Table(dict):
 		if self.copies_subpath:
 			file_copy_exception_raised = self._create_db_copy()
 			if file_copy_exception_raised:
-				return file_copy_exception_raised
+				return self.records_yielder, file_copy_exception_raised
 		db_connect_exception_raised = self._connect()
 		if db_connect_exception_raised:
 			return db_connect_exception_raised
