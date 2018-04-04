@@ -1,7 +1,10 @@
 from pathlib import Path
 
-from . import test_table as tt
+from tests.test_table import test_table as tt
 
+# from . import test_table as tt
+
+project_root = Path(__file__).parents[2]
 
 test_cases_no_excep = [
 	tt.TableArgs(table='urls',
@@ -54,26 +57,22 @@ test_cases_no_excep = [
 	
 	]
 
-test_cases_exception_no_such_table = [tt.TableArgs(table='moz_places',
-                                                    path=Path(
-		                                                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-		                                                    'Firefox/Profiles/udd5sttq.test_profile2/places.sqlite'),
-                                                    browser='firefox',
-                                                    filename='places.sqlite',
-                                                    profile='test_profile2',
-                                                    copies_subpath=None,
-                                                    empty=True,
-                                                    ),
-                                       ]
 
-test_cases_exception_unable_to_open_database_file = [tt.TableArgs(table='moz_places',
-                                      path=Path(
-		                                      'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-		                                      'Firefox/Profiles/udd5sttq.test_profile2/places.sqlite'),
-                                      browser='firefox',
-                                      filename='places.sqlite',
-                                      profile='test_profile2',
-                                      copies_subpath=None,
-                                      empty=True,
-                                      ),
-                         ]
+def test_suite_no_exceptions(test_table_obj):
+	test_results = [str(test_table_obj),
+	                test_table_obj.test_connect(),
+	                test_table_obj.test_yield_readable_timestamps(),
+	                test_table_obj.test_get_records(),
+	                test_table_obj.test_check_if_db_empty(),
+	                ]
+	return test_results
+
+
+def test_Table_no_exceptions():
+	for table_arg_no_excep in test_cases_no_excep:
+		table_no_excep = tt.TestTable(project_root, table_arg_no_excep)
+		print('Passed:', test_suite_no_exceptions(table_no_excep))
+		
+		
+if __name__ == '__main__':
+	test_Table_no_exceptions()
