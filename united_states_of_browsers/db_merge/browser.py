@@ -72,7 +72,6 @@ class Browser(dict):
 				print(error_msg_)
 		print()
 		
-		
 	def make_paths(self):
 		""" Creates the path to different browser profiles.
 		"""
