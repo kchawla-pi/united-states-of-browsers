@@ -55,29 +55,22 @@ class Browser(dict):
 			[self.access_table(file, tables) for file, tables in file_tables.items()]
 			if self.error_msgs:
 				self.error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=self.error_msgs)
-				print()
-				for error_msg_ in self.error_msgs:
-					try:
-						print(f'{error_msg_.strerror}\n{error_msg_.filename}')
-					except AttributeError as attr_err:
-						print(error_msg_)
-				print()
+				self._errors_display(error_msgs=self.error_msgs)
+				
 		super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
 		                 file_tables=self.file_tables, tables=self.tables)
 	
-	def _errors_display_logging(self, error_msgs: List) -> List:
+	def _errors_display(self, error_msgs: List) -> List:
 		""" Adds error messages to the error log without duplication.
 		Accepts a collection of error messages and adds them to the error log
 		"""
-		error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=error_msgs)
 		print()
 		for error_msg_ in error_msgs:
 			try:
-				print(f'{error_msg_.strerror}\n{error_msg_.filename}')
+				print(f'{error_msg_.strerror}\n\t\t{error_msg_.filename}')
 			except AttributeError as attr_err:
 				print(error_msg_)
 		print()
-		return error_msgs
 		
 		
 	def make_paths(self):
@@ -90,7 +83,7 @@ class Browser(dict):
 		""" Accepts name of file containing the tables and list of table names and creates corresponding Table objects.
 		Accessed via the tables attribute.
 		"""
-		error_msg = []
+		error_msgs = []
 		current_batch = [Table(table, path.joinpath(file), self.browser, file, profile, copies_subpath=self.copies_subpath)
 		                 for profile, path in self.paths.items()
 		                 for table in tables
@@ -98,7 +91,7 @@ class Browser(dict):
 		for table in current_batch:
 			table_yielder, exception_raised = table.get_records()  # exception is returned here.
 			if exception_raised:
-				error_msg.append(exception_raised)
+				error_msgs.append(exception_raised)
 			else:
 				self.tables.append(table)
 				try:
@@ -107,16 +100,11 @@ class Browser(dict):
 					self.profiles = set()
 					self.profiles.add(table.profile)
 		try:
-			self.error_msgs.extend(error_msg)
+			self.error_msgs.extend(error_msgs)
 		except AttributeError:
-			if error_msg:
-				error_msg = exceph.exceptions_log_deduplicator(error_msg)
-				print()
-				for error_msg_ in error_msg:
-					try:
-						print(f'{error_msg_.strerror}\n{error_msg_.filename}')
-					except AttributeError as at_err:
-						print(error_msg_)
+			if error_msgs:
+				error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=error_msgs)
+				self._errors_display(error_msgs=error_msgs)
 
 	def access_fields(self, table_fields):
 		additional_fields = ('browser', 'profile', 'file', 'table')
