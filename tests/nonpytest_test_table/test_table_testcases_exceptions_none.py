@@ -1,10 +1,8 @@
-import pytest
-
 from pathlib import Path
 
-from tests.tester_classes import table_tester as tt
+from tests.nonpytest_test_table import table_tester as tt
 
-# from . import test_table as tt
+# from . import nonpytest_test_table as tt
 
 project_root = Path(__file__).parents[2]
 
@@ -59,7 +57,7 @@ test_cases_no_excep = [
 	
 	]
 
-@pytest.mark.parametrize("table_tester_obj", [tt.TableTester(project_root, test_case_) for test_case_ in test_cases_no_excep])
+
 def test_suite_no_exceptions(table_tester_obj):
 	test_results = [str(table_tester_obj),
 	                table_tester_obj.test_connect(),
@@ -70,10 +68,11 @@ def test_suite_no_exceptions(table_tester_obj):
 	return test_results
 
 
+def test_Table_no_exceptions():
+	for table_arg_no_excep in test_cases_no_excep:
+		table_no_excep = tt.TableTester(project_root, table_arg_no_excep)
+		print('Passed:', test_suite_no_exceptions(table_no_excep))
+		
+		
 if __name__ == '__main__':
-	def test_Table_no_exceptions():
-		for table_arg_no_excep in test_cases_no_excep:
-			table_no_excep = tt.TableTester(project_root, table_arg_no_excep)
-			print('Passed:', test_suite_no_exceptions(table_no_excep))
-			
 	test_Table_no_exceptions()

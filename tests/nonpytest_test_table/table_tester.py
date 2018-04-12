@@ -26,10 +26,10 @@ class TableArgs:
 		return self
 
 
-class TestTable:
+class TableTester:
 	"""
 	Accepts root path & test case info for Table class. Prepares the tests for run.
-	**Usage:** TestTable(project_root, test_table_data)
+	**Usage:** TableTester(project_root, test_table_data)
 	:param: project_root: root path of a project.
 	:param: test_table_data: info for Table test case instatitation.
 	**Available tests:**
@@ -56,7 +56,7 @@ class TestTable:
 		return f"{self.test_data.browser, self.test_data.profile, self.test_data.filename, self.test_data.table,}"
 	
 	def __repr__(self):
-		return f"TestTable({self.project_root}, {self.test_data})"
+		return f"TableTester({self.project_root}, {self.test_data})"
 	
 	def make_test_table_obj(self):
 		return Table(table=self.test_data.table,
