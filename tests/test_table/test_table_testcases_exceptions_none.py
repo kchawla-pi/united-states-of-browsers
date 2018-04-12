@@ -59,7 +59,7 @@ test_cases_no_excep = [
 	
 	]
 
-@pytest.mark.parametrize("table_tester_obj", [tt.TableTester(project_root, test_case_) for test_case_ in test_cases_no_excep])
+@pytest.mark.parametrize('table_tester_obj', [tt.TableTester(project_root, test_case_) for test_case_ in test_cases_no_excep])
 def test_suite_no_exceptions(table_tester_obj):
 	test_results = [str(table_tester_obj),
 	                table_tester_obj.test_connect(),
