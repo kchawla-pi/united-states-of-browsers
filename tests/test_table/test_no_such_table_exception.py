@@ -3,8 +3,7 @@ import sqlite3
 
 from pathlib import Path
 
-from sqlite3 import OperationalError
-from tests.nonpytest_test_table import table_tester as tt
+from tests.tester_classes import table_tester as tt
 
 project_root = Path(__file__).parents[2]
 
@@ -83,12 +82,7 @@ def test_exception_no_such_table(table_tester_obj):
 
 def run_tests_without_pytest():
 	def test_exception_no_such_table(table_tester_obj):
-		methods_to_be_tested = [
-			table_tester_obj.test_connect,
-			table_tester_obj.test_yield_readable_timestamps,
-			table_tester_obj.test_get_records,
-			table_tester_obj.test_check_if_db_empty
-			]
+		methods_to_be_tested = get_methods_to_be_tested(table_tester_obj)
 		for method_being_tested in methods_to_be_tested:
 			try:
 				result = method_being_tested()
