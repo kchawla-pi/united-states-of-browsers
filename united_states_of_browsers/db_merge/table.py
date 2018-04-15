@@ -11,6 +11,7 @@ from pprint import pprint
 from united_states_of_browsers.db_merge import exceptions_handling as exceph
 from united_states_of_browsers.db_merge.imported_annotations import *
 
+
 class Table(dict):
 	""" Table object for SQLite database files.
 	
@@ -29,6 +30,7 @@ class Table(dict):
 	:param: profile: Name of the browser profile who's data is being accessed.
 	:param: copies_subpath: Optional. If a valid directory path is given, creates a copy of the SQLite database to read from.
 	"""
+	
 	def __init__(self,
 	             table: Text,
 	             path: PathInfo,
@@ -47,7 +49,7 @@ class Table(dict):
 		self.copies_subpath = copies_subpath
 		self.records_yielder = None
 		self._connection = None
-		
+	
 	def _create_db_copy(self):
 		dst = Path(self.copies_subpath, 'AppData', 'Profile Copies', self.browser, self.profile).expanduser()
 		dst.mkdir(parents=True, exist_ok=True)
@@ -59,23 +61,24 @@ class Table(dict):
 			                         str(self.path))
 		except shutil.SameFileError as excep:
 			self.path = dst.joinpath(self.path.name)
-
+	
 	def _connect(self):
 		""" Creates TableObject.connection to the database file specified in TableObject.path.
 		Returns Exception on error.
 		"""
-
+		
 		connection_arg = f'file:{self.path}?mode=ro'
 		files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
 		try:
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
-			return exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)  # returns a loggable error or raises a fatal one.
+			return exceph.sqlite3_operational_errors_handler(exception_obj=excep,
+			                                                 calling_obj=self)  # returns a loggable error or raises a fatal one.
 		finally:
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
-
+	
 	def _yield_readable_timestamps(self, records_yielder) -> Generator:
 		""" Yields a generator of records for TableObj.table with a with a readable timestamp.
 		Accepts a generator of table records with a valid timestamp.
@@ -94,8 +97,8 @@ class Table(dict):
 			
 			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
 			yield record_dict
-
-	def get_records(self):
+	
+	def get_records(self, raise_exceptions=True):
 		""" Yields a generator to all fields in TableObj.table.
 		"""
 		if self.copies_subpath:
@@ -115,8 +118,11 @@ class Table(dict):
 			else:
 				self.records_yielder = self._yield_readable_timestamps(records_yielder)
 				exception_raised = None
-			return self.records_yielder, exception_raised
-			
+			if raise_exceptions and exception_raised:
+				raise exception_raised
+			else:
+				return self.records_yielder, exception_raised
+	
 	def check_if_db_empty(self):
 		cursor = self._connection.cursor()
 		query = f'SELECT name FROM sqlite_master WHERE type = "table"'
@@ -137,4 +143,28 @@ if __name__ == '__main__':
 	print(len([record for record in table4_records if record['title'] and record['last_visit_date']]))
 	print(len([record for record in table4_records if not (record['title'] and record['last_visit_date'])]))
 	print(len([record for record in table4_records if not (record['last_visit_date'])]))
-	print(len([record for record in table4_records if not (record['title']  )]))
+	print(len([record for record in table4_records if not (record['title'])]))
+	
+	table2 = Table(table='moz_places',
+	               path=Path(
+			               'C:\\Users\\kshit\\OneDrive\\workspace\\UnitedStatesOfBrowsers\\'
+			               'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
+			               'Firefox/Profiles/udd5sttq.test_profile2/non_db_dummy_file_for_testing.txt'),
+	               browser='firefox',
+	               filename='non_db_dummy_file_for_testing.txt',
+	               profile='test_profile2',
+	               copies_subpath=None,
+	               )
+	# table2.get_records()
+	
+	table3 = Table(table='moz_places',
+	               path=Path(
+			               'C:\\Users\\kshit\\OneDrive\\workspace\\UnitedStatesOfBrowsers\\'
+			               'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
+			               'Firefox/Profiles/udd5sttq.test_profile2/non_db_dummy_file_for_testing.txt'),
+	               browser='firefox',
+	               filename='non_db_dummy_file_for_testing.txt',
+	               profile='test_profile2',
+	               copies_subpath=None,
+	               )
+	# table3.get_records()
