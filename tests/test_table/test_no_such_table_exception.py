@@ -4,6 +4,8 @@ import sqlite3
 from pathlib import Path
 
 from tests.tester_classes import table_tester as tt
+from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableError
+
 
 project_root = Path(__file__).parents[2]
 
@@ -76,8 +78,8 @@ def test_exception_no_such_table(table_tester_obj):
 		with pytest.raises(
 				sqlite3.OperationalError) as expected_exception:
 			method_being_tested()
-			if expected_exception:
-				assert str(expected_exception) == f'no such tables: {table_tester_obj.test_data.table}'
+			# if expected_exception:
+			# 	assert str(expected_exception) == f'no such tables: {table_tester_obj.test_data.table}'
 
 
 def run_tests_without_pytest():
@@ -86,8 +88,9 @@ def run_tests_without_pytest():
 		for method_being_tested in methods_to_be_tested:
 			try:
 				result = method_being_tested()
-			except sqlite3.OperationalError as excep:
-				assert excep.args[0] == f'no such table: {table_tester_obj.test_data.table}'
+			except InvalidTableError as excep:
+				print(excep)
+				# assert excep.args[0] == f'no such table: {table_tester_obj.test_data.table}', excep
 			else:
 				print(f'Expected exception not raised by method: {result}')
 		return 'exception: no such table'

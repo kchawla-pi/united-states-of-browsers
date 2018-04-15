@@ -3,8 +3,8 @@ import sqlite3
 
 from pathlib import Path
 from pprint import pprint
+from united_states_of_browsers.db_merge.custom_exceptions import *
 from united_states_of_browsers.db_merge.imported_annotations import *
-
 
 def invalid_path_in_tree(path_to_test: PathInfo) -> AnyStr:
 	""" Accepts a path and returns the first invalid parent.
@@ -34,22 +34,10 @@ def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: ob
 	""" Returns or raises useful exception subtype from sqlite3.OperationalError .
 	Accepts sqlite3.OperationalError exception object and path of the sqlite3 database file.
 	"""
-	browsername = calling_obj['browser']
 	tablename = calling_obj['table']
+	browsername = calling_obj['browser']
 	profilename = calling_obj['profile']
 	path = calling_obj['path']
-	
-	class DatabaseLockedError(sqlite3.OperationalError):
-		def __str__(self):
-			return (f'Unable to open database file: `{path.name}`\n  for `{browsername}` \nat `{path.parent}`\n'
-			        f'Database is locked and in use by some other process.\n'
-			        )
-	
-	class InvalidTableError(sqlite3.OperationalError):
-		def __str__(self):
-			return (f'Table `{tablename}` does not exist in `{path.name}`\n'
-			        f'The `{browsername}` profile `{profilename}` may be empty.'
-			        )
 	
 	msg = str(exception_obj).lower()
 	invalid_path = invalid_path_in_tree(path)
@@ -63,9 +51,9 @@ def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: ob
 		              f'The profile `{profilename}` may be empty.',
 		              ) from sqlite3.OperationalError
 	if 'no such table' in msg:
-		return InvalidTableError(exception_obj, path)
+		return InvalidTableError(exception_obj, path, tablename=tablename, browsername=browsername, profilename=profilename)
 	if 'database is locked' in msg:
-		raise DatabaseLockedError(exception_obj, path) from sqlite3.OperationalError
+		raise DatabaseLockedError(exception_obj, path, browsername=browsername) from sqlite3.OperationalError
 	raise exception_obj
 
 

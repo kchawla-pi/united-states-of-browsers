@@ -4,7 +4,6 @@ from pathlib import Path
 
 from tests.tester_classes import table_tester as tt
 
-# from . import test_table as tt
 
 project_root = Path(__file__).parents[2]
 

@@ -9,7 +9,7 @@ from united_states_of_browsers.db_merge.table import Table
 # TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath empty')
 
 class TableArgs:
-	def __init__(self, table, path, browser, filename, profile, copies_subpath, empty):
+	def __init__(self, table, path, browser, filename, profile, copies_subpath, empty, raise_exceptions=True):
 		self.table = table
 		self.path = path
 		self.browser = browser
@@ -17,6 +17,7 @@ class TableArgs:
 		self.profile = profile
 		self.copies_subpath = copies_subpath
 		self.empty = empty
+		self.raise_exceptions = raise_exceptions
 		
 	def __repr__(self):
 		return f'TableArgs({self.table}, {self.path}, {self.browser}, {self.filename}, {self.profile}, {self.copies_subpath}, {self.empty}'
@@ -52,6 +53,7 @@ class TableTester:
 		fullpath = Path(self.project_root, self.test_data.path)
 		self.test_data = self.test_data._replace(path=fullpath)
 		self.table_obj.path = fullpath
+		self.raise_exceptions = test_table_data.raise_exceptions
 	
 	def __str__(self):
 		return f"{self.test_data.browser, self.test_data.profile, self.test_data.filename, self.test_data.table,}"
@@ -95,8 +97,8 @@ class TableTester:
 			return query_results_direct_sql
 	
 	def test_connect(self):
-		row_yielder_sqlite = self._get_table_row_yielder_using_sqlite_connect()
 		row_yielder_table, exception_table_connect = self._get_table_row_yielder_using_table_connect()
+		row_yielder_sqlite = self._get_table_row_yielder_using_sqlite_connect()
 		assert len(row_yielder_sqlite) == len(row_yielder_table)
 		for row_obj_table_method, row_obj_direct_sql in zip(row_yielder_table, row_yielder_sqlite):
 			row_direct_sql = dict(row_obj_direct_sql)
@@ -121,7 +123,7 @@ class TableTester:
 		return 'yield_readable_timestamps'
 	
 	def test_get_records(self):
-		self.table_obj.get_records()
+		self.table_obj.get_records(raise_exceptions=self.raise_exceptions)
 		
 		row_yielder_raw_timestamps, connect_exception = self._get_table_row_yielder_using_table_connect()
 		row_yielder_readable_timestamps = self.table_obj._yield_readable_timestamps(row_yielder_raw_timestamps)
