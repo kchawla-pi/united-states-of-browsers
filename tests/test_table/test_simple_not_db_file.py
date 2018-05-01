@@ -58,17 +58,5 @@ def non_pytest_test_connect():
 			print()
 			# assert str(excep) == 'file is not a database'
 
-def raising_errors():
-	for test_case in test_cases_exception_no_such_table:
-		table_obj = Table(*test_case)
-		table_obj.get_records()
-
-def test_raising_errors():
-	with pytest.raises(sqlite3.DatabaseError) as excep:
-		raising_errors()
-
-
 if __name__ == '__main__':
-	# non_pytest_test_connect()
-	raising_errors()
-	test_raising_errors()
+	non_pytest_test_connect()

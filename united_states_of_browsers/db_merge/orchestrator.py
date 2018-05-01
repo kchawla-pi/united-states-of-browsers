@@ -126,11 +126,17 @@ class Orchestrator:
 		self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=browser_data.history_table_fieldnames)
 		self.build_search_table()
 		self.write_db_path_to_file()
-
-
-if __name__ == '__main__':
-	app_path = ('~', 'USB')
+		
+		
+def merge_browsers(app_path=('~', 'USB'), db_name='usb_db.sqlite'):
 	all_browsers_info = browser_data.prep_browsers_info()
-	write_combi_db = Orchestrator(app_path=app_path, db_name='usb_db.sqlite', browser_info=all_browsers_info)
+	write_combi_db = Orchestrator(app_path=app_path, db_name=db_name, browser_info=all_browsers_info)
 	write_combi_db.orchestrate()
 # build_search_table('combined_db_fx_cr.sqlite', ['id', 'url', 'title', 'last_visit_time'])
+
+def main():
+	merge_browsers()
+	
+	
+if __name__ == '__main__':
+	main()
