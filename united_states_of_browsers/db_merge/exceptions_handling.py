@@ -44,17 +44,17 @@ def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: ob
 	
 	if 'unable to open database' in msg and invalid_path:
 		raise OSError(f'Path does not exist: {invalid_path}')
-	if 'unable to open database' in msg and not invalid_path:
-		raise OSError(errno.ENOENT,
-		              f'`{path.name}` is not a sqlite3 database file, or the file does not exist.\n'
-		              f'Attempted to open: {path} .\n'
-		              f'The profile `{profilename}` may be empty.',
-		              ) from sqlite3.OperationalError
-	if 'no such table' in msg:
+	elif 'unable to open database' in msg and not invalid_path:
+		raise InvalidFileError(exception_obj, error_symbol=errno.ENOENT, path=path, browsername=browsername, profilename=profilename)
+	elif 'file is not a database' in msg and not invalid_path:
+		raise InvalidFileError(exception_obj, error_symbol=errno.ENOENT, path=path, browsername=browsername,
+		                       profilename=profilename)
+	elif 'no such table' in msg:
 		return InvalidTableError(exception_obj, path, tablename=tablename, browsername=browsername, profilename=profilename)
-	if 'database is locked' in msg:
+	elif 'database is locked' in msg:
 		raise DatabaseLockedError(exception_obj, path, browsername=browsername) from sqlite3.OperationalError
-	raise exception_obj
+	else:
+		raise exception_obj
 
 
 def test_path_tester():

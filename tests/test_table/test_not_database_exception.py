@@ -5,8 +5,9 @@ from collections import namedtuple
 from pathlib import Path
 
 from united_states_of_browsers.db_merge.table import Table
-
+from united_states_of_browsers.db_merge.custom_exceptions import InvalidFileError
 project_root = Path(__file__).parents[2]
+
 
 TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath')
 test_cases_exception_no_such_table = [
@@ -19,25 +20,25 @@ test_cases_exception_no_such_table = [
 	          profile='test_profile2',
 	          copies_subpath=None,
 	          ),
-	TableArgs(table='nonexistent_table',
+	TableArgs(table='urls',
 	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History'),
+	                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History_false_filename'),
 	          browser='chrome',
 	          filename='History',
 	          profile='Profile 1',
 	          copies_subpath=None,
 	          ),
-	TableArgs(table='non_existent_table',
+	TableArgs(table='urls',
 	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User Data/Default/History'),
+	                    'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User Data/Default/History_false_filename'),
 	          browser='vivaldi',
 	          filename='History',
 	          profile='Default',
 	          copies_subpath=None,
 	          ),
-	TableArgs(table='nonexistent_table',
+	TableArgs(table='urls',
 	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Opera Software/Opera Stable/History'),
+	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Opera Software/Opera Stable/History_false_filename'),
 	          browser='opera',
 	          filename='History',
 	          profile='Opera Stable',
@@ -58,10 +59,11 @@ def run_non_pytests():
 		table_obj = Table(*test_case)
 		try:
 			table_obj.get_records()
-		except sqlite3.DatabaseError as excep:
-			print(excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+		except InvalidFileError as excep:
+			print('Expected exception raised: InvalidFileError', excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
 		else:
-			print('No error.', '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+			print('Expected exception InvalidFileError NOT raised: .', '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+			raise Exception
 		finally:
 			print()
 			# assert str(excep) == 'file is not a database'
