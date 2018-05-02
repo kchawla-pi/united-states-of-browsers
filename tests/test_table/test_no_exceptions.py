@@ -68,7 +68,7 @@ def test_suite_no_exceptions(table_tester_obj):
 	                ]
 	return test_results
 
-def run_tests_without_pytest():
+def non_pytest_test_suite_no_exceptions():
 
 	def test_Table_no_exceptions():
 		for table_arg_no_excep in test_cases_no_excep:
@@ -79,4 +79,4 @@ def run_tests_without_pytest():
 
 
 if __name__ == '__main__':
-	run_tests_without_pytest()
+	non_pytest_test_suite_no_exceptions()

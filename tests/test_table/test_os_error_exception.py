@@ -47,13 +47,13 @@ test_cases_exception_no_such_table = [
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_no_such_table])
-def run_pytests(test_case):
+def test_suite_os_error(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(sqlite3.DatabaseError) as excep:
 		table_obj.get_records()
 
 
-def run_non_pytests():
+def non_pytest_test_suite_os_error():
 	for test_case in test_cases_exception_no_such_table:
 		table_obj = Table(*test_case)
 		table_obj.get_records()
