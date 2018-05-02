@@ -58,13 +58,13 @@ test_cases_exception_no_such_table = [
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_no_such_table])
-def test_connect(test_case):
+def run_pytests(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(InvalidTableError) as excep:
 		table_obj.get_records()
 
 
-def non_pytest_test_connect():
+def run_non_pytests():
 	for test_case in test_cases_exception_no_such_table:
 		table_obj = Table(*test_case)
 		try:
@@ -74,4 +74,4 @@ def non_pytest_test_connect():
 
 
 if __name__ == '__main__':
-	non_pytest_test_connect()
+	run_non_pytests()

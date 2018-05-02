@@ -27,7 +27,7 @@ test_cases_exception_no_such_table = [
 	          profile='Profile 1',
 	          copies_subpath=None,
 	          ),
-	TableArgs(table='urls',
+	TableArgs(table='non_existent_table',
 	          path=Path(project_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User Data/Default/History'),
 	          browser='vivaldi',
@@ -35,17 +35,25 @@ test_cases_exception_no_such_table = [
 	          profile='Default',
 	          copies_subpath=None,
 	          ),
+	TableArgs(table='nonexistent_table',
+	          path=Path(project_root,
+	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Opera Software/Opera Stable/History'),
+	          browser='opera',
+	          filename='History',
+	          profile='Opera Stable',
+	          copies_subpath=None,
+	          ),
 	]
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_no_such_table])
-def test_connect(test_case):
+def run_pytests(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(sqlite3.DatabaseError) as excep:
 		table_obj.get_records()
 
 
-def non_pytest_test_connect():
+def run_non_pytests():
 	for test_case in test_cases_exception_no_such_table:
 		table_obj = Table(*test_case)
 		try:
@@ -59,4 +67,4 @@ def non_pytest_test_connect():
 			# assert str(excep) == 'file is not a database'
 
 if __name__ == '__main__':
-	non_pytest_test_connect()
+	run_non_pytests()
