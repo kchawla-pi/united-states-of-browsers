@@ -24,7 +24,7 @@ test_cases_exception_no_such_table = [
 	                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1 _wrongpath_/History'),
 	          browser='chrome',
 	          filename='History',
-	          profile='Profile 1',
+	          profile='Profile 1 _wrongpath_',
 	          copies_subpath=None,
 	          ),
 	TableArgs(table='urls',
@@ -61,8 +61,11 @@ def non_pytest_test_suite_os_error():
 			pass
 		except OSError as excep:
 			print(f'Expected Exception raised', excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+		except Exception as excep:
+			raise excep
 		else:
 			print(f'Expected Exception NOT raised', '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+			raise Exception('Expected exception not raised.')
 		finally:
 			print()
 		# break

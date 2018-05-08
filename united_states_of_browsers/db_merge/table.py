@@ -73,8 +73,9 @@ class Table(dict):
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
-			return exceph.sqlite3_operational_errors_handler(exception_obj=excep,
+			exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep,
 			                                                 calling_obj=self)  # returns a loggable error or raises a fatal one.
+			return exception_raised
 		finally:
 			# Cleans up any database files created during failed connection attempt.
 			exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
@@ -107,7 +108,7 @@ class Table(dict):
 				return self.records_yielder, file_copy_exception_raised
 		db_connect_exception_raised = self._connect()
 		if db_connect_exception_raised:
-			return db_connect_exception_raised
+			raise db_connect_exception_raised
 		else:
 			cursor = self._connection.cursor()
 			query = f'SELECT * FROM {self.table}'
