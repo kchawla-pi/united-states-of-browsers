@@ -30,7 +30,7 @@ def exceptions_log_deduplicator(exceptions_log: Iterable):
 	return list(unique_exception_strings.values())
 
 
-def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: object) -> Optional[Exception]:
+def return_more_specific_exception(exception_obj: Exception, calling_obj: object) -> Optional[Exception]:
 	""" Returns or raises useful exception subtype from sqlite3.OperationalError .
 	Accepts sqlite3.OperationalError exception object and path of the sqlite3 database file.
 	"""
@@ -42,8 +42,8 @@ def sqlite3_operational_errors_handler(exception_obj: Exception, calling_obj: ob
 	msg = str(exception_obj).lower()
 	invalid_path = invalid_path_in_tree(path)
 	
-	if 'unable to open database' in msg and invalid_path:
-		return OSError(f'Path does not exist: {invalid_path}')
+	if invalid_path:
+		return InvalidPathError(exception_obj, error_symbol=errno.ENOENT, path=path, browsername=browsername, profilename=profilename, invalid_path=invalid_path)
 	elif ('unable to open database' in msg or 'file is not a database' in msg) and not invalid_path:
 		return InvalidFileError(exception_obj, error_symbol=errno.ENOENT, path=path, browsername=browsername, profilename=profilename)
 	elif 'no such table' in msg:

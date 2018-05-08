@@ -31,6 +31,19 @@ class InvalidFileError(sqlite3.DatabaseError, FileNotFoundError):
 			)
 
 
+class InvalidPathError(FileNotFoundError):
+	def __init__(self, exception_obj, error_symbol, path, browsername, profilename, invalid_path):
+		self.error_symbol = error_symbol
+		self.path = Path(path)
+		self.profilename = profilename
+		self.browsername = browsername
+		self.exception_obj = exception_obj
+		self.invalid_path = invalid_path
+	
+	def __str__(self):
+		return f'\n\nPath does not exist: {self.invalid_path}\n'
+
+
 class InvalidTableError(sqlite3.OperationalError):
 	def __init__(self, exception_obj, path, tablename, browsername, profilename):
 		self.path = Path(path)

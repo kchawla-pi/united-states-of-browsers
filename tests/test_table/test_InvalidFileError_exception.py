@@ -20,15 +20,15 @@ test_cases_exception_no_such_table = [
 	          profile='test_profile2',
 	          copies_subpath=None,
 	          ),
-	# TableArgs(table='moz_places',
-	#           path=Path(project_root,
-	#                     'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-	#                     'Firefox/Profiles/udd5sttq.test_profile2/moz_places.sqlite'),
-	#           browser='firefox',
-	#           filename='non_db_dummy_file_for_testing.txt',
-	#           profile='test_profile2',
-	#           copies_subpath=None,
-	#           ),
+	TableArgs(table='moz_places',
+	          path=Path(project_root,
+	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
+	                    'Firefox/Profiles/udd5sttq.test_profile2/places_non_existent.sqlite'),
+	          browser='firefox',
+	          filename='places_non_existent.sqlite',
+	          profile='test_profile2',
+	          copies_subpath=None,
+	          ),
 	TableArgs(table='urls',
 	          path=Path(project_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History_false_filename'),
@@ -57,13 +57,13 @@ test_cases_exception_no_such_table = [
 
 
 @pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_no_such_table])
-def test_suite_not_database(test_case):
+def test_InvalidFileError(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(InvalidFileError) as excep:
 		table_obj.get_records()
 
 
-def non_pytest_test_suite_not_database():
+def non_pytest_test_InvalidFileError():
 	for test_case in test_cases_exception_no_such_table:
 		table_obj = Table(*test_case)
 		try:
@@ -84,7 +84,7 @@ def simply_run():
 
 
 if __name__ == '__main__':
-	non_pytest_test_suite_not_database()
+	non_pytest_test_InvalidFileError()
 	quit()
 	# simply_run()
 	fx_false_file = Table(table='moz_places',

@@ -68,13 +68,19 @@ class Table(dict):
 		"""
 		
 		connection_arg = f'file:{self.path}?mode=ro'
-		files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
+		try:
+			files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
+		except FileNotFoundError as excep:
+			exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
+			                                                         calling_obj=self)
+			return exception_raised # returns a loggable error or raises a fatal one.
+
 		try:
 			with sqlite3.connect(connection_arg, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
-			exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep,
-			                                                 calling_obj=self)  # returns a loggable error or raises a fatal one.
+			exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
+			                                                         calling_obj=self)  # returns a loggable error or raises a fatal one.
 			return exception_raised
 		finally:
 			# Cleans up any database files created during failed connection attempt.
@@ -115,7 +121,7 @@ class Table(dict):
 			try:
 				records_yielder = cursor.execute(query)
 			except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
-				exception_raised = exceph.sqlite3_operational_errors_handler(exception_obj=excep, calling_obj=self)
+				exception_raised = exceph.return_more_specific_exception(exception_obj=excep, calling_obj=self)
 			else:
 				self.records_yielder = self._yield_readable_timestamps(records_yielder)
 				exception_raised = None
