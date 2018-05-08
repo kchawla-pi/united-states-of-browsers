@@ -27,22 +27,22 @@ test_cases_exception_no_such_table = [
 	          profile='Profile 1 _wrongpath_',
 	          copies_subpath=None,
 	          ),
-	TableArgs(table='urls',
-	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User_wrongpath_ Data/Default/History'),
-	          browser='vivaldi',
-	          filename='History',
-	          profile='Default',
-	          copies_subpath=None,
-	          ),
-	TableArgs(table='urls',
-	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData_wrongpath_/Roaming/Opera Software/Opera Stable/History'),
-	          browser='opera',
-	          filename='History',
-	          profile='Opera Stable',
-	          copies_subpath=None,
-	          ),
+	# TableArgs(table='urls',
+	#           path=Path(project_root,
+	#                     'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User_wrongpath_ Data/Default/History'),
+	#           browser='vivaldi',
+	#           filename='History',
+	#           profile='Default',
+	#           copies_subpath=None,
+	#           ),
+	# TableArgs(table='urls',
+	#           path=Path(project_root,
+	#                     'tests/data/browser_profiles_for_testing/AppData_wrongpath_/Roaming/Opera Software/Opera Stable/History'),
+	#           browser='opera',
+	#           filename='History',
+	#           profile='Opera Stable',
+	#           copies_subpath=None,
+	#           ),
 	]
 
 
@@ -59,7 +59,7 @@ def non_pytest_test_suite_os_error():
 		try:
 			table_obj.get_records()
 			pass
-		except OSError as excep:
+		except FileNotFoundError as excep:
 			print(f'Expected Exception raised', excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
 		except Exception as excep:
 			raise excep
@@ -73,3 +73,6 @@ def non_pytest_test_suite_os_error():
 
 if __name__ == '__main__':
 	non_pytest_test_suite_os_error()
+	# for test_case in test_cases_exception_no_such_table:
+	# 	table_obj = Table(*test_case)
+	# 	table_obj.get_records()

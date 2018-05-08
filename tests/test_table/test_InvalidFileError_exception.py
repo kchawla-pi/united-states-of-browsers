@@ -84,7 +84,8 @@ def simply_run():
 
 
 if __name__ == '__main__':
-	# non_pytest_test_suite_not_database()
+	non_pytest_test_suite_not_database()
+	quit()
 	# simply_run()
 	fx_false_file = Table(table='moz_places',
 	          path=Path(project_root,
