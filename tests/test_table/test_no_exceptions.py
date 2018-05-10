@@ -7,7 +7,7 @@ from tests.tester_classes import table_tester as tt
 
 project_root = Path(__file__).parents[2]
 
-test_cases_no_excep = [
+test_cases_no_exception = [
 	tt.TableArgs(table='urls',
 	             path=Path(
 			             'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History'),
@@ -58,7 +58,7 @@ test_cases_no_excep = [
 	
 	]
 
-@pytest.mark.parametrize('table_tester_obj', [tt.TableTester(project_root, test_case_) for test_case_ in test_cases_no_excep])
+@pytest.mark.parametrize('table_tester_obj', [tt.TableTester(project_root, test_case_) for test_case_ in test_cases_no_exception])
 def test_suite_no_exceptions(table_tester_obj):
 	test_results = [str(table_tester_obj),
 	                table_tester_obj.test_connect(),
@@ -68,15 +68,15 @@ def test_suite_no_exceptions(table_tester_obj):
 	                ]
 	return test_results
 
-def non_pytest_test_suite_no_exceptions():
+def non_pytest_test_suite_no_exceptions(test_suite):
 
-	def test_Table_no_exceptions():
-		for table_arg_no_excep in test_cases_no_excep:
+	def test_Table_no_exceptions(test_suite):
+		for table_arg_no_excep in test_cases_no_exception:
 			table_no_excep = tt.TableTester(project_root, table_arg_no_excep)
 			print('Passed:', test_suite_no_exceptions(table_no_excep))
 			
-	test_Table_no_exceptions()
+	test_Table_no_exceptions(test_suite=test_suite)
 
 
 if __name__ == '__main__':
-	non_pytest_test_suite_no_exceptions()
+	non_pytest_test_suite_no_exceptions(test_suite=test_cases_no_exception)

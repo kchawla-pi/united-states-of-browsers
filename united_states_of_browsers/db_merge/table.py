@@ -67,16 +67,16 @@ class Table(dict):
 		Returns Exception on error.
 		"""
 		
-		connection_arg = f'file:{self.path}?mode=ro'
 		try:
 			files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
 		except FileNotFoundError as excep:
 			exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
 			                                                         calling_obj=self)
 			return exception_raised # returns a loggable error or raises a fatal one.
-
+			
+		db_file_path_uri_mode = f'file:{self.path}?mode=ro'
 		try:
-			with sqlite3.connect(connection_arg, uri=True) as self._connection:
+			with sqlite3.connect(db_file_path_uri_mode, uri=True) as self._connection:
 				self._connection.row_factory = sqlite3.Row
 		except sqlite3.OperationalError as excep:
 			exception_raised = exceph.return_more_specific_exception(exception_obj=excep,

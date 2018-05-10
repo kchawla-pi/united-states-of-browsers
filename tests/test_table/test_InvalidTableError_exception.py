@@ -10,7 +10,7 @@ from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableErr
 project_root = Path(__file__).parents[2]
 
 TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath')
-test_cases_exception_no_such_table = [
+test_cases_exception_InvalidTableError = [
 	TableArgs(table='moz_places',
 	          path=Path(project_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
@@ -57,15 +57,15 @@ test_cases_exception_no_such_table = [
 	]
 
 
-@pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_no_such_table])
+@pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_InvalidTableError])
 def test_suite_no_such_table(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(InvalidTableError) as excep:
 		table_obj.get_records()
 
 
-def non_pytest_test_suite_no_such_table():
-	for test_case in test_cases_exception_no_such_table:
+def non_pytest_test_suite_no_such_table(test_suite):
+	for test_case in test_suite:
 		table_obj = Table(*test_case)
 		try:
 			table_obj.get_records()
@@ -74,4 +74,4 @@ def non_pytest_test_suite_no_such_table():
 
 
 if __name__ == '__main__':
-	non_pytest_test_suite_no_such_table()
+	non_pytest_test_suite_no_such_table(test_suite=test_cases_exception_InvalidTableError)

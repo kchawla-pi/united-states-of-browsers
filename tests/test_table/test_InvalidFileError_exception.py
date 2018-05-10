@@ -6,11 +6,12 @@ from pathlib import Path
 
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import InvalidFileError
+
+
 project_root = Path(__file__).parents[2]
 
-
 TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath')
-test_cases_exception_no_such_table = [
+test_cases_exception_InvalidFileError = [
 	TableArgs(table='moz_places',
 	          path=Path(project_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
@@ -56,15 +57,15 @@ test_cases_exception_no_such_table = [
 	]
 
 
-@pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_no_such_table])
+@pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_InvalidFileError])
 def test_InvalidFileError(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(InvalidFileError) as excep:
 		table_obj.get_records()
 
 
-def non_pytest_test_InvalidFileError():
-	for test_case in test_cases_exception_no_such_table:
+def non_pytest_test_InvalidFileError(test_suite):
+	for test_case in test_suite:
 		table_obj = Table(*test_case)
 		try:
 			table_obj.get_records()
@@ -77,16 +78,16 @@ def non_pytest_test_InvalidFileError():
 			print()
 			# assert str(excep) == 'file is not a database'
 		
-def simply_run():
-	for test_case in test_cases_exception_no_such_table:
+def simply_run(test_suite):
+	for test_case in test_suite:
 		table_obj = Table(*test_case)
 		table_obj.get_records()
 
 
 if __name__ == '__main__':
-	non_pytest_test_InvalidFileError()
+	non_pytest_test_InvalidFileError(test_suite=test_cases_exception_InvalidFileError)
 	quit()
-	# simply_run()
+	# simply_run(test_suite=test_cases_exception_InvalidFileError)
 	fx_false_file = Table(table='moz_places',
 	          path=Path(project_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
