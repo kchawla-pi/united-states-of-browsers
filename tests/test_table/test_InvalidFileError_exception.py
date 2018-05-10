@@ -61,14 +61,14 @@ test_cases_exception_InvalidFileError = [
 def test_InvalidFileError(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(InvalidFileError) as excep:
-		table_obj.get_records()
+		table_obj.make_records_yielder()
 
 
 def non_pytest_test_InvalidFileError(test_suite):
 	for test_case in test_suite:
 		table_obj = Table(*test_case)
 		try:
-			table_obj.get_records()
+			table_obj.make_records_yielder()
 		except InvalidFileError as excep:
 			print('Expected exception raised: InvalidFileError', excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
 		else:
@@ -81,7 +81,7 @@ def non_pytest_test_InvalidFileError(test_suite):
 def simply_run(test_suite):
 	for test_case in test_suite:
 		table_obj = Table(*test_case)
-		table_obj.get_records()
+		table_obj.make_records_yielder()
 
 
 if __name__ == '__main__':
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 	          copies_subpath=None,
 	          )
 	
-	# fx_false_file.get_records()
+	# fx_false_file.make_records_yielder()
 	
 	chrome_false_file = Table(table='urls',
 	          path=Path(project_root,
@@ -108,5 +108,5 @@ if __name__ == '__main__':
 	          profile='Profile 1',
 	          copies_subpath=None,
 	          )
-	chrome_false_file.get_records()
+	chrome_false_file.make_records_yielder()
 	print(list(chrome_false_file.records_yielder))

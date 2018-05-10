@@ -14,7 +14,7 @@
 				Each table is for a specific table from a specific sqlite file.
 				The dict of {tablename: Table_obj} is stored in Browser_obj.tables
 					
-					Iterates and calls each stored Table_obj's get_records(),
+					Iterates and calls each stored Table_obj's make_records_yielder(),
 					which yields the yielder for each table
 					in Table_obj.records_yielder
 				

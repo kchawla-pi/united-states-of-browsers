@@ -18,7 +18,7 @@ class Table(dict):
 	Usage:
 		table_1 = Table(table, path, browser, filename, profile)
 		
-		table_1.get_records()
+		table_1.make_records_yielder()
 		
 		for record in **table_1.records_yielder**:  # a records yielding generator
 			print(record)
@@ -105,7 +105,7 @@ class Table(dict):
 			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
 			yield record_dict
 	
-	def get_records(self, raise_exceptions=True):
+	def make_records_yielder(self, raise_exceptions=True):
 		""" Yields a generator to all fields in TableObj.table.
 		"""
 		if self.copies_subpath:
@@ -145,7 +145,7 @@ if __name__ == '__main__':
 	               filename='places.sqlite',
 	               profile='Employment',
 	               )
-	table4.get_records()
+	table4.make_records_yielder()
 	table4_records = list(table4.records_yielder)
 	print(len([record for record in table4_records if record['title'] and record['last_visit_date']]))
 	print(len([record for record in table4_records if not (record['title'] and record['last_visit_date'])]))
@@ -162,7 +162,7 @@ if __name__ == '__main__':
 	               profile='test_profile2',
 	               copies_subpath=None,
 	               )
-	# table2.get_records()
+	# table2.make_records_yielder()
 	
 	table3 = Table(table='moz_places',
 	               path=Path(
@@ -174,4 +174,4 @@ if __name__ == '__main__':
 	               profile='test_profile2',
 	               copies_subpath=None,
 	               )
-	# table3.get_records()
+	# table3.make_records_yielder()

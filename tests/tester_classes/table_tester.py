@@ -123,7 +123,7 @@ class TableTester:
 		return 'yield_readable_timestamps'
 	
 	def test_get_records(self):
-		self.table_obj.get_records(raise_exceptions=self.raise_exceptions)
+		self.table_obj.make_records_yielder(raise_exceptions=self.raise_exceptions)
 		
 		row_yielder_raw_timestamps, connect_exception = self._get_table_row_yielder_using_table_connect()
 		row_yielder_readable_timestamps = self.table_obj._yield_readable_timestamps(row_yielder_raw_timestamps)
@@ -131,7 +131,7 @@ class TableTester:
 		                                                               row_yielder_readable_timestamps):
 			assert records_using_get_records == records_directly_yielded, (
 				records_using_get_records, records_directly_yielded)
-		return 'get_records'
+		return 'make_records_yielder'
 	
 	def test_check_if_db_empty(self):
 		assert self.table_empty == self.table_obj.check_if_db_empty()

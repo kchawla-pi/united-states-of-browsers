@@ -52,14 +52,14 @@ test_cases_exception_InvalidPathError = [
 def test_InvalidPathError(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(OSError) as excep:
-		table_obj.get_records()
+		table_obj.make_records_yielder()
 
 
 def non_pytest_test_InvalidPathError(test_suite):
 	for test_case in test_suite:
 		table_obj = Table(*test_case)
 		try:
-			table_obj.get_records()
+			table_obj.make_records_yielder()
 			pass
 		except InvalidPathError as excep:
 			print(f'Expected Exception raised', excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
@@ -76,5 +76,5 @@ if __name__ == '__main__':
 	non_pytest_test_InvalidPathError(test_suite=test_cases_exception_InvalidPathError)
 	# for test_case in test_cases_exception_InvalidFileError:
 	# 	table_obj = Table(*test_case)
-	# 	table_obj.get_records()
+	# 	table_obj.make_records_yielder()
 

@@ -88,7 +88,7 @@ class Browser(dict):
 		                 for table in tables
 		                 ]
 		for table in current_batch:
-			table_yielder, exception_raised = table.get_records(raise_exceptions=False)  # exception is returned here.
+			table_yielder, exception_raised = table.make_records_yielder(raise_exceptions=False)  # exception is returned here.
 			if exception_raised:
 				error_msgs.append(exception_raised)
 			else:
@@ -119,7 +119,7 @@ class Browser(dict):
 				selected_fields_records.update({field_: record[field_] for field_ in fields})
 				# self.selected_fields_records = selected_fields_records
 				yield tuple(selected_fields_records.values())
-			current_table.get_records(raise_exceptions=False)
+			current_table.make_records_yielder(raise_exceptions=False)
 
 	def __repr__(self):
 		return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'

@@ -61,14 +61,14 @@ test_cases_exception_InvalidTableError = [
 def test_suite_no_such_table(test_case):
 	table_obj = Table(*test_case)
 	with pytest.raises(InvalidTableError) as excep:
-		table_obj.get_records()
+		table_obj.make_records_yielder()
 
 
 def non_pytest_test_suite_no_such_table(test_suite):
 	for test_case in test_suite:
 		table_obj = Table(*test_case)
 		try:
-			table_obj.get_records()
+			table_obj.make_records_yielder()
 		except InvalidTableError as excep:
 			print('Passed.')
 
