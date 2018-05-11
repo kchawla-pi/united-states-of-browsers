@@ -8,7 +8,7 @@ def make_paths():
 	venv_python_path = Path(__file__).absolute().parents[1]
 	venv_python_path = venv_python_path.joinpath('venv', 'Scripts', 'python.exe')
 	usb_app_path = Path(__file__).absolute().parent
-	db_merge_module_path = usb_app_path.joinpath('db_merge', 'orchestrator.py')
+	db_merge_module_path = usb_app_path.joinpath('db_merge', 'db_merge.py')
 	usb_server_module_path = usb_app_path.joinpath('usb_server', 'usb_server.py')
 	return venv_python_path, db_merge_module_path, usb_server_module_path
 

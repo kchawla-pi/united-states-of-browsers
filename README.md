@@ -71,18 +71,15 @@ Future Plans:
         
         pip install --editable .
         
-9. To merge the databases, run:
+9. To merge the databases and launch the user interface, run:
 
-        python .\united_states_of_browsers\db_merge\orchestrator.py
+        python .\united_states_of_browsers\run_usb.py
 
-10. To launch the user interface, run:
-
-        python .\united_states_of_browsers\usb_server\usb_server.py
-11. Then go to your browser of choice and visit:
+10. Then go to your browser of choice and visit:
 
         localhost:5000
-12. To stop, go back to the same terminal window  where the program is running and press `Ctrl+C`.
-13. Deactivate the virtual environment by typing `deactivate` and pressing ENTER.
+11. To stop, go back to the same terminal window  where the program is running and press `Ctrl+C`.
+12. Deactivate the virtual environment by typing `deactivate` and pressing ENTER.
 
 Merging the database will generate an sqlite file in the `~\USB\` directory/folder, where `~` is the user directory/folder.  
 In windows this is typically `C:\Users\<user name>`

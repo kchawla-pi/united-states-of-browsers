@@ -24,7 +24,7 @@
 			and only keeps the fields specified for their respective table.
 			Yields that record, (hence is a generator of records).
 	
-	orchestrator.Orchestrator:
+	orchestrator.DatabaseMergeOrchestrator:
 		then collects all the browser.record_yielders and passes it on one at a time to
 		orchestrator.write_records()
 

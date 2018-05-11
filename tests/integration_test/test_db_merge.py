@@ -3,7 +3,7 @@ import sqlite3
 from pathlib import Path
 from pprint import pprint
 
-from united_states_of_browsers.db_merge.orchestrator import Orchestrator
+from united_states_of_browsers.db_merge.db_merge import DatabaseMergeOrchestrator
 from united_states_of_browsers.db_merge.browser_data import prep_browsers_info
 from tests.integration_test import create_benchmark_database_for_tests
 
@@ -96,8 +96,8 @@ def test_db_merge_operation(app_path, newly_merged_test_db_name, benchmark_db_na
 		) = make_test_db_path(app_path=app_path, newly_merged_test_db_name=newly_merged_test_db_name, benchmark_db_name=benchmark_db_name)
 	
 	browser_info = prep_browsers_info(parent_dir=common_path_of_source_test_databases)
-	test_orchestrator = Orchestrator(app_path=app_path, db_name=newly_merged_test_db_name, browser_info=browser_info)
-	test_orchestrator.orchestrate()
+	test_orchestrator = DatabaseMergeOrchestrator(app_path=app_path, db_name=newly_merged_test_db_name, browser_info=browser_info)
+	test_orchestrator.orchestrate_db_merge()
 	new_db_query_record_yielder, benchmark_db_query_record_yielder = make_record_yielders_for_newly_merged_db_and_benchmark_db(
 			newly_merged_test_db_path,
 			benchmark_db_path,
@@ -141,4 +141,4 @@ def run_expected_to_fail_test():
 
 if __name__ == '__main__':
 	run_expected_to_pass_test()
-	run_expected_to_fail_test()
+	# run_expected_to_fail_test()

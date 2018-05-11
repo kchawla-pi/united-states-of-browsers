@@ -2,7 +2,7 @@
 """
 Main file of the United States of Browsers
 To create a merged database, run:
-	$python orchestrator.py
+	$python db_merge.py
 """
 import os
 import sqlite3
@@ -15,7 +15,7 @@ from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-class Orchestrator:
+class DatabaseMergeOrchestrator:
 	"""
 	Orchestrates the running of the app, calling the various functions.
 	"""
@@ -47,7 +47,7 @@ class Orchestrator:
 		accesses the specified tables and fields from those Browser objects,
 		and creates a generator which will yield records from those tables and fields.
 		The generator is stored in:
-				orchestrator_obj.browser_yielder
+				DatabaseMergeOrchestrator_obj.browser_yielder
 		"""
 		for browser_datum in self.installed_browsers_data:
 			each_browser = Browser(browser=browser_datum.browser,
@@ -115,7 +115,7 @@ class Orchestrator:
 			file_obj.write(f'{self.output_db.as_posix()}')
 			
 	
-	def orchestrate(self):
+	def orchestrate_db_merge(self):
 		"""
 		Builds the combined database and its search table.
 		"""
@@ -128,15 +128,17 @@ class Orchestrator:
 		self.write_db_path_to_file()
 		
 		
-def merge_browsers(app_path=('~', 'USB'), db_name='usb_db.sqlite'):
+def merge_browsers_history(app_path, merged_db_name):
 	all_browsers_info = browser_data.prep_browsers_info()
-	write_combi_db = Orchestrator(app_path=app_path, db_name=db_name, browser_info=all_browsers_info)
-	write_combi_db.orchestrate()
+	write_combi_db = DatabaseMergeOrchestrator(app_path=app_path, db_name=merged_db_name, browser_info=all_browsers_info)
+	write_combi_db.orchestrate_db_merge()
 # build_search_table('combined_db_fx_cr.sqlite', ['id', 'url', 'title', 'last_visit_time'])
 
-def main():
-	merge_browsers()
+def usb_merge():
+	app_path = ('~', 'USB')
+	merged_db_name = 'usb_db.sqlite'
+	merge_browsers_history(app_path , merged_db_name)
 	
 	
 if __name__ == '__main__':
-	main()
+	usb_merge()
