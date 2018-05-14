@@ -20,7 +20,7 @@ class Browser(dict):
 		:param: profiles: list of profile, default is all profiles
 		:param: file_tables: dict of database file name containing the tables as keys, list of tables to be accessed as values.
 		:param: copies_subpath: path where a copy of the database files is created, and read from,instead of the original files.
-	
+
 	**Methods:**
 		make_paths()
 		
@@ -68,7 +68,7 @@ class Browser(dict):
 		for error_msg_ in error_msgs:
 			try:
 				print(f'{error_msg_.strerror}\n\t\t{error_msg_.filename}')
-			except AttributeError as attr_err:
+			except AttributeError:
 				print(error_msg_)
 		print()
 		

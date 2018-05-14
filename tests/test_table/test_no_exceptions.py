@@ -55,7 +55,6 @@ test_cases_no_exception = [
 	             copies_subpath=None,
 	             empty=False,
 	             ),
-	
 	]
 
 @pytest.mark.parametrize('table_tester_obj', [tt.TableTester(project_root, test_case_) for test_case_ in test_cases_no_exception])

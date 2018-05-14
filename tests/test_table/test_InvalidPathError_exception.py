@@ -1,5 +1,4 @@
 import pytest
-import sqlite3
 
 from collections import namedtuple
 from pathlib import Path
@@ -70,8 +69,8 @@ def non_pytest_test_InvalidPathError(test_suite):
 			raise Exception('Expected exception not raised.')
 		finally:
 			print()
-			
-			
+
+
 if __name__ == '__main__':
 	non_pytest_test_InvalidPathError(test_suite=test_cases_exception_InvalidPathError)
 	# for test_case in test_cases_exception_InvalidFileError:

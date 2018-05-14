@@ -1,6 +1,4 @@
 import pytest
-import sqlite3
-
 from collections import namedtuple
 from pathlib import Path
 
@@ -60,7 +58,7 @@ test_cases_exception_InvalidFileError = [
 @pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_InvalidFileError])
 def test_InvalidFileError(test_case):
 	table_obj = Table(*test_case)
-	with pytest.raises(InvalidFileError) as excep:
+	with pytest.raises(InvalidFileError):
 		table_obj.make_records_yielder()
 
 
@@ -76,8 +74,8 @@ def non_pytest_test_InvalidFileError(test_suite):
 			raise Exception
 		finally:
 			print()
-			# assert str(excep) == 'file is not a database'
-		
+
+
 def simply_run(test_suite):
 	for test_case in test_suite:
 		table_obj = Table(*test_case)

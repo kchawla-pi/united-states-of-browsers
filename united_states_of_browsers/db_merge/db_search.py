@@ -1,10 +1,7 @@
 import sqlite3
-
 from datetime import datetime as dt
-from pprint import pprint
 
 from united_states_of_browsers.db_merge import helpers
-
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 

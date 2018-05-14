@@ -3,10 +3,7 @@
 import errno
 import shutil
 import sqlite3
-
 from datetime import datetime as dt
-from pathlib import Path
-from pprint import pprint
 
 from united_states_of_browsers.db_merge import exceptions_handling as exceph
 from united_states_of_browsers.db_merge.imported_annotations import *
@@ -37,7 +34,7 @@ class Table(dict):
 	             browser: Text,
 	             filename: Text,
 	             profile: Text,
-	             copies_subpath: Optional[PathInfo]=None
+	             copies_subpath: Optional[PathInfo] = None
 	             ) -> None:
 		super().__init__(table=table, path=path, browser=browser, file=filename, profile=profile)
 		self.table = table
@@ -55,7 +52,7 @@ class Table(dict):
 		dst.mkdir(parents=True, exist_ok=True)
 		try:
 			self.path = Path(shutil.copy2(self.path, dst))
-		except FileNotFoundError as excep:
+		except FileNotFoundError:
 			return FileNotFoundError(errno.ENOENT,
 			                         f'File {self.path.name} does not exist for {self.browser} profile "{self.profile}". The profile may be empty.',
 			                         str(self.path))
@@ -72,8 +69,8 @@ class Table(dict):
 		except FileNotFoundError as excep:
 			exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
 			                                                         calling_obj=self)
-			return exception_raised # returns a loggable error or raises a fatal one.
-			
+			return exception_raised  # returns a loggable error or raises a fatal one.
+		
 		db_file_path_uri_mode = f'file:{self.path}?mode=ro'
 		try:
 			with sqlite3.connect(db_file_path_uri_mode, uri=True) as self._connection:
@@ -98,9 +95,8 @@ class Table(dict):
 			except TypeError as excep:
 				continue
 				pass  # records without valid timestamps are removed
-			except OSError as excep:
-				continue
-				pass  # records without valid timestamps are removed
+			except OSError:
+				continue  # records without valid timestamps are removed
 			
 			record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
 			yield record_dict
@@ -174,4 +170,4 @@ if __name__ == '__main__':
 	               profile='test_profile2',
 	               copies_subpath=None,
 	               )
-	# table3.make_records_yielder()
+# table3.make_records_yielder()

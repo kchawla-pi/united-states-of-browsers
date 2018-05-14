@@ -1,5 +1,4 @@
 import pytest
-import sqlite3
 
 from collections import namedtuple
 from pathlib import Path
@@ -60,7 +59,7 @@ test_cases_exception_InvalidTableError = [
 @pytest.mark.parametrize('test_case', [test_case for test_case in test_cases_exception_InvalidTableError])
 def test_suite_no_such_table(test_case):
 	table_obj = Table(*test_case)
-	with pytest.raises(InvalidTableError) as excep:
+	with pytest.raises(InvalidTableError):
 		table_obj.make_records_yielder()
 
 
@@ -69,7 +68,7 @@ def non_pytest_test_suite_no_such_table(test_suite):
 		table_obj = Table(*test_case)
 		try:
 			table_obj.make_records_yielder()
-		except InvalidTableError as excep:
+		except InvalidTableError:
 			print('Passed.')
 
 

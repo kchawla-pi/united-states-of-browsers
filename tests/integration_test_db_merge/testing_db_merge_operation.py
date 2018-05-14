@@ -1,3 +1,4 @@
+import pytest
 import sqlite3
 
 from pathlib import Path
@@ -5,7 +6,7 @@ from pprint import pprint
 
 from united_states_of_browsers.db_merge.db_merge import DatabaseMergeOrchestrator
 from united_states_of_browsers.db_merge.browser_data import prep_browsers_info
-from tests.integration_test import create_benchmark_database_for_tests
+from tests.integration_test_db_merge import create_benchmark_database_for_integration_testing
 
 
 def make_test_db_path(app_path, newly_merged_test_db_name, benchmark_db_name):
@@ -55,7 +56,7 @@ def make_finer_grained_db_comparision_assertions(benchmark_db_records, new_db_re
 	assert benchmark_db_records_keys.issubset(new_db_records_keys), benchmark_db_records_keys.difference(
 		new_db_records_keys)
 	
-	_, fields_added, _ = create_benchmark_database_for_tests.get_database_fieldnames()
+	_, fields_added, _ = create_benchmark_database_for_integration_testing.get_database_fieldnames()
 	additional_fields = {'last_visit_readable', 'visit_count', 'id', 'rec_num'}
 	expected_fields_in_new_merged_db = set([*benchmark_db_records_keys, *fields_added, *additional_fields])
 	assert expected_fields_in_new_merged_db == new_db_records_keys, expected_fields_in_new_merged_db.symmetric_difference(
@@ -112,10 +113,10 @@ def test_db_merge_operation(app_path, newly_merged_test_db_name, benchmark_db_na
 	else:
 		pprint(list(non_matching_fields_yielder))
 
-
+@pytest.mark.skip()
 def db_merge_integration_test(app_path, newly_merged_db_name, benchmark_db_name):
 	try:
-		create_benchmark_database_for_tests.create_testing_data(benchmark_db_name='~benchmark_db_for_usb_testing.sqlite')
+		create_benchmark_database_for_integration_testing.create_testing_data(benchmark_db_name='~benchmark_db_for_usb_testing.sqlite')
 	except FileExistsError:
 		print(f'Using existing benchmark database...')
 	else:
@@ -125,6 +126,7 @@ def db_merge_integration_test(app_path, newly_merged_db_name, benchmark_db_name)
 		test_db_merge_operation(app_path, newly_merged_test_db_name=newly_merged_db_name, benchmark_db_name=benchmark_db_name)
 
 
+@pytest.mark.skip()
 def run_expected_to_pass_test():
 	app_path = '~/USB/for_tests'
 	newly_merged_db_name = 'merged_db_for_testing.sqlite'
@@ -132,6 +134,7 @@ def run_expected_to_pass_test():
 	db_merge_integration_test(app_path, newly_merged_db_name, benchmark_db_name)
 	
 
+@pytest.mark.skip()
 def run_expected_to_fail_test():
 	app_path = '~/USB/for_tests'
 	newly_merged_db_name = 'merged_db_for_testing.sqlite'

@@ -1,8 +1,5 @@
 import errno
-import sqlite3
 
-from pathlib import Path
-from pprint import pprint
 from united_states_of_browsers.db_merge.custom_exceptions import *
 from united_states_of_browsers.db_merge.imported_annotations import *
 

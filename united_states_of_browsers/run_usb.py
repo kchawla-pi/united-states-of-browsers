@@ -1,6 +1,4 @@
 import subprocess
-import webbrowser
-
 from pathlib import Path
 
 
@@ -28,9 +26,6 @@ def launch_usb():
 	subprocess.run(db_merge_command)
 	subprocess.run(usb_server_command)
 	
-	# usb_ui_url = 'http://127.0.0.1:5000/'
-	# webbrowser.open_new_tab(usb_ui_url)
-
 
 if __name__ == '__main__':
 	launch_usb()

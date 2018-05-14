@@ -22,7 +22,7 @@ class DatabaseMergeOrchestrator:
 	def __init__(self, app_path: PathInfo, db_name: Text, browser_info: BrowserData) -> None:
 		try:
 			self.app_path = Path(app_path).expanduser()
-		except TypeError as excep:
+		except TypeError:
 			self.app_path = Path(*app_path).expanduser()
 		self.db_name = db_name
 		self.browser_info = browser_info

@@ -1,4 +1,3 @@
-import pytest
 import sqlite3
 
 from datetime import datetime as dt
@@ -18,10 +17,9 @@ class TableArgs:
 		self.copies_subpath = copies_subpath
 		self.empty = empty
 		self.raise_exceptions = raise_exceptions
-		
+
 	def __repr__(self):
 		return f'TableArgs({self.table}, {self.path}, {self.browser}, {self.filename}, {self.profile}, {self.copies_subpath}, {self.empty}'
-		
 		
 	def _replace(self, path):
 		self.path = path
@@ -136,6 +134,3 @@ class TableTester:
 	def test_check_if_db_empty(self):
 		assert self.table_empty == self.table_obj.check_if_db_empty()
 		return 'check_if_db_empty'
-
-
-

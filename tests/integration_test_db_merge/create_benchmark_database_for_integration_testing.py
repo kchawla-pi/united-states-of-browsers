@@ -2,7 +2,6 @@ import sqlite3
 import stat
 
 from pathlib import Path
-from pprint import pprint
 
 
 def get_test_databases_info(common_path_of_all_source_db):
