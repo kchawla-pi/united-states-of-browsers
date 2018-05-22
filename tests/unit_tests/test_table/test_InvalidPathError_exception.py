@@ -3,11 +3,12 @@ import pytest
 from collections import namedtuple
 from pathlib import Path
 
+from united_states_of_browsers.db_merge import helpers
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import InvalidPathError
 
 
-project_root = Path(__file__).parents[2]
+project_root = helpers.get_project_root_path(project_file_path=__file__, project_root_dir_name='UnitedStatesOfBrowsers')
 
 TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath')
 test_cases_exception_InvalidPathError = [

@@ -2,10 +2,10 @@ import pytest
 
 from pathlib import Path
 
-from tests.tester_classes import table_tester as tt
+from tests.unit_tests.tester_classes import table_tester as tt
+from united_states_of_browsers.db_merge import helpers
 
-
-project_root = Path(__file__).parents[2]
+project_root = helpers.get_project_root_path(project_file_path=__file__, project_root_dir_name='UnitedStatesOfBrowsers')
 
 test_cases_no_exception = [
 	tt.TableArgs(table='urls',
