@@ -6,7 +6,7 @@ from pprint import pprint
 
 from united_states_of_browsers.db_merge.db_merge import DatabaseMergeOrchestrator
 from united_states_of_browsers.db_merge.browser_data import prep_browsers_info
-from utils.integration_test_db_merge import create_benchmark_database_for_integration_testing
+from tests.integration_test_db_merge import create_benchmark_database_for_integration_testing
 
 
 def make_test_db_path(app_path, newly_merged_test_db_name, benchmark_db_name):
