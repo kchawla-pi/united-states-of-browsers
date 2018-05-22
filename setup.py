@@ -3,8 +3,9 @@ import setuptools
 
 setuptools.setup(
 		name='usb',
-		version='0.8dev',
-		packages=['united_states_of_browsers',
+		version='0.83dev',
+		packages=['tests',
+		          'united_states_of_browsers',
 		          'united_states_of_browsers.db_merge',
 		          'united_states_of_browsers.usb_server'
 		          ],

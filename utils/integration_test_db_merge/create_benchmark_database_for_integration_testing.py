@@ -102,12 +102,12 @@ def get_database_fieldnames():
 	fields_added = ('browser', 'profile', 'file', 'tablename')
 	fields_to_be_written = (*common_fields, 'last_visit', *fields_added)
 	return fields_accessed, fields_added, fields_to_be_written
-	
-	
+
+
 def create_testing_data(benchmark_db_name):
 	common_path_of_all_test_db_to_be_combined_to_make_benchmark_db, benchmark_db_path = make_test_data_paths(benchmark_db_name=benchmark_db_name)
 	fields_accessed, fields_added, fields_to_be_written = get_database_fieldnames()
-	
+
 	if benchmark_db_path.exists():
 		raise FileExistsError
 	else:

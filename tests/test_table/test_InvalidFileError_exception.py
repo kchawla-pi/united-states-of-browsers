@@ -5,7 +5,6 @@ from pathlib import Path
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import InvalidFileError
 
-
 project_root = Path(__file__).parents[2]
 
 TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath')
@@ -68,9 +67,11 @@ def non_pytest_test_InvalidFileError(test_suite):
 		try:
 			table_obj.make_records_yielder()
 		except InvalidFileError as excep:
-			print('Expected exception raised: InvalidFileError', excep, '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+			print('Expected exception raised: InvalidFileError', excep, '--', test_case.browser, test_case.profile,
+			      test_case.filename, test_case.table)
 		else:
-			print('Expected exception InvalidFileError NOT raised: .', '--', test_case.browser, test_case.profile, test_case.filename, test_case.table)
+			print('Expected exception InvalidFileError NOT raised: .', '--', test_case.browser, test_case.profile,
+			      test_case.filename, test_case.table)
 			raise Exception
 		finally:
 			print()
@@ -87,24 +88,24 @@ if __name__ == '__main__':
 	quit()
 	# simply_run(test_suite=test_cases_exception_InvalidFileError)
 	fx_false_file = Table(table='moz_places',
-	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-	                    'Firefox/Profiles/udd5sttq.test_profile2/non_db_dummy_file_for_testing.txt'),
-	          browser='firefox',
-	          filename='non_db_dummy_file_for_testing.txt',
-	          profile='test_profile2',
-	          copies_subpath=None,
-	          )
-	
+	                      path=Path(project_root,
+	                                'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
+	                                'Firefox/Profiles/udd5sttq.test_profile2/non_db_dummy_file_for_testing.txt'),
+	                      browser='firefox',
+	                      filename='non_db_dummy_file_for_testing.txt',
+	                      profile='test_profile2',
+	                      copies_subpath=None,
+	                      )
+
 	# fx_false_file.make_records_yielder()
-	
+
 	chrome_false_file = Table(table='urls',
-	          path=Path(project_root,
-	                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History_false_filename'),
-	          browser='chrome',
-	          filename='History_false_filename',
-	          profile='Profile 1',
-	          copies_subpath=None,
-	          )
+	                          path=Path(project_root,
+	                                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History_false_filename'),
+	                          browser='chrome',
+	                          filename='History_false_filename',
+	                          profile='Profile 1',
+	                          copies_subpath=None,
+	                          )
 	chrome_false_file.make_records_yielder()
 	print(list(chrome_false_file.records_yielder))

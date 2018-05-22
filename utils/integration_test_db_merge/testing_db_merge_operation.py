@@ -1,4 +1,4 @@
-import pytest
+# import pytest
 import sqlite3
 
 from pathlib import Path
@@ -6,11 +6,12 @@ from pprint import pprint
 
 from united_states_of_browsers.db_merge.db_merge import DatabaseMergeOrchestrator
 from united_states_of_browsers.db_merge.browser_data import prep_browsers_info
-from tests.integration_test_db_merge import create_benchmark_database_for_integration_testing
+from utils.integration_test_db_merge import create_benchmark_database_for_integration_testing
 
 
 def make_test_db_path(app_path, newly_merged_test_db_name, benchmark_db_name):
 	newly_merged_test_db_path = Path(app_path, newly_merged_test_db_name).expanduser()
+	print(__file__)
 	common_path_of_source_test_databases = Path(__file__).parents[1].joinpath('data', 'browser_profiles_for_testing')
 	benchmark_db_path = Path(__file__).parents[1].joinpath('data', benchmark_db_name)
 	return (
@@ -35,9 +36,9 @@ def make_record_yielders_for_newly_merged_db_and_benchmark_db(newly_merged_test_
 
 
 def get_sorted_records_from_record_yielders(new_db_record_yielder, benchmark_db_record_yielder):
-	sort_fn = lambda item: item['url']
-	first_db_records = sorted([dict(record) for record in new_db_record_yielder], key=sort_fn)
-	second_db_records = sorted([dict(record) for record in benchmark_db_record_yielder], key=sort_fn)
+	sort_by_url_sorting_key = lambda item: item['url']
+	first_db_records = sorted([dict(record) for record in new_db_record_yielder], key=sort_by_url_sorting_key)
+	second_db_records = sorted([dict(record) for record in benchmark_db_record_yielder], key=sort_by_url_sorting_key)
 	return first_db_records, second_db_records
 
 
@@ -45,7 +46,8 @@ def make_finer_grained_db_comparision_assertions(benchmark_db_records, new_db_re
 	assert len(benchmark_db_records) == len(new_db_records), (len(benchmark_db_records), '**', len(new_db_records))
 	
 	benchmark_db_records_keys = set(
-			[tuple(benchmark_db_record_.keys()) for benchmark_db_record_ in benchmark_db_records])
+			[tuple(benchmark_db_record_.keys()) for benchmark_db_record_ in benchmark_db_records]
+			)
 	assert len(benchmark_db_records_keys) == 1, len(benchmark_db_records_keys)
 	
 	new_db_records_keys = set([tuple(new_db_record_.keys()) for new_db_record_ in new_db_records])
@@ -92,9 +94,12 @@ def yield_non_matching_fields(benchmark_db_records, new_db_records):
 					)
 
 
-def test_db_merge_operation(app_path, newly_merged_test_db_name, benchmark_db_name):
+def db_merge_and_compare(app_path, newly_merged_test_db_name, benchmark_db_name):
 	(common_path_of_source_test_databases, newly_merged_test_db_path, benchmark_db_path,
-		) = make_test_db_path(app_path=app_path, newly_merged_test_db_name=newly_merged_test_db_name, benchmark_db_name=benchmark_db_name)
+		) = make_test_db_path(app_path=app_path,
+	                          newly_merged_test_db_name=newly_merged_test_db_name,
+	                          benchmark_db_name=benchmark_db_name,
+	                          )
 	
 	browser_info = prep_browsers_info(parent_dir=common_path_of_source_test_databases)
 	test_orchestrator = DatabaseMergeOrchestrator(app_path=app_path, db_name=newly_merged_test_db_name, browser_info=browser_info)
@@ -113,7 +118,8 @@ def test_db_merge_operation(app_path, newly_merged_test_db_name, benchmark_db_na
 	else:
 		pprint(list(non_matching_fields_yielder))
 
-@pytest.mark.skip()
+
+# @pytest.mark.skip
 def db_merge_integration_test(app_path, newly_merged_db_name, benchmark_db_name):
 	try:
 		create_benchmark_database_for_integration_testing.create_testing_data(benchmark_db_name='~benchmark_db_for_usb_testing.sqlite')
@@ -123,18 +129,17 @@ def db_merge_integration_test(app_path, newly_merged_db_name, benchmark_db_name)
 		print(f'Test benchmark database created...')
 	finally:
 		print(f'Testing database merge operation.')
-		test_db_merge_operation(app_path, newly_merged_test_db_name=newly_merged_db_name, benchmark_db_name=benchmark_db_name)
+		db_merge_and_compare(app_path, newly_merged_test_db_name=newly_merged_db_name, benchmark_db_name=benchmark_db_name)
 
 
-@pytest.mark.skip()
 def run_expected_to_pass_test():
 	app_path = '~/USB/for_tests'
 	newly_merged_db_name = 'merged_db_for_testing.sqlite'
 	benchmark_db_name = '~benchmark_db_for_usb_testing.sqlite'
 	db_merge_integration_test(app_path, newly_merged_db_name, benchmark_db_name)
-	
 
-@pytest.mark.skip()
+
+# @pytest.mark.xfail
 def run_expected_to_fail_test():
 	app_path = '~/USB/for_tests'
 	newly_merged_db_name = 'merged_db_for_testing.sqlite'
@@ -143,5 +148,6 @@ def run_expected_to_fail_test():
 
 
 if __name__ == '__main__':
+
 	run_expected_to_pass_test()
 	# run_expected_to_fail_test()
