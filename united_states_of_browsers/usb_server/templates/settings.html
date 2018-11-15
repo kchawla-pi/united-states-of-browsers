@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title> USB: Settings </title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, inital-scale=1, shrink-to-fit=yes">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+
+</head>
+
+<body>
+<div class="container-fluid">
+
+    <h7 class="text-right"> <a id="app-name" href="/"> USB: Settings </a> </h7>
+    <form action="{{ url_for('search') }}" method="GET">
+        <input id="label-box" type="text" name="display-label" placeholder="Enter display label here">
+
+
+    <form action="{{ url_for('search') }}" method="GET">
+        <input id="path-box" type="text" name="entry-path" placeholder="Enter directory path here">
+
+    <input type="radio" id="radio-browser-path" name="path-type" value="multi-profiles" checked>
+    <label for="radio-browser-path"> Many Profiles, One Browser </label>
+
+    <input type="radio" id="radio-profile-path" name="path-type" value="single-profile">
+    <label for="radio-profile-path"> Single Profile, Single Browser </label>
+
+    <button class="btn btn-primary" type="submit">Add Path</button>
+    </form>
+    <table class="table htable table-responsive-s table-striped table-hover table-sm">
+        <caption>Paths added; all local browsers and profiles.</caption>
+        <thead>
+        <tr>
+            <!--<th scope="col"> Address</th>-->
+            <th scope="col"> Label</th>
+            <th scope="col" class="right-text"> Type</th>
+            <th scope="col"> Path</th>
+            <!--<th scope="col"> Description </th>-->
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+
+</div>
+</body>
+</html>
+
