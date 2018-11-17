@@ -64,7 +64,12 @@ def search(db_path: PathInfo,
 		date_stop: if None (default), the present date is used.
 	"""
 	if not date_start:
-		date_start = int(dt.timestamp(dt.strptime('1970-01-02', '%Y-%m-%d')) * 10**6)
+		'''
+		Date < 1970-01-03 raises an error in certain python versions on windows.
+		Hence date starts at 04. For More info:
+		https://github.com/home-assistant/appdaemon/issues/83#issuecomment-316043735
+		'''
+		date_start = int(dt.timestamp(dt.strptime('1970-01-04', '%Y-%m-%d')) * 10**6)
 	else:
 		date_start = int(dt.timestamp(dt.strptime(date_start, '%Y-%m-%d')) * 10**6)
 	if not date_stop:

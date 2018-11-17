@@ -44,7 +44,7 @@ def connect_db():
 @app.route('/', methods=['GET', 'POST'])
 def show_entries():
 	db = get_db()
-	search_results = db_search.search(db,'')
+	search_results = db_search.search(db, '')
 	return render_template('main.html', entries=search_results)
 
 
