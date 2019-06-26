@@ -106,5 +106,4 @@ ENV/
 
 # excluded file extensions
 *.sqlite
-*.json
 /_archived_code/
