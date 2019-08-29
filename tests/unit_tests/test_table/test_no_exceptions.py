@@ -7,8 +7,6 @@ from united_states_of_browsers.db_merge.table import Table
 project_root = get_project_root_path()
 
 
-
-
 def test_suite_no_exceptions_chromium():
 	chromium_db_path = create_chromium_data()
 	table_obj = Table(table='urls',
