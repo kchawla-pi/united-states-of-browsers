@@ -27,7 +27,7 @@ def get_project_root_path():
 
 def create_mozilla_data():
     project_root = get_project_root_path()
-    db_path = Path(project_root, 'tests', 'test_mozilla.sqlite')
+    db_path = str(Path(project_root, 'tests', 'test_mozilla.sqlite'))
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     try:
@@ -48,7 +48,7 @@ def create_mozilla_data():
 
 def create_chromium_data():
     project_root = get_project_root_path()
-    db_path = Path(project_root, 'tests', 'test_chromium')
+    db_path = str(Path(project_root, 'tests', 'test_chromium'))
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     try:
