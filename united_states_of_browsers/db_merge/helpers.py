@@ -22,17 +22,12 @@ def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
 	return ''.join([char for char in query if char.isalnum() or char in allowed_chars])  #, '?', '(', ')', ','}])
 
 
-def get_project_root_path(project_file_path, project_root_dir_name):
+def get_root_path(project_file_path, project_root_dir_name):
 	path_parts = Path(project_file_path).parts
 	try:
 		root_dir_idx = path_parts.index(project_root_dir_name)
 	except ValueError:
-		raise ValueError(f'Project root directory name "{project_root_dir_name}" not present in supplied path', project_root_dir_name, project_file_path)
+		error_text = f'Project root directory name "{project_root_dir_name}" not present in supplied path', project_root_dir_name, project_file_path
+		raise ValueError(error_text)
 	project_root_path = Path(*path_parts[:root_dir_idx+1])
 	return f'{project_root_path}'
-
-
-if __name__ == '__main__':
-	root_path1 = get_project_root_path(__file__, 'UnitedStatesOfBrowsers')
-	root_path2 = get_project_root_path(r'C:\Users\kshit\OneDrive\workspace\UnitedStatesOfBrowsers\tests\unit_tests\tester_classes', 'UnitedStatesOfBrowsers')
-	print(root_path1)
