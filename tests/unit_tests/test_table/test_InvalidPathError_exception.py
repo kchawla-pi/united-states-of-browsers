@@ -1,4 +1,3 @@
-from collections import namedtuple
 from pathlib import Path
 
 import pytest
@@ -7,9 +6,6 @@ from tests.fixtures import get_project_root_path
 from united_states_of_browsers.db_merge.table import Table
 
 project_root = get_project_root_path()
-
-TableArgs = namedtuple('TableArgs',
-                       'table path browser filename profile copies_subpath')
 
 
 def test_InvalidPathError_mozilla():

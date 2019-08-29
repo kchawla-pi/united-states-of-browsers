@@ -1,12 +1,3 @@
-from pathlib import Path
-
-from tests.fixtures import (create_chromium_data,
-							create_mozilla_data,
-							get_project_root_path,
-							)
-from united_states_of_browsers.db_merge.table import Table
-from pathlib import Path
-
 from tests.fixtures import (create_chromium_data,
 							create_mozilla_data,
 							get_project_root_path,

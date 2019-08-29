@@ -1,5 +1,4 @@
 import pytest
-from collections import namedtuple
 from pathlib import Path
 
 from tests.fixtures import get_project_root_path
