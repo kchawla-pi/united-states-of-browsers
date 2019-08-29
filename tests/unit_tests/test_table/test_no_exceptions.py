@@ -3,9 +3,9 @@ import pytest
 from pathlib import Path
 
 from tests.unit_tests.tester_classes import table_tester as tt
-from united_states_of_browsers.db_merge import helpers
+from tests.fixtures import get_project_root_path
 
-project_root = helpers.get_project_root_path(project_file_path=__file__, project_root_dir_name='UnitedStatesOfBrowsers')
+project_root = get_project_root_path()
 
 test_cases_no_exception = [
 	tt.TableArgs(table='urls',

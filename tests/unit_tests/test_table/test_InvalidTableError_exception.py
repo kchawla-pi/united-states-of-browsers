@@ -3,12 +3,12 @@ import pytest
 from collections import namedtuple
 from pathlib import Path
 
-from united_states_of_browsers.db_merge import helpers
+from tests.fixtures import get_project_root_path
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableError
 
 
-project_root = helpers.get_project_root_path(project_file_path=__file__, project_root_dir_name='UnitedStatesOfBrowsers')
+project_root = get_project_root_path()
 
 TableArgs = namedtuple('TableArgs', 'table path browser filename profile copies_subpath')
 test_cases_exception_InvalidTableError = [
