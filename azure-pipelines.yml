@@ -31,8 +31,7 @@ jobs:
       displayName: 'Install dependencies'
 
     - script: |
-        pip install pytest
-        pwd
+        ls -a
         pytest
       displayName: 'pytest'
 
@@ -60,7 +59,5 @@ jobs:
 
         - script: |
             pip install pytest pytest-azurepipelines
-            pwd
-            ls -a
             pytest
           displayName: 'pytest'
