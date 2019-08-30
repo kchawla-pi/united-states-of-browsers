@@ -10,9 +10,9 @@ from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableErr
 project_root = get_project_root_path()
 
 
-def test_InvalidTableError_mozilla():
+def test_InvalidTableError_mozilla(tests_root):
 	table_obj = Table(table='moz_places',
-	          path=Path(project_root,
+	          path=Path(tests_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
 	                    'Firefox/Profiles/udd5sttq.test_profile2/places.sqlite'),
 	          browser='firefox',
@@ -24,9 +24,9 @@ def test_InvalidTableError_mozilla():
 		table_obj.make_records_yielder()
 
 	
-def test_InvalidTableError_chrome():
+def test_InvalidTableError_chrome(tests_root):
 	table_obj = Table(table='nonexistent_table',
-	          path=Path(project_root,
+	          path=Path(tests_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History'),
 	          browser='chrome',
 	          filename='History',
@@ -37,9 +37,9 @@ def test_InvalidTableError_chrome():
 		table_obj.make_records_yielder()
 
 	
-def test_InvalidTableError_vivaldi():
+def test_InvalidTableError_vivaldi(tests_root):
 	table_obj = Table(table='nonexistent_table',
-	          path=Path(project_root,
+	          path=Path(tests_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User Data/Default/History'),
 	          browser='vivaldi',
 	          filename='History',
@@ -50,9 +50,9 @@ def test_InvalidTableError_vivaldi():
 		table_obj.make_records_yielder()
 
 	
-def test_InvalidTableError_opera():
+def test_InvalidTableError_opera(tests_root):
 	table_obj = Table(table='nonexistent_table',
-	          path=Path(project_root,
+	          path=Path(tests_root,
 	                    'tests/data/browser_profiles_for_testing/AppData/Roaming/Opera Software/Opera Stable/History'),
 	          browser='opera',
 	          filename='History',

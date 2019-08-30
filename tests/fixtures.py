@@ -1,7 +1,14 @@
 import sqlite3
 from pathlib import Path
 
+import pytest
+from flask.helpers import get_root_path
+
 from united_states_of_browsers.db_merge import helpers
+
+@pytest.fixture()
+def tests_root():
+    return get_root_path('tests')
 
 
 def get_project_root_path():
