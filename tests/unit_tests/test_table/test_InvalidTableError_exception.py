@@ -2,12 +2,8 @@ import pytest
 
 from pathlib import Path
 
-from tests.fixtures import get_project_root_path
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableError
-
-
-project_root = get_project_root_path()
 
 
 def test_InvalidTableError_mozilla(tests_root):
