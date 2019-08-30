@@ -31,8 +31,8 @@ jobs:
       displayName: 'Install dependencies'
 
     - script: |
-        pip install pytest pytest-azurepipelines
-        pytest ./tests
+        pip install pytest
+        pytest
       displayName: 'pytest'
 
   - job: 'TestWindows'
@@ -59,5 +59,5 @@ jobs:
 
         - script: |
             pip install pytest pytest-azurepipelines
-            pytest ./tests
+            pytest
           displayName: 'pytest'
