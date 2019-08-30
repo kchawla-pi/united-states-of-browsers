@@ -32,6 +32,7 @@ jobs:
 
     - script: |
         pip install pytest
+        pwd
         pytest
       displayName: 'pytest'
 
@@ -59,5 +60,6 @@ jobs:
 
         - script: |
             pip install pytest pytest-azurepipelines
+            pwd
             pytest
           displayName: 'pytest'
