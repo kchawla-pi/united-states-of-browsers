@@ -6,11 +6,9 @@ from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableError
 
 
-def test_InvalidTableError_mozilla(tests_root):
+def test_InvalidTableError_mozilla(create_fake_non_db_file):
 	table_obj = Table(table='moz_places',
-	          path=Path(tests_root,
-	                    'data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-	                    'Firefox/Profiles/udd5sttq.test_profile2/places.sqlite'),
+	          path=create_fake_non_db_file,
 	          browser='firefox',
 	          filename='places.sqlite',
 	          profile='test_profile2',
@@ -20,10 +18,9 @@ def test_InvalidTableError_mozilla(tests_root):
 		table_obj.make_records_yielder()
 
 	
-def test_InvalidTableError_chrome(tests_root):
+def test_InvalidTableError_chrome(create_fake_non_db_file):
 	table_obj = Table(table='nonexistent_table',
-	          path=Path(tests_root,
-	                    'data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History'),
+	          path=create_fake_non_db_file,
 	          browser='chrome',
 	          filename='History',
 	          profile='Profile 1',
@@ -33,10 +30,9 @@ def test_InvalidTableError_chrome(tests_root):
 		table_obj.make_records_yielder()
 
 	
-def test_InvalidTableError_vivaldi(tests_root):
+def test_InvalidTableError_vivaldi(create_fake_non_db_file):
 	table_obj = Table(table='nonexistent_table',
-	          path=Path(tests_root,
-	                    'data/browser_profiles_for_testing/AppData/Local/Vivaldi/User Data/Default/History'),
+	          path=create_fake_non_db_file,
 	          browser='vivaldi',
 	          filename='History',
 	          profile='Default',
@@ -46,10 +42,9 @@ def test_InvalidTableError_vivaldi(tests_root):
 		table_obj.make_records_yielder()
 
 	
-def test_InvalidTableError_opera(tests_root):
+def test_InvalidTableError_opera(create_fake_non_db_file):
 	table_obj = Table(table='nonexistent_table',
-	          path=Path(tests_root,
-	                    'data/browser_profiles_for_testing/AppData/Roaming/Opera Software/Opera Stable/History'),
+	          path=create_fake_non_db_file,
 	          browser='opera',
 	          filename='History',
 	          profile='Opera Stable',
