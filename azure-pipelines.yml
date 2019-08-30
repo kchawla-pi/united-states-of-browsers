@@ -61,5 +61,6 @@ jobs:
         - script: |
             pip install pytest pytest-azurepipelines
             pwd
+            ls -a
             pytest
           displayName: 'pytest'
