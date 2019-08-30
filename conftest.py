@@ -66,3 +66,8 @@ def create_fake_non_db_file(tests_root):
 def create_invalid_filepath(tests_root):
     invalid_filepath = Path(tests_root, 'invalid_filepath')
     return str(invalid_filepath)
+
+@pytest.fixture(scope='session', autouse=True)
+def create_invalid_dirpath(tests_root):
+    invalid_dirpath = Path(tests_root, 'unit_tests', 'test_table_JUNK', 'more_junk')
+    return str(invalid_dirpath)
