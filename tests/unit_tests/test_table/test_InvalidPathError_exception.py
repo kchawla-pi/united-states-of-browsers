@@ -11,7 +11,7 @@ project_root = get_project_root_path()
 def test_InvalidPathError_mozilla(tests_root):
     table_obj = Table(table='moz_places',
                       path=Path(tests_root,
-                                'tests/data/browser_profiles_for_testing_wrongpath_/AppData/Roaming/Mozilla/'
+                                'data/browser_profiles_for_testing_wrongpath_/AppData/Roaming/Mozilla/'
                                 'Firefox/Profiles/kceyj748.test_profile1/places.sqlite'),
                       browser='firefox',
                       filename='places.sqlite',
@@ -25,7 +25,7 @@ def test_InvalidPathError_mozilla(tests_root):
 def test_InvalidPathError_chrome(tests_root):
     table_obj = Table(table='urls',
                       path=Path(tests_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1 _wrongpath_/History'),
+                                'data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1 _wrongpath_/History'),
                       browser='chrome',
                       filename='History',
                       profile='Profile 1 _wrongpath_',
@@ -38,7 +38,7 @@ def test_InvalidPathError_chrome(tests_root):
 def test_InvalidPathError_vivaldi(tests_root):
     table_obj = Table(table='urls',
                       path=Path(tests_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User_wrongpath_ Data/Default/History'),
+                                'data/browser_profiles_for_testing/AppData/Local/Vivaldi/User_wrongpath_ Data/Default/History'),
                       browser='vivaldi',
                       filename='History',
                       profile='Default',
@@ -51,7 +51,7 @@ def test_InvalidPathError_vivaldi(tests_root):
 def test_InvalidPathError_opera(tests_root):
     table_obj = Table(table='urls',
                       path=Path(tests_root,
-                                'tests/data/browser_profiles_for_testing/AppData_wrongpath_/Roaming/Opera Software/Opera Stable/History'),
+                                'data/browser_profiles_for_testing/AppData_wrongpath_/Roaming/Opera Software/Opera Stable/History'),
                       browser='opera',
                       filename='History',
                       profile='Opera Stable',
