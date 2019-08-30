@@ -1,20 +1,15 @@
 import pytest
 from pathlib import Path
 
-from tests.fixtures import get_project_root_path
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import (
     InvalidFileError,
     )
 
-project_root = get_project_root_path()
 
-
-def test_InvalidFileError_mozilla_1():
+def test_InvalidFileError_mozilla_1(create_invalid_filepath):
     table_obj = Table(table='moz_places',
-                      path=Path(project_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-                                'Firefox/Profiles/udd5sttq.test_profile2/non_db_dummy_file_for_testing.txt'),
+                      path=create_invalid_filepath,
                       browser='firefox',
                       filename='non_db_dummy_file_for_testing.txt',
                       profile='test_profile2',
@@ -24,11 +19,9 @@ def test_InvalidFileError_mozilla_1():
         table_obj.make_records_yielder()
 
 
-def test_InvalidFileError_mozilla_2():
+def test_InvalidFileError_mozilla_2(create_invalid_filepath):
     table_obj = Table(table='moz_places',
-                      path=Path(project_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-                                'Firefox/Profiles/udd5sttq.test_profile2/places_non_existent.sqlite'),
+                      path=create_invalid_filepath,
                       browser='firefox',
                       filename='places_non_existent.sqlite',
                       profile='test_profile2',
@@ -38,10 +31,9 @@ def test_InvalidFileError_mozilla_2():
         table_obj.make_records_yielder()
 
 
-def test_InvalidFileError_chrome():
+def test_InvalidFileError_chrome(create_invalid_filepath):
     table_obj = Table(table='urls',
-                      path=Path(project_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Local/Google/Chrome/User Data/Profile 1/History_false_filename'),
+                      path=create_invalid_filepath,
                       browser='chrome',
                       filename='History_false_filename',
                       profile='Profile 1',
@@ -51,10 +43,9 @@ def test_InvalidFileError_chrome():
         table_obj.make_records_yielder()
 
 
-def test_InvalidFileError_vivaldi():
+def test_InvalidFileError_vivaldi(create_invalid_filepath):
     table_obj = Table(table='urls',
-                      path=Path(project_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Local/Vivaldi/User Data/Default/History_false_filename'),
+                      path=create_invalid_filepath,
                       browser='vivaldi',
                       filename='History',
                       profile='Default',
@@ -64,10 +55,9 @@ def test_InvalidFileError_vivaldi():
         table_obj.make_records_yielder()
 
 
-def test_InvalidFileError_opera():
+def test_InvalidFileError_opera(create_invalid_filepath):
     table_obj = Table(table='urls',
-                      path=Path(project_root,
-                                'tests/data/browser_profiles_for_testing/AppData/Roaming/Opera Software/Opera Stable/History_false_filename'),
+                      path=create_invalid_filepath,
                       browser='opera',
                       filename='History',
                       profile='Opera Stable',

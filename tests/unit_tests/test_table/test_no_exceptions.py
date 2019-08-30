@@ -1,14 +1,8 @@
-from tests.fixtures import (create_chromium_data,
-							create_mozilla_data,
-							get_project_root_path,
-							)
 from united_states_of_browsers.db_merge.table import Table
 
-project_root = get_project_root_path()
 
-
-def test_suite_no_exceptions_chromium():
-	chromium_db_path = create_chromium_data()
+def test_suite_no_exceptions_chromium(create_chromium_data):
+	chromium_db_path = create_chromium_data
 	table_obj = Table(table='urls',
 		             path=chromium_db_path,
 		             browser='chrome',
@@ -21,8 +15,8 @@ def test_suite_no_exceptions_chromium():
 		entry
 	
 	
-def test_suite_no_exceptions_mozilla():
-	mozilla_db_path = create_mozilla_data()
+def test_suite_no_exceptions_mozilla(create_mozilla_data):
+	mozilla_db_path = create_mozilla_data
 	table_obj = Table(table='moz_places',
 	             path=mozilla_db_path,
 	             browser='firefox',
