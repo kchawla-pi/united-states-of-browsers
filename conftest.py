@@ -53,3 +53,16 @@ def create_chromium_data(tests_root):
     conn.commit()
     conn.close()
     return db_path
+
+
+@pytest.fixture(scope='session', autouse=True)
+def create_fake_non_db_file(tests_root):
+    fake_nondb_path = Path(tests_root, 'fake_nondb')
+    fake_nondb_path.write_bytes(b'0')
+    return str(fake_nondb_path)
+
+
+@pytest.fixture(scope='session', autouse=True)
+def create_invalid_filepath(tests_root):
+    invalid_filepath = Path(tests_root, 'invalid_filepath')
+    return str(invalid_filepath)
