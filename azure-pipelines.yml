@@ -6,17 +6,24 @@
 trigger:
 - master
 
-jobs:
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+    windows:
+      imageName: 'vs2017-win2016'
 
+
+jobs:
   - job: 'TestLinux'
-    pool:
-      vmImage: 'ubuntu-latest'
     strategy:
       matrix:
         Python36:
           python.version: '3.6'
         Python37:
           python.version: '3.7'
+    pool:
+      vmImage: ${imageName}
 
     steps:
     - task: UsePythonVersion@0
@@ -36,28 +43,28 @@ jobs:
       displayName: 'pytest'
 
   - job: 'TestWindows'
+    strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
     pool:
-      vmImage: 'vs2017-win2016'
-      strategy:
-        matrix:
-          Python36:
-            python.version: '3.6'
-          Python37:
-            python.version: '3.7'
+      vmImage: ${imageName}
 
-      steps:
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: '$(python.version)'
-          displayName: 'Use Python $(python.version)'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
 
-        - script: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-            pip install pytest-azurepipelines
-            pip install .
-          displayName: 'Install dependencies'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-azurepipelines
+        pip install .
+      displayName: 'Install dependencies'
 
-        - script: |
-            pytest
-          displayName: 'pytest'
+    - script: |
+        pytest
+      displayName: 'pytest'
