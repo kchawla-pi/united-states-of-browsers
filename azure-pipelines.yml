@@ -6,36 +6,61 @@
 trigger:
 - master
 
+
 strategy:
   matrix:
-    linux:
-      imageName: 'ubuntu-16.04'
-    mac:
-      imageName: 'macos-10.13'
-    windows:
-      imageName: 'vs2017-win2016'
     Python36:
       python.version: '3.6'
     Python37:
       python.version: '3.7'
 
-pool:
-  vmImage: $(imageName)
+jobs:
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+  - job: 'TestLinux'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-    pip install pytest-azurepipelines
-    pip install .
-  displayName: 'Install dependencies'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
 
-- script: |
-    pytest
-  displayName: 'pytest'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-azurepipelines
+        pip install .
+      displayName: 'Install dependencies'
+
+    - script: |
+        pytest
+      displayName: 'pytest'
+
+  - job: 'TestWindows'
+    pool:
+      vmImage: 'vs2017-win2016'
+
+      steps:
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '$(python.version)'
+          displayName: 'Use Python $(python.version)'
+
+        - script: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install pytest-azurepipelines
+            pip install .
+          displayName: 'Install dependencies'
+
+        - script: |
+            pytest
+          displayName: 'pytest'
 
