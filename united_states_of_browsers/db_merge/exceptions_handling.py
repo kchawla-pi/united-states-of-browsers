@@ -58,5 +58,5 @@ def test_path_tester():
 	print(repr(invalid_path_in_tree(curr_path_to_test)))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 	test_path_tester()

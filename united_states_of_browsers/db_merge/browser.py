@@ -128,7 +128,7 @@ class Browser(dict):
 		return f'Browser: {self.browser}, files: {self.files}, profiles: {self.profiles}'
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 	# test_browser()
 	# chrome = Browser(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
 
