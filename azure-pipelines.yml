@@ -35,6 +35,9 @@ jobs:
         pytest
       displayName: 'pytest'
 
+    - script: bash <(curl https://codecov.io/bash) -t `$(CODECOV_TOKEN)`
+        displayName: 'codecov'
+
   - job: 'TestWindows'
     pool:
       vmImage: 'vs2017-win2016'
