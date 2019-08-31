@@ -134,7 +134,7 @@ class Table(dict):
 		return False if all_tables else True
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 	table4 = Table(table='moz_places',
 	               path='C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\a2o7b88n.Employment\\places.sqlite',
 	               browser='firefox',
