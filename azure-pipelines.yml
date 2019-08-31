@@ -36,7 +36,7 @@ jobs:
       displayName: 'pytest'
 
     - script: bash <(curl https://codecov.io/bash) -t '$(CODECOV_TOKEN)'
-        displayName: 'codecov'
+      displayName: 'codecov'
 
   - job: 'TestWindows'
     pool:
