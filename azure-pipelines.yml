@@ -27,12 +27,13 @@ jobs:
     - script: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest-azurepipelines codecov coverage
+        pip install -r requirements-dev.txt
+        pip install pytest-azurepipelines
         pip install .
       displayName: 'Install dependencies'
 
     - script: |
-        pytest
+        python -m pytest --pyargs united-states-of-browsers --cov=united-states-of-browsers
       displayName: 'pytest'
 
     - script: bash <(curl https://codecov.io/bash) -t '$(CODECOV_TOKEN)'
@@ -57,6 +58,7 @@ jobs:
     - script: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
         pip install pytest-azurepipelines
         pip install .
       displayName: 'Install dependencies'
