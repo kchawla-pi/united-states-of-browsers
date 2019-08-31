@@ -27,7 +27,7 @@ jobs:
     - script: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest-azurepipelines
+        pip install pytest-azurepipelines codecov coverage
         pip install .
       displayName: 'Install dependencies'
 
