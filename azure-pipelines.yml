@@ -33,7 +33,7 @@ jobs:
       displayName: 'Install dependencies'
 
     - script: |
-        python -m pytest --pyargs united-states-of-browsers --cov=united-states-of-browsers
+        python -m pytest --pyargs tests --cov=tests
       displayName: 'pytest'
 
     - script: bash <(curl https://codecov.io/bash) -t '$(CODECOV_TOKEN)'
