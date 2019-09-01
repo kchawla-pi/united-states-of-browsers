@@ -20,14 +20,3 @@ def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
     """
     allowed_chars = set(allowed_chars)
     return ''.join([char for char in query if char.isalnum() or char in allowed_chars])  #, '?', '(', ')', ','}])
-
-
-def get_root_path(project_file_path, project_root_dir_name):
-    path_parts = Path(project_file_path).parts
-    try:
-        root_dir_idx = path_parts.index(project_root_dir_name)
-    except ValueError:
-        error_text = f'Project root directory name "{project_root_dir_name}" not present in supplied path', project_root_dir_name, project_file_path
-        raise ValueError(error_text)
-    project_root_path = Path(*path_parts[:root_dir_idx+1])
-    return f'{project_root_path}'
