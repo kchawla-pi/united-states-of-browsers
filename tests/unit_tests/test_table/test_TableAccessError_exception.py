@@ -52,15 +52,3 @@ def test_TableAccessError_opera(create_fake_non_db_file):
                       )
     with pytest.raises(TableAccessError):
         table_obj.make_records_yielder()
-
-
-# TableArgs(table='moz_places',
-#              path=Path(
-#                     'data/browser_profiles_for_testing/AppData/Roaming/Mozilla/'
-#                     'Firefox/Profiles/e0pj4lec.test_profile0/places.sqlite'),
-#              browser='firefox',
-#              filename='places.sqlite',
-#              profile='test_profile0',
-#              copies_subpath=None,
-#
-#              ),
