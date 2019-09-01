@@ -5,7 +5,7 @@ import pytest
 from united_states_of_browsers.db_merge.table import Table
 
 
-def test_InvalidFileError_mozilla_1(create_invalid_filepath):
+def test_invalid_filepath_error_mozilla_1(create_invalid_filepath):
     table_obj = Table(table='moz_places',
                       path=create_invalid_filepath,
                       browser='firefox',
@@ -18,7 +18,7 @@ def test_InvalidFileError_mozilla_1(create_invalid_filepath):
         assert str(excep) == 'unable to open database file'
 
 
-def test_InvalidFileError_mozilla_2(create_invalid_filepath):
+def test_invalid_filepath_error_mozilla_2(create_invalid_filepath):
     table_obj = Table(table='moz_places',
                       path=create_invalid_filepath,
                       browser='firefox',
@@ -31,7 +31,7 @@ def test_InvalidFileError_mozilla_2(create_invalid_filepath):
         assert str(excep) == 'unable to open database file'
 
 
-def test_InvalidFileError_chrome(create_invalid_filepath):
+def test_invalid_filepath_error_chrome(create_invalid_filepath):
     table_obj = Table(table='urls',
                       path=create_invalid_filepath,
                       browser='chrome',
@@ -44,7 +44,7 @@ def test_InvalidFileError_chrome(create_invalid_filepath):
         assert str(excep) == 'unable to open database file'
 
 
-def test_InvalidFileError_vivaldi(create_invalid_filepath):
+def test_invalid_filepath_error_vivaldi(create_invalid_filepath):
     table_obj = Table(table='urls',
                       path=create_invalid_filepath,
                       browser='vivaldi',
@@ -57,7 +57,7 @@ def test_InvalidFileError_vivaldi(create_invalid_filepath):
         assert str(excep) == 'unable to open database file'
 
 
-def test_InvalidFileError_opera(create_invalid_filepath):
+def test_invalid_filepath_error_opera(create_invalid_filepath):
     table_obj = Table(table='urls',
                       path=create_invalid_filepath,
                       browser='opera',
