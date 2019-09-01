@@ -1,7 +1,5 @@
 import pytest
 
-from pathlib import Path
-
 from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge.custom_exceptions import TableAccessError
 
