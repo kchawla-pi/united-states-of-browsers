@@ -49,6 +49,19 @@ def return_more_specific_exception(exception_obj: Exception, calling_obj: object
         return DatabaseLockedError(exception_obj, path, browsername=browsername)
     else:
         return exception_obj
+    
+def determine_table_access_exception(exception_obj: Exception, calling_obj: object) -> Optional[Exception]:
+    tablename = calling_obj['table']
+    path = calling_obj['path']
+    
+    msg = str(exception_obj).lower()
+    
+    if 'no such table' in msg or 'file is not a database' in msg:
+        return TableAccessError(exception_obj, path, tablename)
+    else:
+        return exception_obj
+    
+
 
 
 def test_path_tester():

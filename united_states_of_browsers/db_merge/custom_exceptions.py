@@ -57,5 +57,17 @@ class InvalidTableError(sqlite3.OperationalError):
                 f'The `{self.browsername}` profile `{self.profilename}` may be empty.\n'
                 )
 
+
+class TableAccessError(sqlite3.OperationalError, sqlite3.DatabaseError):
+    def __init__(self, exception_object, path, tablename):
+        self.path = path
+        self.tablename = tablename
+        self.exception_object = exception_object
+    
+    def __str__(self):
+        return (f'The file {self.path} is not a database '
+                f'or does not have the table {self.tablename}.')
+
+
 # excep = DatabaseLockedError()
 # print(excep)

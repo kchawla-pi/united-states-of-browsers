@@ -119,7 +119,7 @@ class Table(dict):
             try:
                 records_yielder = cursor.execute(query)
             except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
-                exception_raised = excep
+                exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
                 # exception_raised = exceph.return_more_specific_exception(exception_obj=excep, calling_obj=self)
             else:
                 self.records_yielder = self._yield_readable_timestamps(records_yielder)
