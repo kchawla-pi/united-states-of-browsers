@@ -19,58 +19,58 @@ app_root_path_parts = Path(*app_root_path_parts[:root_idx + 1])
 app_db_path = app_root_path_parts.joinpath('AppData', 'merged_db_path.txt').read_text()
 
 app.config.update(dict(
-		DATABASE=app_db_path,
-		SECRET_KEY='development key',
-		USERNAME='admin',
-		PASSWORD='default',
-		DEBUG=True,
-		LOGGING_LOCATION=app.root_path+'error.log',
-		))
+        DATABASE=app_db_path,
+        SECRET_KEY='development key',
+        USERNAME='admin',
+        PASSWORD='default',
+        DEBUG=True,
+        LOGGING_LOCATION=app.root_path+'error.log',
+        ))
 app.config.from_envvar('USB_SERVER_SETTINGS', silent=True)
 
 
 def get_db():
-	if not hasattr(g, 'sqlite_db'):
-		g.sqlite_db = connect_db()
-		return g.sqlite_db
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+        return g.sqlite_db
 
 
 def connect_db():
-		conn = sqlite3.connect(app.config['DATABASE'])
-		conn.row_factory = sqlite3.Row
-		return conn
+    conn = sqlite3.connect(app.config['DATABASE'])
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 @app.route('/', methods=['GET', 'POST'])
 def show_entries():
-	db = get_db()
-	search_results = db_search.search(db,'')
-	return render_template('main.html', entries=search_results)
+    db = get_db()
+    search_results = db_search.search(db,'')
+    return render_template('main.html', entries=search_results)
 
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-	db = get_db()
-	search_results = db_search.search(db,
-	                                  request.args["query"],
-	                                  request.args["date-from"],
-	                                  request.args["date-to"]
-	                                  )
-
-	return render_template('main.html', entries=search_results)
-	# return search_results
+    db = get_db()
+    search_results = db_search.search(db,
+                                      request.args["query"],
+                                      request.args["date-from"],
+                                      request.args["date-to"]
+                                      )
+    
+    return render_template('main.html', entries=search_results)
+# return search_results
 
 @app.teardown_appcontext
 def close_db(error):
-	if hasattr(g, 'sqlite_db'):
-		g.sqlite_db.close()
-	
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
 
 def run_flask():
-	app.run()
+    app.run()
 
 
 if __name__ == '__main__':
-	run_flask()
+    run_flask()
 
 
