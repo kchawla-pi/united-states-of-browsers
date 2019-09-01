@@ -27,36 +27,19 @@ def exceptions_log_deduplicator(exceptions_log: Iterable):
     return list(unique_exception_strings.values())
 
 
-def return_more_specific_exception(exception_obj: Exception, calling_obj: object) -> Optional[Exception]:
-    """ Returns or raises useful exception subtype from sqlite3.OperationalError .
-    Accepts sqlite3.OperationalError exception object and path of the sqlite3 database file.
-    """
+def determine_table_access_exception(exception_obj: Exception, calling_obj: object) -> Exception:
+    """ Determines if the passed in exceptions is related to problems with accessing a db table.
+    Returns a TableAccessError is yes, original exception if not.
+    Processes them in OS agnostic manner.
+     (Unix systems raise sqlite3.OperationalError: no such table
+     Windows systems raise sqlite3.DatabaseError: file is not a database.)
+     """
     tablename = calling_obj['table']
-    browsername = calling_obj['browser']
-    profilename = calling_obj['profile']
     path = calling_obj['path']
     
     msg = str(exception_obj).lower()
-    invalid_path = invalid_path_in_tree(path)
     
-    if invalid_path:
-        return InvalidPathError(exception_obj, error_symbol=errno.ENOENT, path=path, browsername=browsername, profilename=profilename, invalid_path=invalid_path)
-    elif ('unable to open database' in msg or 'file is not a database' in msg) and not invalid_path:
-        return InvalidFileError(exception_obj, error_symbol=errno.ENOENT, path=path, browsername=browsername, profilename=profilename)
-    elif 'no such table' in msg:
-        return InvalidTableError(exception_obj, path, tablename=tablename, browsername=browsername, profilename=profilename)
-    elif 'database is locked' in msg:
-        return DatabaseLockedError(exception_obj, path, browsername=browsername)
+    if 'no such table' in msg or 'file is not a database' in msg:
+        return TableAccessError(exception_obj, path, tablename)
     else:
         return exception_obj
-
-
-def test_path_tester():
-    paths_to_test = (
-        'C:\\Users\\kshit\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\px2kvmlk.RegularSurfing\\places.sqlite',)
-    curr_path_to_test = paths_to_test[0]
-    print(repr(invalid_path_in_tree(curr_path_to_test)))
-
-
-if __name__ == '__main__':  # pragma: no cover
-    test_path_tester()

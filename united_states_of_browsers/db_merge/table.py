@@ -67,18 +67,20 @@ class Table(dict):
         try:
             files_pre_connection_attempt = set(entry for entry in self.path.parents[1].iterdir() if entry.is_file())
         except FileNotFoundError as excep:
-            exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
-                                                                     calling_obj=self)
-            return exception_raised  # returns a loggable error or raises a fatal one.
+            return excep
+            # exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
+            #                                                          calling_obj=self)
+            # return exception_raised  # returns a loggable error or raises a fatal one.
         
         db_file_path_uri_mode = f'file:{self.path}?mode=ro'
         try:
             with sqlite3.connect(db_file_path_uri_mode, uri=True) as self._connection:
                 self._connection.row_factory = sqlite3.Row
         except sqlite3.OperationalError as excep:
-            exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
-                                                                     calling_obj=self)  # returns a loggable error or raises a fatal one.
-            return exception_raised
+            return excep
+            # exception_raised = exceph.return_more_specific_exception(exception_obj=excep,
+            #                                                          calling_obj=self)  # returns a loggable error or raises a fatal one.
+            # return exception_raised
         finally:
             # Cleans up any database files created during failed connection attempt.
             exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
@@ -117,7 +119,8 @@ class Table(dict):
             try:
                 records_yielder = cursor.execute(query)
             except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
-                exception_raised = exceph.return_more_specific_exception(exception_obj=excep, calling_obj=self)
+                exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
+                # exception_raised = exceph.return_more_specific_exception(exception_obj=excep, calling_obj=self)
             else:
                 self.records_yielder = self._yield_readable_timestamps(records_yielder)
                 exception_raised = None
