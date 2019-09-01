@@ -3,10 +3,10 @@ import pytest
 from pathlib import Path
 
 from united_states_of_browsers.db_merge.table import Table
-from united_states_of_browsers.db_merge.custom_exceptions import InvalidTableError
+from united_states_of_browsers.db_merge.custom_exceptions import TableAccessError
 
 
-def test_InvalidTableError_mozilla(create_fake_non_db_file):
+def test_TableAccessError_mozilla(create_fake_non_db_file):
     table_obj = Table(table='moz_places',
                       path=create_fake_non_db_file,
                       browser='firefox',
@@ -14,11 +14,11 @@ def test_InvalidTableError_mozilla(create_fake_non_db_file):
                       profile='test_profile2',
                       copies_subpath=None,
                       )
-    with pytest.raises(InvalidTableError):
+    with pytest.raises(TableAccessError):
         table_obj.make_records_yielder()
 
 
-def test_InvalidTableError_chrome(create_fake_non_db_file):
+def test_TableAccessError_chrome(create_fake_non_db_file):
     table_obj = Table(table='nonexistent_table',
                       path=create_fake_non_db_file,
                       browser='chrome',
@@ -26,11 +26,11 @@ def test_InvalidTableError_chrome(create_fake_non_db_file):
                       profile='Profile 1',
                       copies_subpath=None,
                       )
-    with pytest.raises(InvalidTableError):
+    with pytest.raises(TableAccessError):
         table_obj.make_records_yielder()
 
 
-def test_InvalidTableError_vivaldi(create_fake_non_db_file):
+def test_TableAccessError_vivaldi(create_fake_non_db_file):
     table_obj = Table(table='nonexistent_table',
                       path=create_fake_non_db_file,
                       browser='vivaldi',
@@ -38,11 +38,11 @@ def test_InvalidTableError_vivaldi(create_fake_non_db_file):
                       profile='Default',
                       copies_subpath=None,
                       )
-    with pytest.raises(InvalidTableError):
+    with pytest.raises(TableAccessError):
         table_obj.make_records_yielder()
 
 
-def test_InvalidTableError_opera(create_fake_non_db_file):
+def test_TableAccessError_opera(create_fake_non_db_file):
     table_obj = Table(table='nonexistent_table',
                       path=create_fake_non_db_file,
                       browser='opera',
@@ -50,7 +50,7 @@ def test_InvalidTableError_opera(create_fake_non_db_file):
                       profile='Opera Stable',
                       copies_subpath=None,
                       )
-    with pytest.raises(InvalidTableError):
+    with pytest.raises(TableAccessError):
         table_obj.make_records_yielder()
 
 
