@@ -1,3 +1,2 @@
-from .custom_exceptions import (DatabaseLockedError, InvalidFileError,
-                                InvalidPathError, InvalidTableError
+from .custom_exceptions import (DatabaseLockedError, TableAccessError
                                 )
