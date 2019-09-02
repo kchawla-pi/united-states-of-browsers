@@ -36,7 +36,7 @@ def test_suite_no_exceptions_mozilla(create_mozilla_data):
         entry
 
 
-def test_check_if_emoty_db(create_chromium_data):
+def test_check_if_empty_db(create_chromium_data):
     with tempfile.TemporaryDirectory() as tmpdir:
         dbname = 'empty.sqlite'
         dbpath = str(Path(tmpdir, dbname))
@@ -90,6 +90,3 @@ def test_create_db_copy_invalid_parameter_names(create_mozilla_data):
                   )
     with pytest.raises(TypeError):
         table._create_db_copy()
-
-
-test_create_db_copy('/home/kshitij/workspace/united-states-of-browsers/tests/test_mozilla.sqlite')
