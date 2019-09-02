@@ -26,6 +26,9 @@ def create_mozilla_data(tests_root):
         cur.execute(
                 '''INSERT INTO moz_places VALUES ("13",	"https://www.linuxmint.com/start/tessa/", "Start Page - Linux Mint", "moc.tnimxunil.www.", "7", "0", "0", "37", "1547771594938637", "FJ1OyVWgG0Zb", "0", "47360064011053", "", "", "8")'''
                 )
+        cur.execute(
+                '''INSERT INTO moz_places VALUES("1", "https://support.mozilla.org/en-US/products/firefox", " ",  "gro.allizom.troppus.", "0", "0", "0", "20", " ", "OH2P1G22WscA", "1", "47357795150914", "", "", "1")''',
+                )
     except sqlite3.IntegrityError:
         pass
     conn.commit()
