@@ -21,6 +21,7 @@ def test_suite_no_exceptions_chromium(create_chromium_data):
         table_obj.make_records_yielder()
         for entry in table_obj.records_yielder:
             entry
+        del table_obj
 
 
 def test_suite_no_exceptions_mozilla(create_mozilla_data):
