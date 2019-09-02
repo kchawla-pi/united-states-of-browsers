@@ -26,6 +26,12 @@ def create_mozilla_data(tests_root):
         cur.execute(
                 '''INSERT INTO moz_places VALUES ("13",	"https://www.linuxmint.com/start/tessa/", "Start Page - Linux Mint", "moc.tnimxunil.www.", "7", "0", "0", "37", "1547771594938637", "FJ1OyVWgG0Zb", "0", "47360064011053", "", "", "8")'''
                 )
+        cur.execute(
+                '''INSERT INTO moz_places VALUES("1", "https://support.mozilla.org/en-US/products/firefox", " ",  "gro.allizom.troppus.", "0", "0", "0", "20", " ", "OH2P1G22WscA", "1", "47357795150914", "", "", "1")''',
+                )
+        cur.execute(
+                '''INSERT INTO moz_places VALUES("1", "https://support.mozilla.org/en-US/products/firefox", " ",  "gro.allizom.troppus.", "0", "0", "0", "20", " ", "OH2P1G22WscA", "1", "478687686807678876867357795150914", "", "", "1")''',
+                )
     except sqlite3.IntegrityError:
         pass
     conn.commit()
@@ -66,8 +72,3 @@ def create_fake_non_db_file(tests_root):
 def create_invalid_filepath(tests_root):
     invalid_filepath = Path(tests_root, 'invalid_filepath')
     return str(invalid_filepath)
-
-@pytest.fixture(scope='session', autouse=True)
-def create_invalid_dirpath(tests_root):
-    invalid_dirpath = Path(tests_root, 'unit_tests', 'test_table_JUNK', 'more_junk')
-    return str(invalid_dirpath)

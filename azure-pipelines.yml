@@ -8,37 +8,6 @@ trigger:
 
 jobs:
 
-  - job: 'TestLinux'
-    pool:
-      vmImage: 'ubuntu-latest'
-    strategy:
-      matrix:
-        Python36:
-          python.version: '3.6'
-        Python37:
-          python.version: '3.7'
-
-    steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
-
-    - script: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
-        pip install pytest-azurepipelines
-        pip install .
-      displayName: 'Install dependencies'
-
-    - script: |
-        python -m pytest --pyargs tests --cov=united_states_of_browsers -n 2
-      displayName: 'pytest'
-
-    - script: bash <(curl https://codecov.io/bash) -t '$(CODECOV_TOKEN)'
-      displayName: 'codecov'
-
   - job: 'TestWindows'
     pool:
       vmImage: 'vs2017-win2016'
@@ -64,5 +33,36 @@ jobs:
       displayName: 'Install dependencies'
 
     - script: |
-        pytest -n 2
+        python -m pytest --pyargs tests -n 2 --cov=united_states_of_browsers --cov-append
       displayName: 'pytest'
+
+  - job: 'TestLinux'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install pytest-azurepipelines
+        pip install .
+      displayName: 'Install dependencies'
+
+    - script: |
+        python -m pytest --pyargs tests -n 2 --cov=united_states_of_browsers --cov-append
+      displayName: 'pytest'
+
+    - script: bash <(curl https://codecov.io/bash) -t '$(CODECOV_TOKEN)'
+      displayName: 'codecov'
