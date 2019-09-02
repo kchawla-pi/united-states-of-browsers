@@ -66,6 +66,20 @@ def test_check_if_empty_db_false(create_chromium_data):
     assert not_empty_table.check_if_db_empty() == False
     
     
+def test_make_records_yielder_invalid_FileNotFoundError(create_invalid_filepath):
+    with tempfile.TemporaryDirectory() as tempdir:
+        table = Table(table='some_table',
+                      path=create_invalid_filepath,
+                      browser='mozilla',
+                      filename='anything',
+                      profile='test',
+                      copies_subpath=tempdir,
+                      )
+        records_yielder, excep = table.make_records_yielder()
+        assert records_yielder is None
+        assert isinstance(excep, FileNotFoundError)
+
+
 def test_create_db_copy(create_mozilla_data):
     with tempfile.TemporaryDirectory() as tempdir:
         table = Table(table='moz_places',

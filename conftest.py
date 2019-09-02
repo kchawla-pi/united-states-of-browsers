@@ -30,7 +30,7 @@ def create_mozilla_data(tests_root):
                 '''INSERT INTO moz_places VALUES("1", "https://support.mozilla.org/en-US/products/firefox", " ",  "gro.allizom.troppus.", "0", "0", "0", "20", " ", "OH2P1G22WscA", "1", "47357795150914", "", "", "1")''',
                 )
         cur.execute(
-                '''INSERT INTO moz_places VALUES("1", "https://support.mozilla.org/en-US/products/firefox", " ",  "gro.allizom.troppus.", "0", "0", "0", "20", " ", "OH2P1G22WscA", "1", "478687686807357795150914", "", "", "1")''',
+                '''INSERT INTO moz_places VALUES("1", "https://support.mozilla.org/en-US/products/firefox", " ",  "gro.allizom.troppus.", "0", "0", "0", "20", " ", "OH2P1G22WscA", "1", "478687686807678876867357795150914", "", "", "1")''',
                 )
     except sqlite3.IntegrityError:
         pass
