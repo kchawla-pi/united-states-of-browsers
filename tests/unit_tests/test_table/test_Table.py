@@ -1,6 +1,9 @@
+import filecmp
 import sqlite3
 import tempfile
 from pathlib import Path
+
+import pytest
 
 from united_states_of_browsers.db_merge.table import Table
 
@@ -57,3 +60,36 @@ def test_check_if_emoty_db(create_chromium_data):
                             )
     not_empty_table._connect()
     assert not_empty_table.check_if_db_empty() == False
+    
+    
+def test_create_db_copy(create_mozilla_data):
+    with tempfile.TemporaryDirectory() as tempdir:
+        table = Table(table='moz_places',
+                      path=create_mozilla_data,
+                      browser='mozilla',
+                      filename='anything',
+                      profile='test',
+                      copies_subpath=tempdir,
+                      )
+        filename = Path(create_mozilla_data).name
+        expected_dst = Path(table.copies_subpath, 'AppData', 'Profile Copies',
+                            table.browser,
+                            table.profile, filename).expanduser()
+        table._create_db_copy()
+        assert table.path == expected_dst
+        assert filecmp.cmp(expected_dst, table.path)
+
+
+def test_create_db_copy_invalid_parameter_names(create_mozilla_data):
+    table = Table(table='moz_places',
+                  path=create_mozilla_data,
+                  browser=None,
+                  filename=None,
+                  profile=None,
+                  copies_subpath='.',
+                  )
+    with pytest.raises(TypeError):
+        table._create_db_copy()
+
+
+test_create_db_copy('/home/kshitij/workspace/united-states-of-browsers/tests/test_mozilla.sqlite')
