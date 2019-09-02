@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from united_states_of_browsers.db_merge.table import Table
+from united_states_of_browsers.db_merge.custom_exceptions import TableAccessError
 
 
 def test_suite_no_exceptions_chromium(create_chromium_data):
@@ -134,3 +135,51 @@ def test_connect_FileNotFoundError(tests_root):
     excep = table._connect()
     assert isinstance(excep, FileNotFoundError)
 
+
+def test_invalid_filepath_error_mozilla_1(create_invalid_filepath):
+    table_obj = Table(table='moz_places',
+                      path=create_invalid_filepath,
+                      browser='firefox',
+                      filename='non_db_dummy_file_for_testing.txt',
+                      profile='test_profile2',
+                      copies_subpath=None,
+                      )
+    with pytest.raises(sqlite3.OperationalError) as excep:
+        table_obj.make_records_yielder()
+        assert str(excep) == 'unable to open database file'
+
+
+def test_TableAccessError_invalid_table(create_mozilla_data):
+    table_obj = Table(table='invalid_tablename',
+                      path=create_mozilla_data,
+                      browser='firefox',
+                      filename='places.sqlite',
+                      profile='test_profile2',
+                      copies_subpath=None,
+                      )
+    with pytest.raises(TableAccessError):
+        table_obj.make_records_yielder()
+
+
+def test_TableAccessError_nondb_mozilla(create_fake_non_db_file):
+    table_obj = Table(table='moz_places',
+                      path=create_fake_non_db_file,
+                      browser='firefox',
+                      filename='places.sqlite',
+                      profile='test_profile2',
+                      copies_subpath=None,
+                      )
+    with pytest.raises(TableAccessError):
+        table_obj.make_records_yielder()
+
+
+def test_TableAccessError_nondb_chrome(create_fake_non_db_file):
+    table_obj = Table(table='nonexistent_table',
+                      path=create_fake_non_db_file,
+                      browser='chrome',
+                      filename='History',
+                      profile='Profile 1',
+                      copies_subpath=None,
+                      )
+    with pytest.raises(TableAccessError):
+        table_obj.make_records_yielder()
