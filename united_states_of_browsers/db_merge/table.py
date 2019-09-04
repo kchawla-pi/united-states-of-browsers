@@ -101,7 +101,7 @@ class Table(dict):
                 if timestamp_field:
                     self.records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
                 else:
-                    self.records_yielder = records_yielder
+                    self.records_yielder = (dict(record) for record in records_yielder)
             if raise_exceptions and exception_raised:
                 raise exception_raised
             else:
@@ -120,8 +120,8 @@ class Table(dict):
             timestamp_ = record_dict.get(original_timestamp_fieldname, None)
             try:
                 human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6)
-            except (
-            TypeError, OSError) as excep:  # records without valid timestamps
+            except (TypeError, OSError) as excep:
+                # records without valid timestamps
                 record_dict.update({new_timestamp_fieldname: None})
             else:
                 record_dict.update({new_timestamp_fieldname:
