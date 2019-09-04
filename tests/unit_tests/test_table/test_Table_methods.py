@@ -31,7 +31,8 @@ def test_table_no_exceptions_chromium_db_copy(create_chromium_data):
         table_obj.make_records_yielder()
         records = list(table_obj.records_yielder)
         assert len(records) == 1
-        assert records[0] ==expected_record
+        assert records[0]['id'] == 88
+        assert expected_record.keys() == records[0].keys()
         del table_obj
 
 
