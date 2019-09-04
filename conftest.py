@@ -13,12 +13,8 @@ def tests_root():
     return get_root_path('tests')
 
 @pytest.fixture(scope='session', autouse=True)
-def create_mozilla_data(tests_root):
-    db_path = str(Path(tests_root, 'test_mozilla.sqlite'))
-    try:
-        os.remove(db_path)
-    except FileNotFoundError:
-        pass
+def create_mozilla_data(tmpdir):
+    db_path = str(Path(tmpdir, 'test_mozilla.sqlite'))
     with sqlite3.connect(db_path) as conn:
         cur = conn.cursor()
         try:
@@ -49,12 +45,8 @@ def create_mozilla_data(tests_root):
 
 
 @pytest.fixture(scope='session', autouse=True)
-def create_chromium_data(tests_root):
-    db_path = str(Path(tests_root, 'test_chromium'))
-    try:
-        os.remove(db_path)
-    except FileNotFoundError:
-        pass
+def create_chromium_data(tmpdir):
+    db_path = str(Path(tmpdir, 'test_chromium'))
     with sqlite3.connect(db_path) as conn:
         cur = conn.cursor()
         cur.execute(
