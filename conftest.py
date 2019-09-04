@@ -12,7 +12,7 @@ from flask.helpers import get_root_path
 def tests_root():
     return get_root_path('tests')
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(autouse=True)
 def create_mozilla_data(tmpdir):
     db_path = str(Path(tmpdir, 'test_mozilla.sqlite'))
     with sqlite3.connect(db_path) as conn:
@@ -44,7 +44,7 @@ def create_mozilla_data(tmpdir):
     return db_path
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(autouse=True)
 def create_chromium_data(tmpdir):
     db_path = str(Path(tmpdir, 'test_chromium'))
     with sqlite3.connect(db_path) as conn:
@@ -58,14 +58,14 @@ def create_chromium_data(tmpdir):
     return db_path
 
 
-@pytest.fixture(scope='session', autouse=True)
-def create_fake_non_db_file(tests_root):
-    fake_nondb_path = Path(tests_root, 'fake_nondb')
+@pytest.fixture(autouse=True)
+def create_fake_non_db_file(tmpdir):
+    fake_nondb_path = Path(tmpdir, 'fake_nondb')
     fake_nondb_path.write_bytes(b'0')
     return str(fake_nondb_path)
 
 
-@pytest.fixture(scope='session', autouse=True)
-def create_invalid_filepath(tests_root):
-    invalid_filepath = Path(tests_root, 'invalid_filepath')
+@pytest.fixture(autouse=True)
+def create_invalid_filepath(tmpdir):
+    invalid_filepath = Path(tmpdir, 'invalid_filepath')
     return str(invalid_filepath)
