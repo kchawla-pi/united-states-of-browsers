@@ -26,7 +26,7 @@ def test_table_no_exceptions_chromium_db_copy(create_chromium_data):
         del table_obj
 
 
-def test_table_no_exceptions_mozilla(create_mozilla_data):
+def test_table_no_exceptions_mozilla_timestamp_field(create_mozilla_data):
     mozilla_db_path = create_mozilla_data
     table_obj = Table(table='moz_places',
                       path=mozilla_db_path,
@@ -39,9 +39,10 @@ def test_table_no_exceptions_mozilla(create_mozilla_data):
     records = list(table_obj.records_yielder)
     assert len(records) == 3
     assert [record['id'] for record in records] == [13, 1, 1]
+    assert any([key.endswith('_readable') for key in records[0].keys()])
 
 
-def test_table_another_table(create_mozilla_data):
+def test_table_mozilla_table_no_timestamp_field(create_mozilla_data):
     mozilla_db_path = Path(create_mozilla_data)
     table_obj = Table(table='moz_origins',
                       path=mozilla_db_path,
@@ -54,6 +55,7 @@ def test_table_another_table(create_mozilla_data):
     records = list(table_obj.records_yielder)
     assert len(records) == 1
     assert records[0]['id'] ==1
+    assert not all([key.endswith('_readable') for key in records[0].keys()])
         
 
 def test_check_if_empty_db_true(create_chromium_data):

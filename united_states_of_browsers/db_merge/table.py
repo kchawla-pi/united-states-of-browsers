@@ -78,21 +78,6 @@ class Table(dict):
             # Cleans up any database files created during failed connection attempt.
             exceph.remove_new_empty_files(dirpath=self.path.parents[1], existing_files=files_pre_connection_attempt)
     
-    def _yield_readable_timestamps(self, records_yielder) -> Generator:
-        """ Yields a generator of records for TableObj.table with a with a readable timestamp.
-        Accepts a generator of table records with a valid timestamp.
-        """
-        for record in records_yielder:
-            record_dict = dict(record)
-            timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
-            try:
-                human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6)
-            except (TypeError, OSError) as excep:  # records without valid timestamps
-                pass
-            else:
-                record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
-            yield record_dict
-    
     def make_records_yielder(self, raise_exceptions=True):
         """ Yields a generator to all fields in TableObj.table.
         """
@@ -111,13 +96,54 @@ class Table(dict):
             except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
                 exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
             else:
-                self.records_yielder = self._yield_readable_timestamps(records_yielder)
                 exception_raised = None
+                timestamp_field = self._check_timestamp_field(cursor=cursor)
+                if timestamp_field:
+                    self.records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
+                else:
+                    self.records_yielder = records_yielder
             if raise_exceptions and exception_raised:
                 raise exception_raised
             else:
                 return self.records_yielder, exception_raised
-    
+
+    def _yield_readable_timestamps(self, records_yielder: Generator,
+                                   timestamp_field: [Mapping[Text, Text],
+                                                     None]) -> Generator:
+        """ Yields a generator of records for TableObj.table with a with a readable timestamp.
+        Accepts a generator of table records with a valid timestamp.
+        """
+        original_timestamp_fieldname, new_timestamp_fieldname = \
+        tuple(timestamp_field.items())[0]
+        for record in records_yielder:
+            record_dict = dict(record)
+            timestamp_ = record_dict.get(original_timestamp_fieldname, None)
+            try:
+                human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6)
+            except (
+            TypeError, OSError) as excep:  # records without valid timestamps
+                pass
+            else:
+                record_dict.update({new_timestamp_fieldname:
+                                        str(human_readable).split('.')[0]
+                                    })
+            yield record_dict
+
+    def _check_timestamp_field(self, cursor) -> Optional[Mapping[Text,Text]]:
+        """ Checks if table has a field with timestamp data
+        and returns a new field name to store the huamn readable timestamp.
+        
+        :param cursor: sqlite3.connection.cursor()
+        :return: Dict of original & new timestamp fieldname
+        """
+        field_names = [desc_entry[0] for desc_entry in cursor.description]
+        if 'last_visit_date' in field_names:  # moz_places table of Mozilla
+            return {'last_visit_date': 'last_visit_readable'}
+        elif 'last_visit_time' in field_names:  # urls table of Chromium
+            return {'last_visit_time': 'last_visit_readable'}
+        else:
+            return None
+
     def check_if_db_empty(self):
         cursor = self._connection.cursor()
         query = f'SELECT name FROM sqlite_master WHERE type = "table"'
