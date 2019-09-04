@@ -87,13 +87,10 @@ class Table(dict):
             timestamp_ = record_dict.get('last_visit_date', record_dict.get('last_visit_time', None))
             try:
                 human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6)
-            except TypeError as excep:
-                continue
-                pass  # records without valid timestamps are removed
-            except OSError:
-                continue  # records without valid timestamps are removed
-            
-            record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
+            except (TypeError, OSError) as excep:  # records without valid timestamps
+                pass
+            else:
+                record_dict.update({'last_visit_readable': str(human_readable).split('.')[0]})
             yield record_dict
     
     def make_records_yielder(self, raise_exceptions=True):
