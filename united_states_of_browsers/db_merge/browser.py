@@ -127,11 +127,9 @@ class Browser(dict):
         for current_table in current_table_across_profiles:
             fields = table_fields[current_table.table]
             for record in current_table.records_yielder:
-                selected_fields_records = dict.fromkeys(fields, None)
+                selected_fields_records = {field_: record[field_] for field_ in fields}
                 selected_fields_records.update({field: current_table[field] for field in additional_fields})
-                selected_fields_records.update({field_: record[field_] for field_ in fields})
                 # self.selected_fields_records = selected_fields_records
-                # print(selected_fields_records)
                 yield selected_fields_records
                 # yield tuple(selected_fields_records.values())
             current_table.make_records_yielder(raise_exceptions=False)
