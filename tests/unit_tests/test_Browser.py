@@ -17,8 +17,6 @@ def test_browser_methods(tests_root):
                             'last_visit_readable']
              }
             )
-    # print(*list(moz_places_records_yielder), sep='\n')
-    # quit()
     profile_1_2_records_using_browser = [record for record in moz_places_records_yielder]
     sort_by_id = lambda item: item['id']
     profile_1_2_records_using_browser.sort(key=sort_by_id)
@@ -52,24 +50,29 @@ def test_browser_methods(tests_root):
     assert profile_1_2_records_using_tables == profile_1_2_records_using_tables
 
     
-        
 def test_browser_methods_2(tests_root):
     browser_profile_1 = Browser(browser='firefox',
-                      profiles=['test_profile1'],
-                      profile_root=Path(tests_root, 'firefox_databases'),
-                      )
-    browser_profile_1 .add_tables_for_access(file='places.sqlite', tables=['moz_places'], )
+                                profiles=['test_profile1'],
+                                profile_root=Path(tests_root, 'firefox_databases'),
+                                file_tables={'places.sqlite': ['moz_places', 'moz_origins']}
+                                )
+    browser_profile_1 .add_tables_for_access(file='places.sqlite', tables=['moz_places', 'moz_origins'])
     moz_places_records_yielder = browser_profile_1 .access_fields(
             {'moz_places': ['id', 'url', 'title',
                             'last_visit_date',
                             'last_visit_readable']
              }
             )
-    # list(records_yielder)
+    print('moz_places')
     for rec in moz_places_records_yielder:
         print((rec))
-
+    print('moz_origins')
+    moz_origins_record_yielder = browser_profile_1.access_fields({'moz_origins': ['id', 'prefix', 'host', 'frecency']})
+    for rec in moz_origins_record_yielder:
+        print(rec)
         
         
 if __name__ == '__main__':
-    test_browser_methods(tests_root='/home/kshitij/workspace/united-states-of-browsers/tests')
+    tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
+    # test_browser_methods(tests_root)
+    test_browser_methods_2(tests_root)
