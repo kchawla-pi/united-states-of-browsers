@@ -11,6 +11,7 @@ from flask.helpers import get_root_path
 def tests_root():
     return get_root_path('tests')
 
+
 @pytest.fixture(scope='session', autouse=True)
 def create_mozilla_data(tests_root):
     db_path = str(Path(tests_root, 'test_mozilla.sqlite'))
