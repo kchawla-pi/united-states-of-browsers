@@ -129,7 +129,7 @@ class Table(dict):
                                     })
             yield record_dict
 
-    def _check_timestamp_field(self, cursor) -> Optional[Mapping[Text,Text]]:
+    def _check_timestamp_field(self, cursor: sqlite3.Connection.cursor) -> Optional[Mapping[Text,Text]]:
         """ Checks if table has a field with timestamp data
         and returns a new field name to store the huamn readable timestamp.
         

@@ -1,16 +1,25 @@
 import filecmp
 import sqlite3
 import tempfile
+from collections import namedtuple
 from pathlib import Path
 
 import pytest
 
+from united_states_of_browsers.db_merge.custom_exceptions import \
+    TableAccessError
 from united_states_of_browsers.db_merge.table import Table
-from united_states_of_browsers.db_merge.custom_exceptions import TableAccessError
 
 
 def test_table_no_exceptions_chromium_db_copy(create_chromium_data):
     with tempfile.TemporaryDirectory() as tempdir:
+        expected_record = {'id': 88,
+                           'url': 'https://www.google.com/search?q=chrome+linux+profile+data&oq=chrome+linux+profile+data&aqs=chrome..69i57j33l4.3443j0j7&sourceid=chrome&ie=UTF-8',
+                           'title': 'chrome linux profile data - Google Search',
+                           'visit_count': 1, 'typed_count': 0,
+                           'last_visit_time': 13204503690648295, 'hidden': 0,
+                           'last_visit_readable': '2388-06-07 16:41:30',
+                           }
         chromium_db_path = create_chromium_data
         table_obj = Table(table='urls',
                           path=chromium_db_path,
@@ -23,6 +32,7 @@ def test_table_no_exceptions_chromium_db_copy(create_chromium_data):
         records = list(table_obj.records_yielder)
         assert len(records) == 1
         assert records[0]['id'] == 88
+        assert expected_record.keys() == records[0].keys()
         del table_obj
 
 
@@ -54,9 +64,19 @@ def test_table_mozilla_table_no_timestamp_field(create_mozilla_data):
     table_obj.make_records_yielder()
     records = list(table_obj.records_yielder)
     assert len(records) == 1
-    assert records[0]['id'] ==1
+    assert records[0]['id'] == 1
     assert not all([key.endswith('_readable') for key in records[0].keys()])
-        
+    
+    
+@pytest.mark.parametrize('field_names', [field_names for field_names in (['id', 'last_visit_date'], ['id', 'last_visit_time'])])
+def test_check_timestamp_field(field_names):
+    expected_output = {field_names[1]: 'last_visit_readable'}
+    cursor_desc_mimic = [[field, None, None, None] for field in field_names]
+    CursorDescription = namedtuple('CursorDescription', 'description')
+    cursor_mimic = CursorDescription(description=cursor_desc_mimic)
+    actual_output= Table._check_timestamp_field(Table, cursor=cursor_mimic)
+    assert expected_output == actual_output
+
 
 def test_check_if_empty_db_true(create_chromium_data):
     with tempfile.TemporaryDirectory() as tmpdir:
