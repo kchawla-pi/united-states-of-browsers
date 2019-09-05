@@ -8,18 +8,39 @@ from united_states_of_browsers.db_merge.helpers import \
 from united_states_of_browsers.db_merge.table import Table
 
 
+def test_browser_chrome_make_paths_during_init(tests_root):
+    profile_rootpath = Path(tests_root, 'chrome_databases')
+    browser_name = 'chrome'
+    table_name = 'urls'
+    profile_name = 'Profile 1'
+    file_name = 'History'
+
+    browser_profile1 = Browser(browser=browser_name,
+                               profiles=[profile_name],
+                               profile_root=profile_rootpath,
+                               )
+    expected_paths = {'Profile 1': Path(profile_rootpath, 'Profile 1')}
+    
+    assert browser_profile1.paths.keys() == expected_paths.keys()
+    
+    for profile_name in browser_profile1.paths:
+        assert browser_profile1.paths[profile_name] == expected_paths[profile_name]
+    
+
+    
+
 def test_browser_chrome_access_single_profile_file_table_with_timestamp(
         tests_root):
     profile_rootpath = Path(tests_root, 'chrome_databases')
-    profile_path = Path(profile_rootpath,
-                        'Profile 1',
-                        'History',
-                        )
     browser_name = 'chrome'
     table_name = 'urls'
     profile_name = 'Profile 1'
     file_name = 'History'
     
+    profile_path = Path(profile_rootpath,
+                        'Profile 1',
+                        'History',
+                        )
     browser_profile1 = Browser(browser=browser_name,
                                profiles=[profile_name],
                                profile_root=profile_rootpath,
@@ -253,5 +274,6 @@ def test_browser_chrome_access_single_profile_file_table_with_timestamp(
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-    test_browser_chrome_access_single_profile_file_table_with_timestamp(
-            tests_root)
+    # test_browser_chrome_access_single_profile_file_table_with_timestamp(
+    #         tests_root)
+    test_browser_chrome_make_paths_during_init(tests_root)

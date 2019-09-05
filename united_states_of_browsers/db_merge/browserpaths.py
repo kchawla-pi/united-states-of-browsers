@@ -38,7 +38,10 @@ class BrowserPaths(dict):
     
     def _make_chrome_profile_paths(self):
         if self.profiles:
-            self.profilepaths = {entry.name: entry for entry in self.profile_root.iterdir()}
+            self.profilepaths = {entry.name: entry
+                                 for profile_name in self.profiles
+                                 for entry in self.profile_root.iterdir()
+                                 if entry.name.endswith(profile_name)}
         else:
             self.profilepaths = {entry.name: entry for entry in self.profile_root.iterdir()
                                  if entry.name.startswith('Profile') or entry.name == 'Default'}
