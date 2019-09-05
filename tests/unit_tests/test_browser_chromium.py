@@ -1,4 +1,4 @@
-import pprint
+from pprint import pprint
 import sqlite3
 from pathlib import Path
 
@@ -37,7 +37,7 @@ def test_browser_chrome_access_single_profile_file_table_with_timestamp(
     sort_by_id = lambda item: item['id']
     browser_profile1_records.sort(key=sort_by_id)
     
-    with sqlite3.connect(profile_path) as conn:
+    with sqlite3.connect(str(profile_path)) as conn:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         cur.execute('''SELECT * FROM urls''')
