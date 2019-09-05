@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from united_states_of_browsers.db_merge.browser import Browser
+from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
 
 
 def test_browser_firefox_make_paths_during_init_one_profile(tests_root):
@@ -121,3 +122,25 @@ def test_browser_chrome_make_paths_during_init_all_profiles(tests_root):
     for profile_name in browser_profile1.paths:
         assert browser_profile1.paths[profile_name] == expected_paths[
             profile_name]
+
+
+if __name__ == '__main__':  # pragma: no cover
+    tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
+    test_browser_firefox_make_paths_during_init_all_profiles(tests_root)
+
+# def test_browserpaths():
+#     files = ['places.sqlite', 'permissions.sqlite']
+#     firefox_all = BrowserPaths(browser='firefox',
+#                                profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
+#     firefox_all.make_paths()
+#
+#     profiles_list = ['test_profile0', 'test_profile1']
+#     firefox_some = BrowserPaths(browser='firefox',
+#                                 profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
+#                                 profiles=profiles_list)
+#     firefox_some.make_paths()
+#
+#     chrome = BrowserPaths(browser='chrome',
+#                           profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
+#
+#     objects_list = [firefox_all, firefox_some]

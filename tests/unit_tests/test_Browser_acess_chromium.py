@@ -244,8 +244,7 @@ def test_browser_access_same_profile_file_two_tables(tests_root):
     assert keyword_search_terms_expected_ids == keyword_search_terms_actual_ids
 
 
-# if __name__ == '__main__':
-#     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-#     # test_browser_chrome_access_single_profile_file_table_with_timestamp(
-#     #         tests_root)
-#     test_browser_chrome_make_paths_during_init(tests_root)
+if __name__ == '__main__':  # pragme: no cover
+    tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
+    test_browser_chrome_access_single_profile_file_table_with_timestamp(
+            tests_root)
