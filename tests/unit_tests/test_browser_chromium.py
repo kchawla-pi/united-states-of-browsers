@@ -1,3 +1,4 @@
+import pprint
 import sqlite3
 from pathlib import Path
 
@@ -43,14 +44,20 @@ def test_browser_chrome_access_single_profile_file_table_with_timestamp(
         records = [dict(record) for record in cur]
         # print(records)
         
-    assert len(records) ==len(browser_profile1_records)
-    assert check_records_unique_with_field(records=records, field='id')
-    assert check_records_unique_with_field(records=browser_profile1_records,
-                                    field='id')
+    
+    
+    pprint(records)
+    print()
+    pprint(browser_profile1_records)
     
     browser_profile1_records_ids = [record['id'] for record in
                                     browser_profile1_records]
     profile1_records_ids = [record['id'] for record in records]
+    
+    assert len(records) ==len(browser_profile1_records)
+    assert check_records_unique_with_field(records=records, field='id')
+    assert check_records_unique_with_field(records=browser_profile1_records,
+                                    field='id')
     assert sorted(profile1_records_ids) == sorted(browser_profile1_records_ids)
 
     
