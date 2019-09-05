@@ -1,6 +1,8 @@
 from pathlib import Path
 
 from united_states_of_browsers.db_merge.browser import Browser
+from united_states_of_browsers.db_merge.helpers import \
+    check_records_unique_with_field
 from united_states_of_browsers.db_merge.table import Table
 
 
@@ -176,10 +178,3 @@ def test_browser_access_same_profile_file_two_tables(tests_root):
     
     assert moz_places_expected_ids == moz_places_actual_ids
     assert moz_origins_expected_ids == moz_origins_actual_ids
-    
-    
-def check_records_unique_with_field(records, field):
-    all_ids = [record[field] for record in records]
-    unique_ids = set(all_ids)
-    return len(all_ids) == len(unique_ids)
-    
