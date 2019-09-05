@@ -6,7 +6,7 @@ from united_states_of_browsers.db_merge.helpers import \
 from united_states_of_browsers.db_merge.table import Table
 
 
-def test_browser_access_single_profile_file_table_with_timestamp(tests_root):
+def test_browser_chrome_access_single_profile_file_table_with_timestamp(tests_root):
     profile_rootpath = Path(tests_root, 'chrome_databases')
     profile_path = Path(profile_rootpath,
                         'Profile 1',
