@@ -8,69 +8,6 @@ from united_states_of_browsers.db_merge.helpers import \
 from united_states_of_browsers.db_merge.table import Table
 
 
-def test_browser_chrome_make_paths_during_init_one_profile(tests_root):
-    profile_rootpath = Path(tests_root, 'chrome_databases')
-    browser_name = 'chrome'
-    table_name = 'urls'
-    profile_name = 'Profile 1'
-    file_name = 'History'
-
-    browser_profile1 = Browser(browser=browser_name,
-                               profiles=[profile_name],
-                               profile_root=profile_rootpath,
-                               )
-    expected_paths = {'Profile 1': Path(profile_rootpath, 'Profile 1')}
-    
-    assert browser_profile1.paths.keys() == expected_paths.keys()
-    
-    for profile_name in browser_profile1.paths:
-        assert browser_profile1.paths[profile_name] == expected_paths[profile_name]
-
-
-def test_browser_chrome_make_paths_during_init_two_profiles(tests_root):
-    profile_rootpath = Path(tests_root, 'chrome_databases')
-    browser_name = 'chrome'
-    table_name = 'urls'
-    profile_names = ['Profile 1', 'Profile 2']
-    file_name = 'History'
-    
-    browser_profile1 = Browser(browser=browser_name,
-                               profiles=profile_names,
-                               profile_root=profile_rootpath,
-                               )
-    expected_paths = {'Profile 1': Path(profile_rootpath, 'Profile 1'),
-                      'Profile 2': Path(profile_rootpath, 'Profile 2'),
-                      }
-    
-    assert browser_profile1.paths.keys() == expected_paths.keys()
-    
-    for profile_name in browser_profile1.paths:
-        assert browser_profile1.paths[profile_name] == expected_paths[
-            profile_name]
-
-
-def test_browser_chrome_make_paths_during_init_all_profiles(tests_root):
-    profile_rootpath = Path(tests_root, 'chrome_databases')
-    browser_name = 'chrome'
-    table_name = 'urls'
-    profile_names = None
-    file_name = 'History'
-    
-    browser_profile1 = Browser(browser=browser_name,
-                               profiles=profile_names,
-                               profile_root=profile_rootpath,
-                               )
-    expected_paths = {'Profile 1': Path(profile_rootpath, 'Profile 1'),
-                      'Profile 2': Path(profile_rootpath, 'Profile 2'),
-                      }
-    
-    assert browser_profile1.paths.keys() == expected_paths.keys()
-    
-    for profile_name in browser_profile1.paths:
-        assert browser_profile1.paths[profile_name] == expected_paths[
-            profile_name]
-
-
 def test_browser_chrome_access_single_profile_file_table_with_timestamp(
         tests_root):
     profile_rootpath = Path(tests_root, 'chrome_databases')

@@ -45,8 +45,8 @@ def test_browser_access_single_profile_file_table_with_timestamp(tests_root):
     table_profile1_records_ids = [record['id'] for record in table_profile1_records]
     browser_profile1_records_ids = [record['id'] for record in browser_profile1_records]
     assert table_profile1_records_ids == browser_profile1_records_ids
-    
-    
+
+
 def test_browser_access_single_profile_file_table_without_timestamp(tests_root):
     profile_rootpath = Path(tests_root, 'firefox_databases')
     profile_path = Path(profile_rootpath,
