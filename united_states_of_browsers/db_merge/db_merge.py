@@ -55,7 +55,8 @@ class DatabaseMergeOrchestrator:
                                    profiles=browser_datum.profiles,
                                    file_tables=browser_datum.file_tables,
                                    copies_subpath=self.app_path)
-            each_browser_records_yielder = each_browser.access_fields(browser_datum.table_fields)
+            table_name, fields_list = tuple(browser_datum.table_fields.items())[0]
+            each_browser_records_yielder = each_browser.access_fields(table_name, fields_list)
             self.browser_yielder.append(each_browser_records_yielder)
     
     def rename_existing_db(self):

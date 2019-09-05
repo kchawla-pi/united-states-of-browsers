@@ -69,12 +69,12 @@ def test_table_mozilla_table_no_timestamp_field(create_mozilla_data):
     
     
 @pytest.mark.parametrize('field_names', [field_names for field_names in (['id', 'last_visit_date'], ['id', 'last_visit_time'])])
-def test_check_timestamp_field(field_names):
+def test_check_if_timestamp_field_needed(field_names):
     expected_output = {field_names[1]: 'last_visit_readable'}
     cursor_desc_mimic = [[field, None, None, None] for field in field_names]
     CursorDescription = namedtuple('CursorDescription', 'description')
     cursor_mimic = CursorDescription(description=cursor_desc_mimic)
-    actual_output= Table._check_timestamp_field(Table, cursor=cursor_mimic)
+    actual_output= Table._check_if_timestamp_field_needed(Table, cursor=cursor_mimic)
     assert expected_output == actual_output
 
 

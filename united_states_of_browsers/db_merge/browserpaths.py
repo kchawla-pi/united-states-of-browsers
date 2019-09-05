@@ -29,16 +29,21 @@ class BrowserPaths(dict):
     def _make_firefox_profile_paths(self):
         get_profile_name = lambda dir_entry: str(dir_entry).split(sep='.', maxsplit=1)[1]
         if self.profiles:
-            self.profilepaths = {get_profile_name(entry): entry for entry in self.profile_root.iterdir()
+            self.profilepaths = {profile: entry for entry in self.profile_root.iterdir()
                                  for profile in self.profiles
-                                 if str(profile).lower() in str(entry).lower() and entry.is_dir()
+                                 if '.' in entry.name and entry.is_dir() and entry.name.endswith(profile)
                                  }
         else:
-            self.profilepaths = {get_profile_name(entry): entry for entry in self.profile_root.iterdir()}
+            self.profilepaths = {get_profile_name(entry): entry
+                                 for entry in self.profile_root.iterdir()
+                                 if '.' in entry.name and entry.is_dir()}
     
     def _make_chrome_profile_paths(self):
         if self.profiles:
-            self.profilepaths = {entry.name: entry for entry in self.profile_root.iterdir()}
+            self.profilepaths = {entry.name: entry
+                                 for profile_name in self.profiles
+                                 for entry in self.profile_root.iterdir()
+                                 if entry.name.endswith(profile_name)}
         else:
             self.profilepaths = {entry.name: entry for entry in self.profile_root.iterdir()
                                  if entry.name.startswith('Profile') or entry.name == 'Default'}
@@ -58,28 +63,3 @@ class BrowserPaths(dict):
             return f'BrowserPaths({self.browser}, {self.profile_root}, {self.profiles})'
         else:
             return f'BrowserPaths({self.browser}, {self.profile_root})'
-
-
-def browserpaths_test():
-    files = ['places.sqlite', 'permissions.sqlite']
-    firefox_all = BrowserPaths(browser='firefox',
-                               profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
-    firefox_all.make_paths()
-    
-    profiles_list = ['test_profile0', 'test_profile1']
-    firefox_some = BrowserPaths(browser='firefox', profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-                                profiles=profiles_list)
-    firefox_some.make_paths()
-    
-    chrome = BrowserPaths(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
-    
-    objects_list = [firefox_all, firefox_some]
-# print_objects(objects_list)
-# print_objects([chrome])
-
-
-
-
-
-if __name__ == '__main__':
-    browserpaths_test()

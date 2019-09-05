@@ -28,11 +28,11 @@
         <property name="enable_load_extension" value="true" />
       </driver-properties>
     </data-source>
-    <data-source source="LOCAL" name="test_mozilla" uuid="f3c55ba7-70db-4b4f-8bd8-26054f1a4b81">
+    <data-source source="LOCAL" name="History" uuid="1b02ac45-7201-4cc1-8e8b-690216c79ab8">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/tests/test_mozilla.sqlite</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/tests/chrome_databases/Profile 1/History</jdbc-url>
       <driver-properties>
         <property name="enable_load_extension" value="true" />
       </driver-properties>

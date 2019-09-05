@@ -20,3 +20,9 @@ def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
     """
     allowed_chars = set(allowed_chars)
     return ''.join([char for char in query if char.isalnum() or char in allowed_chars])  #, '?', '(', ')', ','}])
+
+
+def check_records_unique_with_field(records, field):
+    all_ids = [record[field] for record in records]
+    unique_ids = set(all_ids)
+    return len(all_ids) == len(unique_ids)

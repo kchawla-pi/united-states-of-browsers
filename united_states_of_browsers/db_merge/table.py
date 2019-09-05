@@ -97,11 +97,11 @@ class Table(dict):
                 exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
             else:
                 exception_raised = None
-                timestamp_field = self._check_timestamp_field(cursor=cursor)
+                timestamp_field = self._check_if_timestamp_field_needed(cursor=cursor)
                 if timestamp_field:
                     self.records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
                 else:
-                    self.records_yielder = records_yielder
+                    self.records_yielder = (dict(record) for record in records_yielder)
             if raise_exceptions and exception_raised:
                 raise exception_raised
             else:
@@ -120,16 +120,16 @@ class Table(dict):
             timestamp_ = record_dict.get(original_timestamp_fieldname, None)
             try:
                 human_readable = dt.fromtimestamp(timestamp_ / 10 ** 6)
-            except (
-            TypeError, OSError) as excep:  # records without valid timestamps
-                pass
+            except (TypeError, OSError) as excep:
+                # records without valid timestamps
+                record_dict.update({new_timestamp_fieldname: None})
             else:
                 record_dict.update({new_timestamp_fieldname:
                                         str(human_readable).split('.')[0]
                                     })
             yield record_dict
 
-    def _check_timestamp_field(self, cursor: sqlite3.Connection.cursor) -> Optional[Mapping[Text,Text]]:
+    def _check_if_timestamp_field_needed(self, cursor: sqlite3.Connection.cursor) -> Optional[Mapping[Text, Text]]:
         """ Checks if table has a field with timestamp data
         and returns a new field name to store the huamn readable timestamp.
         
