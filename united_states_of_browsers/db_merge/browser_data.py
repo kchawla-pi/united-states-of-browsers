@@ -94,12 +94,12 @@ search_table_fields = ['rec_id', 'id', 'url', 'title', 'visit_count', 'last_visi
 
 
 if __name__ == '__main__':
-	from pprint import pprint
-	
-	
-	# pprint(prep_browsers_info())
-	
-	new_parent = Path(__file__).parents[2].joinpath('tests', 'data', 'browser_profiles_for_testing')
-	print(new_parent)
-	print(new_parent, 'aba')
-	pprint(prep_browsers_info(new_parent))
+    from pprint import pprint
+    
+    
+    # pprint(prep_browsers_info())
+    
+    new_parent = Path(__file__).parents[2].joinpath('tests', 'data', 'browser_profiles_for_testing')
+    print(new_parent)
+    print(new_parent, 'aba')
+    pprint(prep_browsers_info(new_parent))

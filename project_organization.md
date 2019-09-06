@@ -9,7 +9,7 @@
 				BrowserPaths, upon _init__ reads browser_data.py and uses it to 
 				construct the necessary paths to the sqlite files for the each browser.
 				Returns the paths to Browser_obj.
-		Calls Browser_obj.access_table({filename: tablename})
+		Calls Browser_obj.add_tables_for_access({filename: tablename})
 			creates and calls Table_obj from table.Table
 				Each table is for a specific table from a specific sqlite file.
 				The dict of {tablename: Table_obj} is stored in Browser_obj.tables

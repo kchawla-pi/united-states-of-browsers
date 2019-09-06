@@ -105,5 +105,6 @@ ENV/
 /tinker/data/firefox_regular_surfing/places.sqlite
 
 # excluded file extensions
-*.sqlite
+#*.sqlite
+*.json
 /_archived_code/
