@@ -7,8 +7,6 @@ To create a merged database, run:
 import os
 import sqlite3
 
-from pathlib import Path
-
 from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.browser import Browser
 from united_states_of_browsers.db_merge.helpers import make_queries
@@ -86,9 +84,12 @@ class DatabaseMergeOrchestrator:
         with sqlite3.connect(str(self.output_db)) as connection:
             cursor = connection.cursor()
             cursor.execute(queries['create'])
-            [cursor.executemany(queries['insert'], browser_record_yielder)
-             for browser_record_yielder in self.browser_yielder
-             ]
+            records_yielder = (tuple(browser_record.values())
+                               for browser_record_yielder in
+                               self.browser_yielder
+                               for browser_record in browser_record_yielder)
+            cursor.executemany(queries['insert'], records_yielder)
+             
     
     def build_search_table(self):
         """

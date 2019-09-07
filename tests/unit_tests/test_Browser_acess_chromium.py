@@ -68,49 +68,8 @@ def test_browser_chrome_access_single_profile_file_table_with_timestamp(
     # browser_profile1_records_ids = [record['id'] for record in
     #                                 browser_profile1_records]
     # assert table_profile1_records_ids == browser_profile1_records_ids
-    
-    
-def test_browser_chrome_access_single_profile_file_table_with_timestamp(tests_root):
-    profile_rootpath = Path(tests_root, 'chrome_databases')
-    profile_path = Path(profile_rootpath,
-                        'Profile 1',
-                        'History',
-                        )
-    browser_name = 'chrome'
-    table_name = 'urls'
-    profile_name = 'Profile 1'
-    file_name = 'History'
 
-    browser_profile1 = Browser(browser=browser_name,
-                      profiles=[profile_name],
-                      profile_root=profile_rootpath,
-                      )
-    browser_profile1.add_tables_for_access(file=file_name, tables=[table_name], )
-    urls_records_yielder = browser_profile1.access_fields(
-            table='urls',
-            fields=['id', 'url', 'title',
-                    'last_visit_time',
-                    'last_visit_readable',
-                    ]
-            )
-    browser_profile1_records = [record for record in urls_records_yielder]
-    sort_by_id = lambda item: item['id']
-    browser_profile1_records.sort(key=sort_by_id)
 
-    profile1_table = Table(table=table_name,
-                            path=profile_path,
-                           browser=browser_name,
-                            filename=file_name,
-                            profile=profile_name,
-                            )
-    profile1_table.make_records_yielder()
-    table_profile1_records = list(profile1_table.records_yielder)
-    table_profile1_records.sort(key=sort_by_id)
-    table_profile1_records_ids = [record['id'] for record in table_profile1_records]
-    browser_profile1_records_ids = [record['id'] for record in browser_profile1_records]
-    assert table_profile1_records_ids == browser_profile1_records_ids
-    
-    
 def test_browser_access_single_profile_file_table_without_timestamp(tests_root):
     profile_rootpath = Path(tests_root, 'chrome_databases')
     profile_path = Path(profile_rootpath,

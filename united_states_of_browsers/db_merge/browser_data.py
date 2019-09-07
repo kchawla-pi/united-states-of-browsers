@@ -63,7 +63,7 @@ def _linux_browser_info(parent_dir):
 	                    browser='chrome',
 	                    path=parent_dir.joinpath('.config', 'google-chrome'),
 	                    profiles=None,
-	                    file_tables={'history': ['urls']},
+	                    file_tables={'History': ['urls']},
 	                    table_fields={'urls': ['id', 'url', 'title', 'visit_count', 'last_visit_time',
 	                                           'last_visit_readable']},
 	                    ),
