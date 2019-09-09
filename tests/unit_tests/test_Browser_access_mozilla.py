@@ -134,7 +134,7 @@ def test_browser_access_two_profiles_same_file_table(tests_root):
     
     profile_1_2_records_using_tables = [*profile1_records, *profile2_records]
     profile_1_2_records_using_tables.sort(key=sort_by_id)
-    assert profile_1_2_records_using_tables == profile_1_2_records_using_tables
+    assert profile_1_2_records_using_tables == profile_1_2_records_using_browser
 
     
 def test_browser_access_same_profile_file_two_tables(tests_root):
@@ -227,4 +227,4 @@ def test_browser_access_all_profiles_same_file_table(tests_root):
     
     profile_1_2_records_using_tables = [*profile1_records, *profile2_records]
     profile_1_2_records_using_tables.sort(key=sort_by_id)
-    assert profile_1_2_records_using_tables == profile_1_2_records_using_tables
+    assert profile_1_2_records_using_tables == profile_1_2_records_using_browser
