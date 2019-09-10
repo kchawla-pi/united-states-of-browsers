@@ -4,11 +4,10 @@ The Browser class
 """
 from collections import namedtuple
 
-from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
-from united_states_of_browsers.db_merge.table import Table
 from united_states_of_browsers.db_merge import exceptions_handling as exceph
+from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
 from united_states_of_browsers.db_merge.imported_annotations import *
-
+from united_states_of_browsers.db_merge.table import Table
 
 TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
 
@@ -47,15 +46,15 @@ class Browser(dict):
         self.file_tables = file_tables
         self.files = None
         self.paths = None
-        self.available_tables = {}
+        self.available_tables = []
         self.copies_subpath = copies_subpath
         self.make_paths()
-        if self.file_tables:
-            self.error_msgs = []
-            [self.add_tables_for_access(file, tables) for file, tables in file_tables.items()]
-            if self.error_msgs:
-                self.error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=self.error_msgs)
-                self._errors_display(error_msgs=self.error_msgs)
+        # if self.file_tables:
+        #     self.error_msgs = []
+        #     [self.add_tables_for_access(file, tables) for file, tables in file_tables.items()]
+        #     if self.error_msgs:
+        #         self.error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=self.error_msgs)
+        #         self._errors_display(error_msgs=self.error_msgs)
         
         super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
                          file_tables=self.file_tables, tables=self.available_tables)
@@ -79,20 +78,49 @@ class Browser(dict):
         self.paths = pathmaker.profilepaths
         
     def _make_table_objects(self, file: Text, table_names: Iterable[Text]) -> List[Table]:
-        all_tables = {}
+        all_tables = []
         for profile, path in self.paths.items():
             for table_name_ in table_names:
-                all_tables.update({table_name_:
+                all_tables.append(
                         Table(table=table_name_,
                               path=path.joinpath(file),
                               browser=self.browser,
                               filename=file,
                               profile=profile,
                               copies_subpath=self.copies_subpath,
-                              )}
+                              )
                         )
         return all_tables
     
+    def make_records_yielder(self, filename, tablename, fieldnames=None):
+        for profile_name, profile_path in self.paths.items():
+            filepath = Path(profile_path, filename)
+            profile_name = Path(profile_path).name
+            table_obj = Table(table=tablename,
+                              path=filepath,
+                              browser=self.browser,
+                              filename=filename,
+                              profile=profile_name,
+                              copies_subpath=self.copies_subpath,
+                              )
+            additional_info = {'browser': self.browser, 'profile': profile_name,
+                               'file': filename, 'table': tablename,
+                               }
+            table_obj.make_records_yielder()
+            if fieldnames:
+                for record in table_obj.records_yielder:
+                    record = {field_name: field_value for
+                              field_name, field_value in record.items() if
+                              field_name in fieldnames}
+                    record.update(additional_info)
+                    yield record
+            else:
+                for record in table_obj.records_yielder:
+                    record.update(additional_info)
+                    yield record
+            
+        
+        
     def add_tables_for_access(self, file: Text, tables: Iterable[Text], non_null_fields=None):
         """ Accepts name of file containing the tables and list of table names
         and makes them accessible via the Browser.access_fields() method.
@@ -100,12 +128,12 @@ class Browser(dict):
         """
         error_msgs = []
         all_tables = self._make_table_objects(file, tables)
-        for table_name, table_obj in all_tables.items():
+        for table_obj in all_tables:
             table_yielder, exception_raised = table_obj.make_records_yielder(raise_exceptions=False)  # exception is returned here.
             if exception_raised:
                 error_msgs.append(exception_raised)
             else:
-                self.available_tables.update({table_name: table_obj})
+                self.available_tables.append(table_obj)
                 try:
                     self.profiles.add(table_obj.profile)
                 except AttributeError:
@@ -127,7 +155,7 @@ class Browser(dict):
         :return:
         """
         additional_fields = ('browser', 'profile', 'file', 'table')
-        current_table = self.available_tables[table]
+        current_table = [table_obj for table_obj in self.available_tables if table_obj['table'] == table]
         for record in current_table.records_yielder:
             selected_fields_records = {field_: record[field_] for field_ in fields}
             selected_fields_records.update({field: current_table[field] for field in additional_fields})
