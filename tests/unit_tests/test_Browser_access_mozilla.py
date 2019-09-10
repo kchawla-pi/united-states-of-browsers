@@ -190,6 +190,32 @@ def test_browser_access_all_profiles_same_file_table(tests_root):
     assert table_records_urls == browser_records_urls
 
 
+def test_browser_access_filtered_fields(tests_root):
+    profile_rootpath = Path(tests_root, 'firefox_databases')
+    browser_name = 'firefox'
+    table_name = 'moz_places'
+    profile_name = 'test_profile1'
+    file_name = 'places.sqlite'
+    fields=['id', 'url', 'title',
+            'last_visit_date',
+            'last_visit_readable',
+            ]
+    browser_profile1 = Browser(browser=browser_name,
+                      profiles=[profile_name],
+                      profile_root=profile_rootpath,
+                      )
+    moz_places_records_yielder = browser_profile1.make_records_yielder(filename=file_name,
+                                                                       tablename=table_name,
+                                                                       fieldnames=fields,
+                                                                       )
+
+    records = [record for record in moz_places_records_yielder]
+    records_fieldnames = set(tuple(record_.keys()) for record_ in records)
+    records_fieldnames = records_fieldnames.pop()
+    additional_fields = ('browser', 'profile', 'file', 'table')
+    expected_fieldnames = [*fields, *additional_fields]
+    assert not set(records_fieldnames).difference(expected_fieldnames)
+
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
