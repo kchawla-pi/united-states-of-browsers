@@ -21,9 +21,6 @@ def test_browser_access_single_profile_file_table_with_timestamp(tests_root):
             'last_visit_date',
             'last_visit_readable',
             ]
-
-    
-    
     browser_profile1 = Browser(browser=browser_name,
                       profiles=[profile_name],
                       profile_root=profile_rootpath,
@@ -45,7 +42,14 @@ def test_browser_access_single_profile_file_table_with_timestamp(tests_root):
     table_profile1_records.sort(key=sort_by_id)
     table_profile1_records_urls = [record['url'] for record in table_profile1_records]
     browser_profile1_records_urls = [record['url'] for record in browser_profile1_records]
+    
     assert table_profile1_records_urls == browser_profile1_records_urls
+    assert len(table_profile1_records) ==len(browser_profile1_records)
+    assert check_records_unique_with_field(records=table_profile1_records, field='id')
+    assert check_records_unique_with_field(records=browser_profile1_records,
+                                    field='id')
+    assert sorted(table_profile1_records_urls) == sorted(browser_profile1_records_urls)
+
 
 
 def test_browser_access_single_profile_file_table_without_timestamp(tests_root):

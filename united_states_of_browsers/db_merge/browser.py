@@ -49,13 +49,6 @@ class Browser(dict):
         self.available_tables = []
         self.copies_subpath = copies_subpath
         self.make_paths()
-        # if self.file_tables:
-        #     self.error_msgs = []
-        #     [self.add_tables_for_access(file, tables) for file, tables in file_tables.items()]
-        #     if self.error_msgs:
-        #         self.error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=self.error_msgs)
-        #         self._errors_display(error_msgs=self.error_msgs)
-        
         super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
                          file_tables=self.file_tables, tables=self.available_tables)
     
@@ -77,21 +70,6 @@ class Browser(dict):
         pathmaker = BrowserPaths(self.browser, self.profile_root, self.profiles)
         self.paths = pathmaker.profilepaths
         
-    def _make_table_objects(self, file: Text, table_names: Iterable[Text]) -> List[Table]:
-        all_tables = []
-        for profile, path in self.paths.items():
-            for table_name_ in table_names:
-                all_tables.append(
-                        Table(table=table_name_,
-                              path=path.joinpath(file),
-                              browser=self.browser,
-                              filename=file,
-                              profile=profile,
-                              copies_subpath=self.copies_subpath,
-                              )
-                        )
-        return all_tables
-    
     def make_records_yielder(self, filename, tablename, fieldnames=None):
         for profile_name, profile_path in self.paths.items():
             filepath = Path(profile_path, filename)
@@ -119,51 +97,6 @@ class Browser(dict):
                     record.update(additional_info)
                     yield record
             
-        
-        
-    def add_tables_for_access(self, file: Text, tables: Iterable[Text], non_null_fields=None):
-        """ Accepts name of file containing the tables and list of table names
-        and makes them accessible via the Browser.access_fields() method.
-        Accessed via the tables attribute.
-        """
-        error_msgs = []
-        all_tables = self._make_table_objects(file, tables)
-        for table_obj in all_tables:
-            table_yielder, exception_raised = table_obj.make_records_yielder(raise_exceptions=False)  # exception is returned here.
-            if exception_raised:
-                error_msgs.append(exception_raised)
-            else:
-                self.available_tables.append(table_obj)
-                try:
-                    self.profiles.add(table_obj.profile)
-                except AttributeError:
-                    self.profiles = set()
-                    self.profiles.add(table_obj.profile)
-        try:
-            self.error_msgs.extend(error_msgs)
-        except AttributeError:
-            if error_msgs:
-                error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=error_msgs)
-                self._errors_display(error_msgs=error_msgs)
-    
-    def access_fields(self, table: Text, fields: Iterable[Text]) -> Generator:
-        """ Accepts a table name (from list of available_tables
-        and list of field names for that table.
-        Yields a generator which prvides the records from that table.
-        :param table: Text
-        :param fields: List of field names that are to be accessed in that table.
-        :return:
-        """
-        additional_fields = ('browser', 'profile', 'file', 'table')
-        current_table = [table_obj for table_obj in self.available_tables if table_obj['table'] == table]
-        for record in current_table.records_yielder:
-            selected_fields_records = {field_: record[field_] for field_ in fields}
-            selected_fields_records.update({field: current_table[field] for field in additional_fields})
-            self.selected_fields_records = selected_fields_records
-            yield selected_fields_records
-        current_table.make_records_yielder(raise_exceptions=False)
-        
-    
     def __repr__(self):
         return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'
     
