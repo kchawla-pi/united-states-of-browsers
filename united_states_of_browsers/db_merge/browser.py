@@ -39,19 +39,15 @@ class Browser(dict):
     """
     
     def __init__(self, browser: Text, profile_root: PathInfo, profiles: Optional[Iterable[Text]]=None,
-                 file_tables: Dict[Text, Iterable[Text]]=None, copies_subpath: Optional[PathInfo]=None):
+                 copies_subpath: Optional[PathInfo]=None):
         self.browser = browser
         self.profile_root = profile_root
         self.profiles = profiles
-        self.file_tables = file_tables
-        self.files = None
         self.paths = None
-        self.available_tables = []
         self.copies_subpath = copies_subpath
         self.make_paths()
         super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
-                         file_tables=self.file_tables, tables=self.available_tables)
-    
+                         )
     def make_paths(self):
         """ Creates the path to different browser profiles.
         """
@@ -89,7 +85,7 @@ class Browser(dict):
         return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'
     
     def __str__(self):
-        return f'Browser: {self.browser}, files: {self.files}, profiles: {self.profiles}'
+        return f'Browser: {self.browser}, profiles: {self.profiles}'
 
 
 if __name__ == '__main__':  # pragma: no cover
