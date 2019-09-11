@@ -1,7 +1,7 @@
 import sqlite3
 from pathlib import Path
 
-from united_states_of_browsers.db_merge.browser import Browser
+from united_states_of_browsers.db_merge.browser import make_browser_records_yielder
 from united_states_of_browsers.db_merge.helpers import \
     check_records_unique_with_field
 from united_states_of_browsers.db_merge.table import Table
@@ -14,21 +14,14 @@ def test_browser_chrome_access_single_profile_file_table_with_timestamp(
     table_name = 'urls'
     profile_name = 'Profile 1'
     file_name = 'History'
-    fields = ['id', 'url', 'title',
-              'last_visit_time',
-              'last_visit_readable',
-              ]
-
-    profile_path = Path(profile_rootpath,
-                        'Profile 1',
-                        'History',
-                        )
-    browser_profile1 = Browser(browser=browser_name,
-                               profiles=[profile_name],
-                               profile_root=profile_rootpath,
-                               )
-    urls_records_yielder = browser_profile1.make_records_yielder(filename=file_name,
-                                           tablename=table_name, )
+    profile_path = Path(profile_rootpath, 'Profile 1', 'History',)
+    urls_records_yielder = make_browser_records_yielder(
+            browser=browser_name,
+            profile_root=profile_rootpath,
+            filename=file_name,
+            tablename=table_name,
+            profiles=[profile_name],
+            )
     browser_profile1_records = [record for record in urls_records_yielder]
     sort_by_id = lambda item: item['id']
     browser_profile1_records.sort(key=sort_by_id)
@@ -60,14 +53,14 @@ def test_browser_access_single_profile_file_table_without_timestamp(tests_root):
     table_name = 'keyword_search_terms'
     profile_name = 'Profile 1'
     file_name = 'History'
-    fields=['keyword_id', 'url_id', 'lower_term', 'term']
 
-    browser_profile1 = Browser(browser=browser_name,
-                               profiles=[profile_name],
-                               profile_root=profile_rootpath,
-                               )
-    urls_records_yielder = browser_profile1.make_records_yielder(filename=file_name,
-                                           tablename=table_name, )
+    urls_records_yielder = make_browser_records_yielder(
+            browser=browser_name,
+            profile_root=profile_rootpath,
+            filename=file_name,
+            tablename=table_name,
+            profiles=[profile_name],
+            )
     browser_profile1_records = [record for record in
                                 urls_records_yielder]
     sort_by_id = lambda item: item['url_id']
@@ -94,16 +87,14 @@ def test_browser_access_two_profiles_same_file_table(tests_root):
     browser_name = 'chrome'
     table_name = 'urls'
     file_name = 'History'
-    fields=['id', 'url', 'title',
-            'last_visit_time',
-            'last_visit_readable',
-            ]
-    browser_two_profiles = Browser(browser=browser_name,
-                      profiles=['Profile 1', 'Profile 2'],
-                      profile_root=profile_rootpath,
-                      )
-    urls_records_yielder = browser_two_profiles.make_records_yielder(filename=file_name,
-                                                                     tablename=table_name)
+    
+    urls_records_yielder = make_browser_records_yielder(
+            browser=browser_name,
+            profile_root=profile_rootpath,
+            filename=file_name,
+            tablename=table_name,
+            profiles=['Profile 1', 'Profile 2'],
+            )
     profile_1_2_records_using_browser = [record for record in urls_records_yielder]
     sort_by_url = lambda item: item['url']
     profile_1_2_records_using_browser.sort(key=sort_by_url)
@@ -151,16 +142,14 @@ def test_browser_access_all_profiles_same_file_table(tests_root):
     browser_name = 'chrome'
     table_name = 'urls'
     file_name = 'History'
-    fields=['id', 'url', 'title',
-            'last_visit_time',
-            'last_visit_readable',
-            ]
-    browser_two_profiles = Browser(browser=browser_name,
-                      profiles=None,
-                      profile_root=profile_rootpath,
-                      )
-    urls_records_yielder = browser_two_profiles.make_records_yielder(filename=file_name,
-                                                                     tablename=table_name)
+    urls_records_yielder = make_browser_records_yielder(
+            browser=browser_name,
+            profile_root=profile_rootpath,
+            filename=file_name,
+            tablename=table_name,
+            profiles=None,
+            )
+
     profile_1_2_records_using_browser = [record for record in urls_records_yielder]
     sort_by_url = lambda item: item['url']
     profile_1_2_records_using_browser.sort(key=sort_by_url)
@@ -210,13 +199,12 @@ def test_browser_chrome_access_filtered_fields(
               'last_visit_time',
               'last_visit_readable',
               ]
-    browser_profile1 = Browser(browser=browser_name,
-                               profiles=[profile_name],
-                               profile_root=profile_rootpath,
-                               )
-    urls_records_yielder = browser_profile1.make_records_yielder(
+    urls_records_yielder = make_browser_records_yielder(
+            browser=browser_name,
+            profile_root=profile_rootpath,
             filename=file_name,
             tablename=table_name,
+            profiles=[profile_name],
             fieldnames=fields,
             )
     records = [record for record in urls_records_yielder]
