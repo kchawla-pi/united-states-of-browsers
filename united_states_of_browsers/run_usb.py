@@ -1,10 +1,12 @@
+import os
 import subprocess
-from pathlib import Path
 
+from pathlib import Path
 
 def make_paths():
     venv_python_path = Path(__file__).absolute().parents[1]
-    venv_python_path = venv_python_path.joinpath('venv', 'Scripts', 'python.exe')
+    venv_subdir, exe_ext = ('bin', '') if os.name == 'posix' else ('Scripts', '.exe')
+    venv_python_path = venv_python_path.joinpath('venv', venv_subdir, f'python{exe_ext}')
     usb_app_path = Path(__file__).absolute().parent
     db_merge_module_path = usb_app_path.joinpath('db_merge', 'db_merge.py')
     usb_server_module_path = usb_app_path.joinpath('usb_server', 'usb_server.py')

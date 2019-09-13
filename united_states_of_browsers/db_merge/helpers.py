@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Text, Sequence, Dict, Union, Iterable
+from typing import Dict, Iterable, List, Sequence, Text, Union
 
 
 def make_queries(tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]) -> Dict:
@@ -9,7 +9,7 @@ def make_queries(tablename: Text, primary_key_name: Text, fieldnames: Sequence[T
     fieldnames_str = ', '.join(fieldnames)
     query_placeholder = '?, ' * len(fieldnames)
     queries = {'create': f'''CREATE TABLE IF NOT EXISTS {tablename} ({primary_key_name} integer PRIMARY KEY, {fieldnames_str[:]})'''}
-    queries.update({'insert': f"INSERT INTO {tablename}({fieldnames_str}) VALUES ({query_placeholder[:-2]})"})
+    queries.update({'insert': f"INSERT INTO {tablename} ({fieldnames_str}) VALUES ({query_placeholder[:-2]})"})
     return queries
 
 
@@ -26,3 +26,14 @@ def check_records_unique_with_field(records, field):
     all_ids = [record[field] for record in records]
     unique_ids = set(all_ids)
     return len(all_ids) == len(unique_ids)
+
+
+def errors_display(error_msgs: List) -> List:
+    print()
+    for error_msg_ in error_msgs:
+        try:
+            print(f'{error_msg_.strerror}\n\t\t{error_msg_.filename}')
+        except AttributeError:
+            print(error_msg_)
+    print()
+

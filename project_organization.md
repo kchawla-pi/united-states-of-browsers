@@ -4,7 +4,7 @@
 
 	browser.BrowserObj.__init__():
 		
-		Calls BrowserObj.make_paths()
+		Calls BrowserObj.make_browser_paths()
 			creates browserpaths.BrowserPaths object
 				BrowserPaths, upon _init__ reads browser_data.py and uses it to 
 				construct the necessary paths to the sqlite files for the each browser.

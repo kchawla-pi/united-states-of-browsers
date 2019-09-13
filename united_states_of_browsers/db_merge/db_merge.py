@@ -7,10 +7,9 @@ To create a merged database, run:
 import os
 import sqlite3
 
-from pathlib import Path
-
 from united_states_of_browsers.db_merge import browser_data
-from united_states_of_browsers.db_merge.browser import Browser
+from united_states_of_browsers.db_merge.browser import \
+    make_browser_records_yielder
 from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -50,13 +49,19 @@ class DatabaseMergeOrchestrator:
                 DatabaseMergeOrchestrator_obj.browser_yielder
         """
         for browser_datum in self.installed_browsers_data:
-            each_browser = Browser(browser=browser_datum.browser,
-                                   profile_root=browser_datum.path,
-                                   profiles=browser_datum.profiles,
-                                   file_tables=browser_datum.file_tables,
-                                   copies_subpath=self.app_path)
+            file, _ = tuple(browser_datum.file_tables.items())[0]
             table_name, fields_list = tuple(browser_datum.table_fields.items())[0]
-            each_browser_records_yielder = each_browser.access_fields(table_name, fields_list)
+
+            each_browser_records_yielder = make_browser_records_yielder(
+                    browser=browser_datum.browser,
+                    profile_root=browser_datum.path,
+                    filename=file,
+                    tablename=table_name,
+                    profiles=browser_datum.profiles,
+                    fieldnames=fields_list,
+                    copies_subpath=self.app_path,
+            )
+
             self.browser_yielder.append(each_browser_records_yielder)
     
     def rename_existing_db(self):
@@ -86,9 +91,12 @@ class DatabaseMergeOrchestrator:
         with sqlite3.connect(str(self.output_db)) as connection:
             cursor = connection.cursor()
             cursor.execute(queries['create'])
-            [cursor.executemany(queries['insert'], browser_record_yielder)
-             for browser_record_yielder in self.browser_yielder
-             ]
+            records_yielder = (tuple(browser_record.values())
+                               for browser_record_yielder in
+                               self.browser_yielder
+                               for browser_record in browser_record_yielder)
+            cursor.executemany(queries['insert'], records_yielder)
+             
     
     def build_search_table(self):
         """

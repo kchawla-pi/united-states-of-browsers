@@ -1,164 +1,131 @@
 # -*- encoding: utf-8 -*-
 """
-The Browser class
+Module containing fucntions to setup browser profile paths,
+database file paths, and generator for browser records.
 """
 from collections import namedtuple
 
-from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
-from united_states_of_browsers.db_merge.table import Table
-from united_states_of_browsers.db_merge import exceptions_handling as exceph
+from united_states_of_browsers.db_merge import exceptions_handling
 from united_states_of_browsers.db_merge.imported_annotations import *
-
+from united_states_of_browsers.db_merge.table import Table
 
 TableMetadata = namedtuple('TableMetadata', 'browser profile file table')
 
-class Browser(dict):
+
+def make_browser_records_yielder(browser: Text,
+                                 profile_root: PathInfo,
+                                 filename: Text,
+                                 tablename: Text,
+                                 profiles: Optional[Iterable[Text]] = None,
+                                 fieldnames: Optional[Iterable[Text]] = None,
+                                 copies_subpath: Optional[PathInfo] = None
+                                 ) -> Generator[Mapping[Text, Text], None, None]:
     """ Creates a generator of browser database records.
-    Accepts parameters-
-        :param: browser: browser name
-        :param: profile_root: path to directory/folder where the browser stores all of its profiles
-        :param: profiles: list of profile, default is all profiles
-        :param: file_tables: dict of database file name containing the tables as keys, list of tables to be accessed as values.
-        :param: copies_subpath: path where a copy of the database files is created, and read from,instead of the original files.
 
-    **Methods:**
-        make_paths()
-        
-        add_tables_for_access(file, tables)
+    :param browser: browser name
+    :param profile_root: path to directory/folder
+            where the browser stores all of its profiles
+    :param profiles: list of profile, default is all profiles
+    :param copies_subpath: path where a copy of the database files is created,
+            and read from,instead of the original files.
 
-    **Usage:**
-        browser_obj = Browser(browser, profile_root, profiles, {database_file1: [table1, table2], database_file2: [table3, table4]})
-
-    Add additional file and tables to existing Browser objects using the add_tables_for_access() method.
-            browser_obj.add_tables_for_access(database_file1, [table1, table2])
-            
-    Access each table:
-        for table in browser_obj.tables:
-            for record in table.records_yielder:
-                dict(record)
-            
+    :return: Generator of records
     """
-    
-    def __init__(self, browser: Text, profile_root: PathInfo, profiles: Optional[Iterable[Text]]=None,
-                 file_tables: Dict[Text, Iterable[Text]]=None, copies_subpath: Optional[PathInfo]=None):
-        self.browser = browser
-        self.profile_root = profile_root
-        self.profiles = profiles
-        self.file_tables = file_tables
-        self.files = None
-        self.paths = None
-        self.available_tables = {}
-        self.copies_subpath = copies_subpath
-        self.make_paths()
-        if self.file_tables:
-            self.error_msgs = []
-            [self.add_tables_for_access(file, tables) for file, tables in file_tables.items()]
-            if self.error_msgs:
-                self.error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=self.error_msgs)
-                self._errors_display(error_msgs=self.error_msgs)
-        
-        super().__init__(browser=self.browser, profile_root=self.profile_root, profiles=self.profiles,
-                         file_tables=self.file_tables, tables=self.available_tables)
-    
-    def _errors_display(self, error_msgs: List) -> List:
-        """ Adds error messages to the error log without duplication.
-        Accepts a collection of error messages and adds them to the error log
-        """
-        print()
-        for error_msg_ in error_msgs:
-            try:
-                print(f'{error_msg_.strerror}\n\t\t{error_msg_.filename}')
-            except AttributeError:
-                print(error_msg_)
-        print()
-    
-    def make_paths(self):
-        """ Creates the path to different browser profiles.
-        """
-        pathmaker = BrowserPaths(self.browser, self.profile_root, self.profiles)
-        self.paths = pathmaker.profilepaths
-        
-    def _make_table_objects(self, file: Text, table_names: Iterable[Text]) -> List[Table]:
-        all_tables = {}
-        for profile, path in self.paths.items():
-            for table_name_ in table_names:
-                all_tables.update({table_name_:
-                        Table(table=table_name_,
-                              path=path.joinpath(file),
-                              browser=self.browser,
-                              filename=file,
-                              profile=profile,
-                              copies_subpath=self.copies_subpath,
-                              )}
-                        )
-        return all_tables
-    
-    def add_tables_for_access(self, file: Text, tables: Iterable[Text], non_null_fields=None):
-        """ Accepts name of file containing the tables and list of table names
-        and makes them accessible via the Browser.access_fields() method.
-        Accessed via the tables attribute.
-        """
-        error_msgs = []
-        all_tables = self._make_table_objects(file, tables)
-        for table_name, table_obj in all_tables.items():
-            table_yielder, exception_raised = table_obj.make_records_yielder(raise_exceptions=False)  # exception is returned here.
-            if exception_raised:
-                error_msgs.append(exception_raised)
-            else:
-                self.available_tables.update({table_name: table_obj})
-                try:
-                    self.profiles.add(table_obj.profile)
-                except AttributeError:
-                    self.profiles = set()
-                    self.profiles.add(table_obj.profile)
-        try:
-            self.error_msgs.extend(error_msgs)
-        except AttributeError:
-            if error_msgs:
-                error_msgs = exceph.exceptions_log_deduplicator(exceptions_log=error_msgs)
-                self._errors_display(error_msgs=error_msgs)
-    
-    def access_fields(self, table: Text, fields: Iterable[Text]) -> Generator:
-        """ Accepts a table name (from list of available_tables
-        and list of field names for that table.
-        Yields a generator which prvides the records from that table.
-        :param table: Text
-        :param fields: List of field names that are to be accessed in that table.
-        :return:
-        """
-        additional_fields = ('browser', 'profile', 'file', 'table')
-        current_table = self.available_tables[table]
-        for record in current_table.records_yielder:
-            selected_fields_records = {field_: record[field_] for field_ in fields}
-            selected_fields_records.update({field: current_table[field] for field in additional_fields})
-            self.selected_fields_records = selected_fields_records
-            yield selected_fields_records
-        current_table.make_records_yielder(raise_exceptions=False)
-        
-    
-    def __repr__(self):
-        return f'Browser("{self.browser}", "{self.profile_root}", {self.profiles}, {self.file_tables})'
-    
-    def __str__(self):
-        return f'Browser: {self.browser}, files: {self.files}, profiles: {self.profiles}'
+    paths = make_browser_paths(browser, profile_root, profiles)
+    for profile_name, profile_path in paths.items():
+        filepath = Path(profile_path, filename)
+        profile_name = Path(profile_path).name
+        table_obj = Table(table=tablename,
+                          path=filepath,
+                          browser=browser,
+                          filename=filename,
+                          profile=profile_name,
+                          copies_subpath=copies_subpath,
+                          )
+        additional_info = {'browser': browser, 'profile': profile_name,
+                           'file': filename, 'table': tablename,
+                           }
+        table_obj.make_records_yielder()
+        if fieldnames:
+            for record in table_obj.records_yielder:
+                record = {field_name: field_value for
+                          field_name, field_value in record.items() if
+                          field_name in fieldnames}
+                record.update(additional_info)
+                yield record
+        else:
+            for record in table_obj.records_yielder:
+                record.update(additional_info)
+                yield record
 
 
-if __name__ == '__main__':  # pragma: no cover
-    # test_browser()
-    # chrome = Browser(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
-    
-    firefox_auto = Browser(browser='firefox',
-                           profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-                           profiles=['Employment'],
-                           file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
-                                        'permissions.sqlite': ['moz_hosts']})
-    quit()
-    firefox_auto.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date', 'last_visit_readable']})
-    firefox_auto = Browser(browser='firefox',
-                           profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-                           profiles=['test_profile0', 'test_profile1'],
-                           file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
-                                        'permissions.sqlite': ['moz_hosts']})
+def _make_firefox_profile_paths(profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
+    """
+    Makes a dict of profile names and paths for Chrome broser.
 
-# rb.get_tablenames('C:/Users/kshit/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default/places.sqlite')
+    :param profile_root: Path where the specific browser stores
+            all the profile directoris.
+    :param profiles: List of profile names whose path is to be made.
+            None gives path for all profiles detected.
 
+    :return: Dict of profile names and corresponding path.
+    """
+
+    get_profile_name = lambda dir_entry: str(dir_entry).split(sep='.', maxsplit=1)[1]
+    if profiles:
+        profilepaths = {profile: entry for entry in profile_root.iterdir()
+                             for profile in profiles
+                             if '.' in entry.name and entry.is_dir() and entry.name.endswith(profile)
+                             }
+    else:
+        profilepaths = {get_profile_name(entry): entry
+                             for entry in profile_root.iterdir()
+                             if '.' in entry.name and entry.is_dir()}
+    return profilepaths
+
+
+def _make_chrome_profile_paths(profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
+    """
+    Makes a dict of profile names and paths for Chrome broser.
+
+    :param profile_root: Path where the specific browser stores
+            all the profile directoris.
+    :param profiles: List of profile names whose path is to be made.
+            None gives path for all profiles detected.
+
+    :return: Dict of profile names and corresponding path.
+    """
+    if profiles:
+        profilepaths = {entry.name: entry
+                             for profile_name in profiles
+                             for entry in profile_root.iterdir()
+                             if entry.name.endswith(profile_name)}
+    else:
+        profilepaths = {entry.name: entry for entry in profile_root.iterdir()
+                             if entry.name.startswith('Profile') or entry.name == 'Default'}
+    return profilepaths
+
+
+def make_browser_paths(browser: Text, profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
+    """
+    Makes a dict of profile names and paths.
+
+    :param browser: Browser name [ 'firefox', 'chrome'] .
+    :param profile_root: Path where the specific browser stores
+            all the profile directoris.
+    :param profiles: List of profile names whose path is to be made.
+            None gives path for all profiles detected.
+            
+    :return: Dict of profile names and corresponding path.
+    """
+    make_path_chooser = {'firefox': _make_firefox_profile_paths, 'chrome': _make_chrome_profile_paths,
+                         'opera': _make_chrome_profile_paths, 'vivaldi': _make_chrome_profile_paths,
+                         }
+    try:
+        profilepaths = make_path_chooser[browser](profile_root, profiles)
+    except FileNotFoundError as excep:
+        invalid_path = exceptions_handling.invalid_path_in_tree(excep.filename)
+        print(f'In {excep.filename},\npath {invalid_path} does not exist.\nMoving on...')
+        raise excep
+    else:
+        return profilepaths
