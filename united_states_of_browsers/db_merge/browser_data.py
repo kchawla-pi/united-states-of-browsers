@@ -7,7 +7,7 @@ BrowserData = namedtuple('BrowserData', 'os browser path profiles file_tables ta
 
 
 def prep_browsers_info(parent_dir='~'):
-	parent_dir = Path(parent_dir)
+	parent_dir = Path(parent_dir).expanduser()
 	if os.name == 'nt':
 		return _windows_browser_info(parent_dir)
 	elif os.name == 'posix':

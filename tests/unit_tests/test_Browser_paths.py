@@ -130,13 +130,13 @@ if __name__ == '__main__':  # pragma: no cover
 #     files = ['places.sqlite', 'permissions.sqlite']
 #     firefox_all = BrowserPaths(browser='firefox',
 #                                profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles')
-#     firefox_all.make_paths()
+#     firefox_all.make_browser_paths()
 #
 #     profiles_list = ['test_profile0', 'test_profile1']
 #     firefox_some = BrowserPaths(browser='firefox',
 #                                 profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
 #                                 profiles=profiles_list)
-#     firefox_some.make_paths()
+#     firefox_some.make_browser_paths()
 #
 #     chrome = BrowserPaths(browser='chrome',
 #                           profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')

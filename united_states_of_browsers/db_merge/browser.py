@@ -4,7 +4,7 @@ The Browser class
 """
 from collections import namedtuple
 
-from united_states_of_browsers.db_merge.browserpaths import BrowserPaths
+from united_states_of_browsers.db_merge.browserpaths import make_browser_paths
 from united_states_of_browsers.db_merge.imported_annotations import *
 from united_states_of_browsers.db_merge.table import Table
 
@@ -27,7 +27,7 @@ def make_browser_records_yielder(browser: Text,
         :param: copies_subpath: path where a copy of the database files is created, and read from,instead of the original files.
 
     """
-    paths = BrowserPaths(browser, profile_root, profiles).profilepaths
+    paths = make_browser_paths(browser, profile_root, profiles)
     for profile_name, profile_path in paths.items():
         filepath = Path(profile_path, filename)
         profile_name = Path(profile_path).name
@@ -53,24 +53,3 @@ def make_browser_records_yielder(browser: Text,
             for record in table_obj.records_yielder:
                 record.update(additional_info)
                 yield record
-
-
-if __name__ == '__main__':  # pragma: no cover
-    # test_browser()
-    # chrome = Browser(browser='chrome', profile_root='C:\\Users\\kshit\\AppData\\Local\\Google\\Chrome\\User Data')
-    
-    firefox_auto = Browser(browser='firefox',
-                           profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-                           profiles=['Employment'],
-                           file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
-                                        'permissions.sqlite': ['moz_hosts']})
-    quit()
-    firefox_auto.access_fields({'moz_places': ['id', 'url', 'title', 'last_visit_date', 'last_visit_readable']})
-    firefox_auto = Browser(browser='firefox',
-                           profile_root='~\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles',
-                           profiles=['test_profile0', 'test_profile1'],
-                           file_tables={'places.sqlite': ['moz_places', 'moz_bookmarks'],
-                                        'permissions.sqlite': ['moz_hosts']})
-
-# rb.get_tablenames('C:/Users/kshit/AppData/Roaming/Mozilla/Firefox/Profiles/vy2bqplf.dev-edition-default/places.sqlite')
-
