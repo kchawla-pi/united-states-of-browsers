@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from united_states_of_browsers.db_merge.browserpaths import make_browser_paths
+from united_states_of_browsers.db_merge.browser import make_browser_paths
 
 
 def test_browser_firefox_make_paths_during_init_one_profile(tests_root):
