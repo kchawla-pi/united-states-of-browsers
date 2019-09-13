@@ -1,9 +1,10 @@
 import sqlite3
 from pathlib import Path
 
-from united_states_of_browsers.db_merge.browser import make_browser_records_yielder
-from united_states_of_browsers.db_merge.helpers import \
-    check_records_unique_with_field
+from united_states_of_browsers.db_merge.browser import (
+    make_browser_records_yielder)
+from united_states_of_browsers.db_merge.helpers import (
+    check_records_unique_with_field)
 from united_states_of_browsers.db_merge.table import Table
 
 
