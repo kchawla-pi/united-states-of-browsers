@@ -1,3 +1,9 @@
+[![Build Status](https://circleci.com/gh/kchawla-pi/united-states-of-browsers.svg?branch=master)](https://circleci.com/gh/kchawla-pi/united-states-of-browsers)
+[![Build Status](https://dev.azure.com/kchawla-pi/united-states-of-browsers/_apis/build/status/kchawla-pi.united-states-of-browsers?branchName=master)](https://dev.azure.com/kchawla-pi/united-states-of-browsers/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://codecov.io/gh/kchawla-pi/united-states-of-browsers/branch/master/graph/badge.svg)](https://codecov.io/gh/kchawla-pi/united-states-of-browsers)
+
+
+
 # United States of Browsers
 ##### A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
 
