@@ -26,6 +26,7 @@ def make_browser_records_yielder(browser: Text,
     :param profile_root: path to directory/folder
             where the browser stores all of its profiles
     :param profiles: list of profile, default is all profiles
+    :param fieldnames: Optional list of fieldnames for which data is to be retrieved.
     :param copies_subpath: path where a copy of the database files is created,
             and read from,instead of the original files.
 
