@@ -91,21 +91,36 @@ class Table(dict):
         else:
             cursor = self._connection.cursor()
             query = f'SELECT * FROM {self.table}'
-            try:
-                records_yielder = cursor.execute(query)
-            except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
-                exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
+            self.records_yielder, exception_raised = self._query_table(
+                    cursor=cursor,
+                    query=query,
+                    raise_exceptions=raise_exceptions,
+                    )
+
+    def _query_table(self, cursor: sqlite3.Connection.cursor,
+                     query: Text,
+                     raise_exceptions:bool) -> Tuple[Generator, Exception]:
+        """ Queries and retrives all records in the connected table.
+        :param cursor: sqlite3 cursor object with the open connection to the DB
+        :param query: Query to retrive data from table
+        :param raise_exceptions: Whether to raise expceptions or return them.
+        :return: Generator of table records, exception raised
+        """
+        try:
+            records_yielder = cursor.execute(query)
+        except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
+            exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
+        else:
+            exception_raised = None
+            timestamp_field = self._check_if_timestamp_field_needed(cursor=cursor)
+            if timestamp_field:
+                records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
             else:
-                exception_raised = None
-                timestamp_field = self._check_if_timestamp_field_needed(cursor=cursor)
-                if timestamp_field:
-                    self.records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
-                else:
-                    self.records_yielder = (dict(record) for record in records_yielder)
-            if raise_exceptions and exception_raised:
-                raise exception_raised
-            else:
-                return self.records_yielder, exception_raised
+                records_yielder = (dict(record) for record in records_yielder)
+        if raise_exceptions and exception_raised:
+            raise exception_raised
+        else:
+            return records_yielder, exception_raised
 
     def _yield_readable_timestamps(self, records_yielder: Generator,
                                    timestamp_field: [Mapping[Text, Text],

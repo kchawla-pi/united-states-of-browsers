@@ -45,7 +45,7 @@ def test_browser_missing_path_1(tests_root):
     browser_name = 'firefox'
     table_name = 'moz_places'
     profile_name = 'test_profile1_JUNK'
-    file_name = 'places.sqlite_JUNK'
+    file_name = 'places.sqlite'
     moz_places_records_yielder = make_browser_records_yielder(
         browser=browser_name,
         profile_root=profile_rootpath,
@@ -76,4 +76,4 @@ if __name__ == '__main__':
     test_browser_access_single_profile_file_table_with_timestamp(tests_root)
     test_browser_missing_proflie(tests_root)
     test_browser_missing_path_1(tests_root)
-    test_browser_missing_path_2(tests_root)
+    # test_browser_missing_path_2(tests_root)
