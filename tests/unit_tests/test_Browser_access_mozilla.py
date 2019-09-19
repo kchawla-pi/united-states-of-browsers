@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from united_states_of_browsers.db_merge.browser import \
-    make_browser_records_yielder
-from united_states_of_browsers.db_merge.helpers import \
-    check_records_unique_with_field
+from united_states_of_browsers.db_merge.browser import (
+    make_browser_records_yielder)
+from united_states_of_browsers.db_merge.helpers import (
+    check_records_unique_with_field)
 from united_states_of_browsers.db_merge.table import Table
 
 
@@ -220,7 +220,7 @@ def test_browser_access_filtered_fields(tests_root):
     assert not set(records_fieldnames).difference(expected_fieldnames)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
     profile_rootpath = Path(tests_root, 'firefox_databases')
     fields = ['id', 'url', 'title',

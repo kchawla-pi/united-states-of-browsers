@@ -46,6 +46,17 @@ class Table(dict):
         self.copies_subpath = copies_subpath
         self.records_yielder = None
         self._connection = None
+
+    def _check_spaces_in_table_name(self):
+        """ Raises ValueError if table name has spaces in it.
+
+        This is because sqlite3 only takes the frst word as table name,
+        raising the possibility that an incorrect table name datum might slip through.
+        Explicit is better than implicit.
+        :raises: ValueError
+        """
+        if ' ' in self.table:
+            raise ValueError(f"Table name cannot have spaces. You provided '{self.table}'")
     
     def _create_db_copy(self):
         dst = Path(self.copies_subpath, 'AppData', 'Profile Copies', self.browser, self.profile).expanduser()
@@ -81,6 +92,7 @@ class Table(dict):
     def make_records_yielder(self, raise_exceptions=True):
         """ Yields a generator to all fields in TableObj.table.
         """
+        self._check_spaces_in_table_name()
         if self.copies_subpath:
             file_copy_exception_raised = self._create_db_copy()
             if file_copy_exception_raised:
@@ -91,21 +103,36 @@ class Table(dict):
         else:
             cursor = self._connection.cursor()
             query = f'SELECT * FROM {self.table}'
-            try:
-                records_yielder = cursor.execute(query)
-            except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
-                exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
+            self.records_yielder, exception_raised = self._query_table(
+                    cursor=cursor,
+                    query=query,
+                    raise_exceptions=raise_exceptions,
+                    )
+
+    def _query_table(self, cursor: sqlite3.Connection.cursor,
+                     query: Text,
+                     raise_exceptions:bool) -> Tuple[Generator, Exception]:
+        """ Queries and retrives all records in the connected table.
+        :param cursor: sqlite3 cursor object with the open connection to the DB
+        :param query: Query to retrive data from table
+        :param raise_exceptions: Whether to raise expceptions or return them.
+        :return: Generator of table records, exception raised
+        """
+        try:
+            records_yielder = cursor.execute(query)
+        except (sqlite3.OperationalError, sqlite3.DatabaseError) as excep:
+            exception_raised = exceph.determine_table_access_exception(exception_obj=excep, calling_obj=self)
+        else:
+            exception_raised = None
+            timestamp_field = self._check_if_timestamp_field_needed(cursor=cursor)
+            if timestamp_field:
+                records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
             else:
-                exception_raised = None
-                timestamp_field = self._check_if_timestamp_field_needed(cursor=cursor)
-                if timestamp_field:
-                    self.records_yielder = self._yield_readable_timestamps(records_yielder, timestamp_field)
-                else:
-                    self.records_yielder = (dict(record) for record in records_yielder)
-            if raise_exceptions and exception_raised:
-                raise exception_raised
-            else:
-                return self.records_yielder, exception_raised
+                records_yielder = (dict(record) for record in records_yielder)
+        if raise_exceptions and exception_raised:
+            raise exception_raised
+        else:
+            return records_yielder, exception_raised
 
     def _yield_readable_timestamps(self, records_yielder: Generator,
                                    timestamp_field: [Mapping[Text, Text],

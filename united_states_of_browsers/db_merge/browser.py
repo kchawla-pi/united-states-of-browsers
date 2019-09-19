@@ -26,6 +26,7 @@ def make_browser_records_yielder(browser: Text,
     :param profile_root: path to directory/folder
             where the browser stores all of its profiles
     :param profiles: list of profile, default is all profiles
+    :param fieldnames: Optional list of fieldnames for which data is to be retrieved.
     :param copies_subpath: path where a copy of the database files is created,
             and read from,instead of the original files.
 
@@ -125,7 +126,7 @@ def make_browser_paths(browser: Text, profile_root: PathInfo, profiles: Iterable
         profilepaths = make_path_chooser[browser](profile_root, profiles)
     except FileNotFoundError as excep:
         invalid_path = exceptions_handling.invalid_path_in_tree(excep.filename)
-        print(f'In {excep.filename},\npath {invalid_path} does not exist.\nMoving on...')
+        # print(f'In {excep.filename},\npath {invalid_path} does not exist.\nMoving on...')
         raise excep
     else:
         return profilepaths

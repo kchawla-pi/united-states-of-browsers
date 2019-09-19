@@ -222,3 +222,15 @@ def test_TableAccessError_nondb_chrome(create_fake_non_db_file):
                       )
     with pytest.raises(TableAccessError):
         table_obj.make_records_yielder()
+
+
+def test_spaces_in_table_name(create_fake_non_db_file):
+    table_obj = Table(table='nonexistent table',
+                      path=create_fake_non_db_file,
+                      browser='chrome',
+                      filename='History',
+                      profile='Profile 1',
+                      copies_subpath=None,
+                      )
+    with pytest.raises(ValueError):
+        table_obj.make_records_yielder()
