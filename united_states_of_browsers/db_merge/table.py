@@ -49,6 +49,10 @@ class Table(dict):
 
     def _check_spaces_in_table_name(self):
         """ Raises ValueError if table name has spaces in it.
+
+        This is because sqlite3 only takes the frst word as table name,
+        raising the possibility that an incorrect table name datum might slip through.
+        Explicit is better than implicit.
         :raises: ValueError
         """
         if ' ' in self.table:
