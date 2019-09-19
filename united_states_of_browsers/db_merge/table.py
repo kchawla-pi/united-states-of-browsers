@@ -46,6 +46,13 @@ class Table(dict):
         self.copies_subpath = copies_subpath
         self.records_yielder = None
         self._connection = None
+
+    def _check_spaces_in_table_name(self):
+        """ Raises ValueError if table name has spaces in it.
+        :raises: ValueError
+        """
+        if ' ' in self.table:
+            raise ValueError(f"Table name cannot have spaces. You provided '{self.table}'")
     
     def _create_db_copy(self):
         dst = Path(self.copies_subpath, 'AppData', 'Profile Copies', self.browser, self.profile).expanduser()
@@ -81,6 +88,7 @@ class Table(dict):
     def make_records_yielder(self, raise_exceptions=True):
         """ Yields a generator to all fields in TableObj.table.
         """
+        self._check_spaces_in_table_name()
         if self.copies_subpath:
             file_copy_exception_raised = self._create_db_copy()
             if file_copy_exception_raised:
