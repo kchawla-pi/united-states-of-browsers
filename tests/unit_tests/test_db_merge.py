@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
@@ -41,7 +43,7 @@ def _make_data_for_tests(tests_root):
                                                      'last_visit_readable']
                                             }
                               )
-    browser_info = [firefox_info, chrome_info]
+    browser_info = [firefox_info, chrome_info, opera_info]
     combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
                                             db_name='test_combi_db',
                                             browser_info=browser_info,
@@ -82,7 +84,8 @@ def _make_expected_data():
         }
     return expected_data
 
-def test_find_installed_browsers(combined_db):
+def test_find_installed_browsers(tests_root):
+    combined_db = _make_data_for_tests(tests_root)
     assert combined_db.installed_browsers_data is None
     combined_db.find_installed_browsers()
     assert len(combined_db.installed_browsers_data) == 2
@@ -96,7 +99,8 @@ def test_find_installed_browsers(combined_db):
             )
 
 
-def test_make_records_yielder(combined_db):
+def test_make_records_yielder(tests_root):
+    combined_db = _make_data_for_tests(tests_root)
     combined_db.find_installed_browsers()
     combined_db.make_records_yielders()
     combi_records = [browser_records
