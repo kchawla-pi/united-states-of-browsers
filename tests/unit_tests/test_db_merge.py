@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-import pytest
-
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
@@ -45,11 +43,7 @@ def _make_data_for_tests(tests_root):
                                             }
                               )
     browser_info = [firefox_info, chrome_info, opera_info]
-    combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
-                                            db_name='test_combi_db',
-                                            browser_info=browser_info,
-                                            )
-    return combined_db
+    return browser_info
 
 
 def _make_expected_data():
@@ -86,7 +80,11 @@ def _make_expected_data():
     return expected_data
 
 def test_find_installed_browsers(tests_root):
-    combined_db = _make_data_for_tests(tests_root)
+    browser_info = _make_data_for_tests(tests_root)
+    combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
+                                            db_name='test_combi_db',
+                                            browser_info=browser_info,
+                                            )
     assert combined_db.installed_browsers_data is None
     combined_db.find_installed_browsers()
     assert len(combined_db.installed_browsers_data) == 2
@@ -101,7 +99,11 @@ def test_find_installed_browsers(tests_root):
 
 
 def test_make_records_yielder(tests_root):
-    combined_db = _make_data_for_tests(tests_root)
+    browser_info = _make_data_for_tests(tests_root)
+    combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
+                                            db_name='test_combi_db',
+                                            browser_info=browser_info,
+                                            )
     combined_db.find_installed_browsers()
     combined_db.make_records_yielders()
     combi_records = [browser_records
@@ -110,15 +112,53 @@ def test_make_records_yielder(tests_root):
                       ]
     # print(*combi_records, sep='\n')
     expected_data = _make_expected_data()
-    assert expected_data[11] == combi_records[11]
-    assert expected_data[37] == combi_records[37]
-    assert expected_data[44] == combi_records[44]
-    assert expected_data[-1] == combi_records[-1]
+    browser_names = []
+    profile_names = []
+    urls = {'firefox': list(),
+            'chrome': list(),
+            }
+    for record in combi_records:
+        current_browser = record['browser']
+        current_profile = record['profile']
+        current_url = record['url']
+
+        browser_names.append(current_browser)
+        profile_names.append(current_profile)
+        urls[current_browser].append(current_url)
+
+    unique_browsers = set(browser_names)
+    unique_profiles = set(profile_names)
+
+    assert unique_browsers == {'firefox', 'chrome'}
+    assert unique_profiles == {'t87e6f86.test_profile1',
+                               'z786c76dv78.test_profile2',
+                               'Profile 1',
+                               'Profile 2',
+                               }
+    browser_counts = {browser_name_: browser_names.count(browser_name_)
+                      for browser_name_ in unique_browsers
+                      }
+    assert browser_counts['firefox'] == 18 + 20
+    assert browser_counts['chrome'] == 4 + 9
+
+    profile_counts = {profile_name_: profile_names.count(profile_name_)
+                      for profile_name_ in unique_profiles
+                      }
+    assert profile_counts['t87e6f86.test_profile1'] == 18
+    assert profile_counts['z786c76dv78.test_profile2'] == 20
+    assert profile_counts['Profile 1'] == 4
+    assert profile_counts['Profile 2'] == 9
+
+    unique_urls = {'firefox': set(urls['firefox']),
+                   'chrome': set(urls['chrome']),
+                   }
+    assert len(unique_urls['firefox']) == 18 + 20 - 13
+    assert len(unique_urls['chrome']) == 4 + 9
 
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
     combined_db = _make_data_for_tests(tests_root)
-    test_find_installed_browsers(combined_db)
-    test_make_records_yielder(combined_db)
+    test_find_installed_browsers(tests_root)
+    test_make_records_yielder(tests_root)
 
