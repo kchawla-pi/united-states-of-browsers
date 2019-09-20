@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,7 @@ from united_states_of_browsers.db_merge.db_merge import (
 
 
 def _make_data_for_tests(tests_root):
-    firefox_info = BrowserData(os='posix',
+    firefox_info = BrowserData(os=os.name,
                                browser='firefox',
                                path=Path(tests_root, 'firefox_databases'),
                                profiles=None,
@@ -21,7 +22,7 @@ def _make_data_for_tests(tests_root):
                                              }
                                )
 
-    chrome_info = BrowserData(os='posix',
+    chrome_info = BrowserData(os=os.name,
                               browser='chrome',
                               path=Path(tests_root, 'chrome_databases'),
                               profiles=None,
@@ -32,7 +33,7 @@ def _make_data_for_tests(tests_root):
                                                      'last_visit_readable']
                                             }
                               )
-    opera_info = BrowserData(os='posix',
+    opera_info = BrowserData(os=os.name,
                               browser='opera',
                               path=Path(tests_root, 'opera_databases'),
                               profiles=None,
