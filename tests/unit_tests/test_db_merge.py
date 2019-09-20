@@ -1,5 +1,8 @@
 import os
+import tempfile
 from pathlib import Path
+
+import pytest
 
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
@@ -110,8 +113,6 @@ def test_make_records_yielder(tests_root):
                       for browser_records_yielder in combined_db.browser_yielder
                       for browser_records in browser_records_yielder
                       ]
-    # print(*combi_records, sep='\n')
-    expected_data = _make_expected_data()
     browser_names = []
     profile_names = []
     urls = {'firefox': list(),
@@ -156,9 +157,28 @@ def test_make_records_yielder(tests_root):
     assert len(unique_urls['chrome']) == 4 + 9
 
 
+def test_rename_existing_db():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        browser_info = _make_data_for_tests(tmp_dir)
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=browser_info,
+                                                )
+        renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
+        combined_db.output_db.write_text('junk')
+        assert combined_db.output_db.exists()
+        assert not renamed_db_path.exists()
+        combined_db.rename_existing_db()
+        assert not combined_db.output_db.exists()
+        assert renamed_db_path.exists()
+
+
+
+
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-    combined_db = _make_data_for_tests(tests_root)
-    test_find_installed_browsers(tests_root)
-    test_make_records_yielder(tests_root)
+    # combined_db = _make_data_for_tests(tests_root)
+    # test_find_installed_browsers(tests_root)
+    # test_make_records_yielder(tests_root)
+    test_rename_existing_db()
 
