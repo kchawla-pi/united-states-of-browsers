@@ -27,7 +27,9 @@ THIS IS A USE AT YOUR OWN RISK SOFTWARE.
  - For Mozilla Firefox, Chrome, Opera, Vivaldi
  - May work with other Windows versions.
 
-It is Windows ONLY for now. Easy to make it work for other OSes.
+It is Windows ~ONLY~ for now. I got it working with my personal installation of Linux Mint. Watch this space.
+
+Easy to make it work for other OSes.
 Changing path locations for browser profile folder should make it work on other OS. (TODO)
 
 Following functionality has been implemented as of Jan 30, 2018:
