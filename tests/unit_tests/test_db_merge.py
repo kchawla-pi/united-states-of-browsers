@@ -7,6 +7,7 @@ from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
     )
+from united_states_of_browsers.db_merge.helpers import within_temp_dir
 
 
 def _make_data_for_tests(tests_root):
@@ -185,7 +186,12 @@ def test_write_records():
                         for browser in mock_browsers_records
                         for record in browser
                         ]
-    with tempfile.TemporaryDirectory() as tmp_dir:
+    def _test_write_record_(tmp_dir):
+        """ Nested function to run the test code,
+        ensuring all open handles are closed
+        so clean up on Windows does not glitch
+        due to PermissionError with open file handles.
+        """
         combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
                                                 db_name='test_combi_db',
                                                 browser_info=None,
@@ -197,6 +203,7 @@ def test_write_records():
                 primary_key_name='rec_num',
                 fieldnames=['field1', 'field2'],
                 )
+
         with sqlite3.connect(str(combined_db.output_db)) as conn:
             conn.row_factory = sqlite3.Row
             cur = conn.cursor()
@@ -206,8 +213,9 @@ def test_write_records():
             record.update({'rec_num': num})
         actual_records = [dict(record) for record in queried_records]
         assert actual_records == expected_records
-        combined_db.output_db.unlink()
 
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        _test_write_record_(tmp_dir)
 
 def test_write_db_path_to_file():
     test_db_name = 'test_combi_db'
@@ -221,6 +229,7 @@ def test_write_db_path_to_file():
         assert expected_output_path.exists()
         actual_text = expected_output_path.read_text()
         assert actual_text.endswith(test_db_name)
+
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
