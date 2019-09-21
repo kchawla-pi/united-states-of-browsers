@@ -210,7 +210,7 @@ def test_db_merge(tests_root):
                                                 browser_info=browser_info,
                                                 )
         combined_db.orchestrate_db_merge()
-        with sqlite3.connect(combined_db.output_db) as conn:
+        with sqlite3.connect(str(combined_db.output_db)) as conn:
             cur = conn.cursor()
             cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
             res = cur.fetchall()
