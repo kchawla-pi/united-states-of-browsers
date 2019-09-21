@@ -3,10 +3,13 @@ import sqlite3
 import tempfile
 from pathlib import Path
 
+import pytest
+
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
     )
+from united_states_of_browsers.db_merge.db_search import check_fts5
 
 
 def _make_data_for_tests(tests_root):
@@ -221,7 +224,8 @@ def test_db_merge(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     with tempfile.TemporaryDirectory() as tmp_dir:
         tables = _core_test_code()
-    assert 'search_table' in tables
+    if check_fts5():
+        assert 'search_table' in tables
     assert 'history' in tables
 
 
