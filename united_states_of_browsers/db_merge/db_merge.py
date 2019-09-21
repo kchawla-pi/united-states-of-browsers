@@ -8,8 +8,9 @@ import os
 import sqlite3
 
 from united_states_of_browsers.db_merge import browser_data
-from united_states_of_browsers.db_merge.browser import \
-    make_browser_records_yielder
+from united_states_of_browsers.db_merge.browser import (
+    make_browser_records_yielder,
+    )
 from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -79,7 +80,6 @@ class DatabaseMergeOrchestrator:
             previous_db_path.unlink()
             self.output_db.rename(previous_db_path)
     
-    
     def write_records(self, tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]):
         """
         Creates a new sqlite database file with te specified table name, primary key name and list of field names.
@@ -87,6 +87,8 @@ class DatabaseMergeOrchestrator:
         :param primary_key_name: Set the name of the primary key field. Must be one of the fieldnames passed in.
         :param fieldnames: List of fieldnames in the new table.
         """
+        if ' ' in tablename:  # space in table name malforms the SQL statements.
+            raise ValueError(f"Table name cannot have spaces. You provided '{tablename}'")
         queries = make_queries(tablename, primary_key_name, fieldnames)
         with sqlite3.connect(str(self.output_db)) as connection:
             cursor = connection.cursor()
@@ -96,8 +98,7 @@ class DatabaseMergeOrchestrator:
                                self.browser_yielder
                                for browser_record in browser_record_yielder)
             cursor.executemany(queries['insert'], records_yielder)
-             
-    
+
     def build_search_table(self):
         """
         Builds a virtual search table in the newly created sqlite database file.
@@ -112,18 +113,19 @@ class DatabaseMergeOrchestrator:
             cursor.execute(create_virtual_query)
             cursor.execute(insert_virtual_query)
     
-    def write_db_path_to_file(self):
+    def write_db_path_to_file(self, output_dir=None):
         """
-        Writes the complete path to the newly created sqlite database to a text file in
-                <UserDir>/AppData/merged_db_path.txt
+        Writes the complete path to the newly created sqlite database
+        to a text file in the specified output_dir,
+        by default: <UserDir>/AppData/merged_db_path.txt
         """
-        db_path_store_dir = Path(__file__).parents[1].joinpath('AppData')
+        output_dir = output_dir if output_dir else Path(__file__).parents[1]
+        db_path_store_dir = Path(output_dir, 'AppData')
         db_path_store_dir.mkdir(parents=True, exist_ok=True)
         db_path_store = db_path_store_dir.joinpath('merged_db_path.txt')
         with open(db_path_store, 'w') as file_obj:
             file_obj.write(f'{self.output_db.as_posix()}')
-    
-    
+
     def orchestrate_db_merge(self):
         """
         Builds the combined database and its search table.
