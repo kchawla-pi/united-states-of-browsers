@@ -198,31 +198,31 @@ def test_write_db_path_to_file():
         assert actual_text.endswith(test_db_name)
 
 # fts5 installation needed.
-# def test_db_merge(tests_root):
-#     def _core_test_code():
-#         """ Nested function to run the test code,
-#         ensuring all open handles are closed
-#         so clean up on Windows does not glitch
-#         due to PermissionError with open file handles.
-#         """
-#         combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-#                                                 db_name='test_combi_db',
-#                                                 browser_info=browser_info,
-#                                                 )
-#         combined_db.orchestrate_db_merge()
-#         with sqlite3.connect(combined_db.output_db) as conn:
-#             cur = conn.cursor()
-#             cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-#             res = cur.fetchall()
-#             tables = [table_tuple[0] for table_tuple in res]
-#
-#             return tables
-#
-#     browser_info = _make_data_for_tests(tests_root)
-#     with tempfile.TemporaryDirectory() as tmp_dir:
-#         tables = _core_test_code()
-#     assert 'search_table' in tables
-#     assert 'history' in tables
+def test_db_merge(tests_root):
+    def _core_test_code():
+        """ Nested function to run the test code,
+        ensuring all open handles are closed
+        so clean up on Windows does not glitch
+        due to PermissionError with open file handles.
+        """
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=browser_info,
+                                                )
+        combined_db.orchestrate_db_merge()
+        with sqlite3.connect(combined_db.output_db) as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            res = cur.fetchall()
+            tables = [table_tuple[0] for table_tuple in res]
+
+            return tables
+
+    browser_info = _make_data_for_tests(tests_root)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tables = _core_test_code()
+    assert 'search_table' in tables
+    assert 'history' in tables
 
 
 if __name__ == '__main__':
