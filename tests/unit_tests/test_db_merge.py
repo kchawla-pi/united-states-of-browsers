@@ -7,7 +7,6 @@ from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
     )
-from united_states_of_browsers.db_merge.helpers import within_temp_dir
 
 
 def _make_data_for_tests(tests_root):
