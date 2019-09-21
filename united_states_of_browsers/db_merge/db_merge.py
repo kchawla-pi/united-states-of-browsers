@@ -11,6 +11,7 @@ from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.browser import (
     make_browser_records_yielder,
     )
+from united_states_of_browsers.db_merge.db_search import check_fts5
 from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -132,10 +133,17 @@ class DatabaseMergeOrchestrator:
         """
         self.find_installed_browsers()
         self.make_records_yielders()
-        # using table as column name seems to conflict with SQL, table_ for example was not giving sqlite3 syntax error on create.
+        '''
+        using table as column name seems to conflict with SQL, 
+        table_ for example was not giving sqlite3 syntax error on create.
+        '''
         self.rename_existing_db()
-        self.write_records(tablename='history', primary_key_name='rec_num', fieldnames=browser_data.history_table_fieldnames)
-        self.build_search_table()
+        self.write_records(tablename='history', primary_key_name='rec_num',
+                           fieldnames=browser_data.history_table_fieldnames)
+        if check_fts5():
+            self.build_search_table()
+        else:
+            print('FTS5 extension for SQLIte not available/enabled. Search functionality unavailable.')
         self.write_db_path_to_file()
 
 

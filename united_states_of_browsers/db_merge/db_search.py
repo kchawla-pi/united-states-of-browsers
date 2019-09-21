@@ -5,6 +5,41 @@ from united_states_of_browsers.db_merge import helpers
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
+def fts5_installed(cls):
+    FTS5_MIN_VERSION = 1
+    if sqlite3.sqlite_version_info[:3] < FTS5_MIN_VERSION:
+        return False
+
+    # Test in-memory DB to determine if the FTS5 extension is installed.
+    tmp_db = sqlite3.connect(':memory:')
+    try:
+        tmp_db.execute('CREATE VIRTUAL TABLE fts5test USING fts5 (data);')
+    except:
+        try:
+            sqlite3.enable_load_extension(True)
+            sqlite3.load_extension('fts5')
+        except:
+            return False
+        else:
+            cls._meta.database.load_extension('fts5')
+    finally:
+        tmp_db.close()
+
+    return True
+
+def check_fts5():
+    with sqlite3.connect(':memory:') as con:
+        cur = con.cursor()
+        cur.execute('pragma compile_options;')
+        available_pragmas = cur.fetchall()
+
+    print(available_pragmas)
+
+    if ('ENABLE_FTS5',) in available_pragmas:
+        return True
+    else:
+        return False
+
 def _make_sql_statement(word_query: Optional[Text],
                         date_start: Union[int, None],
                         date_stop: Union[int, None]
@@ -75,3 +110,7 @@ def search(db_path: PathInfo,
     sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
     search_results = _run_search(db_path, sql_query, query_bindings)
     return search_results
+
+
+if __name__ == '__main__':
+    check_fts5()
