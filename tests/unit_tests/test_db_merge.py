@@ -226,6 +226,8 @@ def test_db_merge(tests_root):
         tables = _core_test_code()
     if check_fts5():
         assert 'search_table' in tables
+    else:
+        print('fts5 not found. Skpping test for search table building')
     assert 'history' in tables
 
 
