@@ -48,39 +48,6 @@ def _make_data_for_tests(tests_root):
     return browser_info
 
 
-def _make_expected_data():
-    expected_data = {
-        11: {'id': 12, 'url': 'http://www.linuxmint.com/start/tessa/',
-             'title': None, 'visit_count': 1,
-             'last_visit_date': 1567466430249670,
-             'last_visit_readable': '2019-09-03 01:20:30',
-             'browser': 'firefox',
-             'profile': 't87e6f86.test_profile1', 'file': 'places.sqlite',
-             'table': 'moz_places'
-             },
-        37: {'id': 20, 'url': 'https://www.youtube.com/', 'title': 'YouTube',
-             'visit_count': 1, 'last_visit_date': 1567466777759963,
-             'last_visit_readable': '2019-09-03 01:26:17',
-             'browser': 'firefox', 'profile': 'z786c76dv78.test_profile2',
-             'file': 'places.sqlite', 'table': 'moz_places'
-             },
-        44: {'id': 7,
-             'url': 'https://www.google.com/search?q=about%3A+profiles+chrome&oq=about%3A+profiles+chrome&aqs=chrome..69i64.9800j1j8&sourceid=chrome&ie=UTF-8',
-             'title': 'about: profiles chrome - Google Search',
-             'visit_count': 1, 'last_visit_time': 13212130939811649,
-             'last_visit_readable': '2388-09-04 05:22:19', 'browser': 'chrome',
-             'profile': 'Profile 2', 'file': 'History', 'table': 'urls'
-             },
-        - 1: {'id': 4, 'url': 'https://circleci.com/',
-              'title': 'Continuous Integration and Delivery - CircleCI',
-              'visit_count': 1, 'last_visit_time': 13212132010525366,
-              'last_visit_readable': '2388-09-04 05:40:10',
-              'browser': 'chrome', 'profile': 'Profile 1',
-              'file': 'History', 'table': 'urls'
-              }
-        }
-    return expected_data
-
 def test_find_installed_browsers(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
