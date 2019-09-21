@@ -1,8 +1,7 @@
 import os
+import sqlite3
 import tempfile
 from pathlib import Path
-
-import pytest
 
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
@@ -159,10 +158,9 @@ def test_make_records_yielder(tests_root):
 
 def test_rename_existing_db():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        browser_info = _make_data_for_tests(tmp_dir)
         combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
                                                 db_name='test_combi_db',
-                                                browser_info=browser_info,
+                                                browser_info=None,
                                                 )
         renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
         combined_db.output_db.write_text('junk')
@@ -173,12 +171,46 @@ def test_rename_existing_db():
         assert renamed_db_path.exists()
 
 
-
+def test_write_records():
+    mock_browsers_records = [
+        [{'field1': 'b1p1r1v1', 'field2': 'b1p1r1v2'},
+        {'field1': 'b1p2r2v1', 'field2': 'b1p2r2v2'},
+        ],
+        [{'field1': 'b2p1r1v1', 'field2': 'b2p1r1v2'},
+        {'field1': 'b2p2r2v1', 'field2': 'b2p2r2v2'},
+        ]]
+    browser_yielder = (browser for browser in mock_browsers_records)
+    mock_records_generator = (record for record in browser_yielder)
+    expected_records = [record
+                        for browser in mock_browsers_records
+                        for record in browser
+                        ]
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=None,
+                                                )
+        combined_db.browser_yielder = mock_records_generator
+        tablename = 'junk_table'
+        combined_db.write_records(
+                tablename=tablename,
+                primary_key_name='rec_num',
+                fieldnames=['field1', 'field2'],
+                )
+        with sqlite3.connect(str(combined_db.output_db)) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            query_results = cur.execute(f'SELECT * FROM {tablename}')
+            queried_records = query_results.fetchall()
+        for num, record in enumerate(expected_records):
+            record.update({'rec_num': num})
+        actual_records = [dict(record) for record in queried_records]
+        assert actual_records == expected_records
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-    # combined_db = _make_data_for_tests(tests_root)
-    # test_find_installed_browsers(tests_root)
-    # test_make_records_yielder(tests_root)
+    combined_db = _make_data_for_tests(tests_root)
+    test_find_installed_browsers(tests_root)
+    test_make_records_yielder(tests_root)
     test_rename_existing_db()
-
+    test_write_records()

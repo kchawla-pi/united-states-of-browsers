@@ -8,8 +8,9 @@ import os
 import sqlite3
 
 from united_states_of_browsers.db_merge import browser_data
-from united_states_of_browsers.db_merge.browser import \
-    make_browser_records_yielder
+from united_states_of_browsers.db_merge.browser import (
+    make_browser_records_yielder,
+    )
 from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -87,6 +88,8 @@ class DatabaseMergeOrchestrator:
         :param primary_key_name: Set the name of the primary key field. Must be one of the fieldnames passed in.
         :param fieldnames: List of fieldnames in the new table.
         """
+        if ' ' in tablename:  # space in table name malforms the SQL statements.
+            raise ValueError(f"Table name cannot have spaces. You provided '{tablename}'")
         queries = make_queries(tablename, primary_key_name, fieldnames)
         with sqlite3.connect(str(self.output_db)) as connection:
             cursor = connection.cursor()
