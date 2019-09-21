@@ -202,7 +202,7 @@ def test_write_records():
             cur = conn.cursor()
             query_results = cur.execute(f'SELECT * FROM {tablename}')
             queried_records = query_results.fetchall()
-        for num, record in enumerate(expected_records):
+        for num, record in enumerate(expected_records, start=1):
             record.update({'rec_num': num})
         actual_records = [dict(record) for record in queried_records]
         assert actual_records == expected_records
