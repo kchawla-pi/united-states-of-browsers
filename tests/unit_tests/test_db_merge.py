@@ -220,13 +220,7 @@ def test_write_db_path_to_file():
         expected_output_path = Path(tmp_dir, 'AppData', 'merged_db_path.txt')
         assert expected_output_path.exists()
         actual_text = expected_output_path.read_text()
-        if os.name == 'posix':
-            text_parts = actual_text.split('/')
-        if os.name == 'nt':
-            text_parts = actual_text.split('\\')
-        text_parts[-1] == test_db_name
-        text_parts[-3].lower() == 'tmp'
-
+        assert actual_text.endswith(test_db_name)
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
