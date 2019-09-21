@@ -220,7 +220,8 @@ def test_write_db_path_to_file():
         expected_output_path = Path(tmp_dir, 'AppData', 'merged_db_path.txt')
         assert expected_output_path.exists()
         actual_text = expected_output_path.read_text()
-        assert actual_text.endswith(tmp_dir+os.sep+test_db_name)
+        expected_text_end = os.path.join(tmp_dir, test_db_name)
+        assert actual_text.endswith(expected_text_end)
 
 
 if __name__ == '__main__':
