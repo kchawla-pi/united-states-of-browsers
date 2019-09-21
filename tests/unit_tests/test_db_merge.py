@@ -206,11 +206,28 @@ def test_write_records():
             record.update({'rec_num': num})
         actual_records = [dict(record) for record in queried_records]
         assert actual_records == expected_records
+        combined_db.output_db.unlink()
+
+
+def test_write_db_path_to_file():
+    test_db_name = 'test_combi_db'
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name= test_db_name,
+                                                browser_info=None,
+                                                )
+        combined_db.write_db_path_to_file(output_dir=tmp_dir)
+        expected_output_path = Path(tmp_dir, 'AppData', 'merged_db_path.txt')
+        assert expected_output_path.exists()
+        actual_text = expected_output_path.read_text()
+        assert actual_text.endswith(tmp_dir+os.sep+test_db_name)
+
 
 if __name__ == '__main__':
     tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-    combined_db = _make_data_for_tests(tests_root)
-    test_find_installed_browsers(tests_root)
-    test_make_records_yielder(tests_root)
-    test_rename_existing_db()
-    test_write_records()
+    # combined_db = _make_data_for_tests(tests_root)
+    # test_find_installed_browsers(tests_root)
+    # test_make_records_yielder(tests_root)
+    # test_rename_existing_db()
+    # test_write_records()
+    test_write_db_path_to_file()
