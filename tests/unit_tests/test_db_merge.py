@@ -223,7 +223,9 @@ def _core_code_for_testing_db_merge(tmp_dir, browser_info):
 
 
 # fts5 installation needed.
-@pytest.mark.skipif(not check_fts5_installed())
+@pytest.mark.skipif(not check_fts5_installed(),
+                    reason='FTS5 unavailable; '
+                           'required for search table in test.')
 def test_db_merge_with_fts5(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -232,7 +234,8 @@ def test_db_merge_with_fts5(tests_root):
         assert 'history' in tables
 
 
-@pytest.mark.skipif(check_fts5_installed())
+@pytest.mark.skipif(check_fts5_installed(),
+                    reason='FTS5 avaliable, test inappropriate.')
 def test_db_merge_without_fts5(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     expected_warning = UserWarning(
