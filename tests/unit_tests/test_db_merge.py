@@ -247,9 +247,10 @@ def test_db_merge_without_fts5(tests_root):
         with warnings.catch_warnings(record=True) as raised_warnings:
             tables = _core_code_for_testing_db_merge(tmp_dir, browser_info)
             warnings_contents = get_warnings_text(raised_warnings)
-            assert expected_warning.message in warnings_contents
-            assert (expected_warning[expected_warning.message]
-                    == expected_warning.category
+            msg = str(expected_warning)
+            assert msg in warnings_contents
+            assert (expected_warning[msg]
+                    == isinstance(expected_warning, UserWarning)
                     )
 
 
