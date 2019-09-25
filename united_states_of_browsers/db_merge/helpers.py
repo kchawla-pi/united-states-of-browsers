@@ -44,6 +44,6 @@ def get_warnings_text(warnings_recorded: Iterable[Warning]
     :param warnings_recorded: List of Warnings
     :return: Dict of message and category category each warning.
     """
-    return {warning_.message: warning_.category
+    return {str(warning_.message): warning_.category
             for warning_ in warnings_recorded
             }
