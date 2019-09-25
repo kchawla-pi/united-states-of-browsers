@@ -239,15 +239,18 @@ def test_db_merge_with_fts5(tests_root):
                     reason='FTS5 avaliable, test inappropriate.')
 def test_db_merge_without_fts5(tests_root):
     browser_info = _make_data_for_tests(tests_root)
-    expected_warning_text = (
+    expected_warning = UserWarning(
             'FTS5 extension for SQLIte not available/enabled. '
             'Search functionality unavailable.'
             )
     with tempfile.TemporaryDirectory() as tmp_dir:
         with warnings.catch_warnings(record=True) as raised_warnings:
             tables = _core_code_for_testing_db_merge(tmp_dir, browser_info)
-            warnings_text = get_warnings_text(raised_warnings)
-            assert expected_warning_text in warnings_text
+            warnings_contents = get_warnings_text(raised_warnings)
+            assert expected_warning.message in warnings_contents
+            assert (expected_warning[expected_warning.message]
+                    == expected_warning.category
+                    )
 
 
 if __name__ == '__main__':

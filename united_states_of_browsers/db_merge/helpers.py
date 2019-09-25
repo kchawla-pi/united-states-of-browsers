@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence, Text, Union
+from typing import Dict, Iterable, List, Sequence, Text, Union, Tuple, Mapping
 
 
 def make_queries(tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]) -> Dict:
@@ -38,9 +38,12 @@ def errors_display(error_msgs: List) -> List:
     print()
 
 
-def get_warnings_text(warnings_recorded: Iterable[Warning]) -> List[Text]:
-    """ Extracts the text of warning.
+def get_warnings_text(warnings_recorded: Iterable[Warning]
+                      ) -> Mapping[Text, Warning]:
+    """ Extracts the contents of each warning.
     :param warnings_recorded: List of Warnings
-    :return: List of text of each warning.
+    :return: Dict of message and category category each warning.
     """
-    return [str(warning_) for warning_ in warnings_recorded]
+    return {warning_.message: warning_.category
+            for warning_ in warnings_recorded
+            }
