@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import tempfile
+import warnings
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,7 @@ from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
     )
-from united_states_of_browsers.db_merge.db_search import check_fts5
+from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 
 
 def _make_data_for_tests(tests_root):
@@ -200,35 +201,48 @@ def test_write_db_path_to_file():
         actual_text = expected_output_path.read_text()
         assert actual_text.endswith(test_db_name)
 
+
+def _core_code_for_testing_db_merge(tmp_dir, browser_info):
+    """ Nested function to run the test code,
+    ensuring all open handles are closed
+    so clean up on Windows does not glitch
+    due to PermissionError with open file handles.
+    """
+    combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                            db_name='test_combi_db',
+                                            browser_info=browser_info,
+                                            )
+    combined_db.orchestrate_db_merge()
+    with sqlite3.connect(str(combined_db.output_db)) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        res = cur.fetchall()
+        tables = [table_tuple[0] for table_tuple in res]
+
+        return tables
+
+
 # fts5 installation needed.
-def test_db_merge(tests_root):
-    def _core_test_code():
-        """ Nested function to run the test code,
-        ensuring all open handles are closed
-        so clean up on Windows does not glitch
-        due to PermissionError with open file handles.
-        """
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                                db_name='test_combi_db',
-                                                browser_info=browser_info,
-                                                )
-        combined_db.orchestrate_db_merge()
-        with sqlite3.connect(str(combined_db.output_db)) as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-            res = cur.fetchall()
-            tables = [table_tuple[0] for table_tuple in res]
-
-            return tables
-
+@pytest.mark.skipif(not check_fts5_installed())
+def test_db_merge_with_fts5(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     with tempfile.TemporaryDirectory() as tmp_dir:
-        tables = _core_test_code()
-    if check_fts5():
+        tables = _core_code_for_testing_db_merge(tmp_dir, browser_info)
         assert 'search_table' in tables
-    else:
-        print('fts5 not found. Skpping test for search table building')
-    assert 'history' in tables
+        assert 'history' in tables
+
+
+@pytest.mark.skipif(check_fts5_installed())
+def test_db_merge_without_fts5(tests_root):
+    browser_info = _make_data_for_tests(tests_root)
+    expected_warning = UserWarning(
+            'FTS5 extension for SQLIte not available/enabled. '
+            'Search functionality unavailable.'
+            )
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        with warnings.catch_warnings(record=True) as raised_warnings:
+            tables = _core_code_for_testing_db_merge(tmp_dir, browser_info)
+            assert expected_warning in raised_warnings
 
 
 if __name__ == '__main__':
@@ -239,4 +253,4 @@ if __name__ == '__main__':
     # test_rename_existing_db()
     # test_write_records()
     # test_write_db_path_to_file()
-    test_db_merge(tests_root)
+    # test_db_merge(tests_root)

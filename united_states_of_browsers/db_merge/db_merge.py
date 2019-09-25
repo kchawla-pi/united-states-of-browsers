@@ -6,12 +6,13 @@ To create a merged database, run:
 """
 import os
 import sqlite3
+import warnings
 
 from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.browser import (
     make_browser_records_yielder,
     )
-from united_states_of_browsers.db_merge.db_search import check_fts5
+from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
@@ -140,10 +141,13 @@ class DatabaseMergeOrchestrator:
         self.rename_existing_db()
         self.write_records(tablename='history', primary_key_name='rec_num',
                            fieldnames=browser_data.history_table_fieldnames)
-        if check_fts5():
+        try:
             self.build_search_table()
-        else:
-            print('FTS5 extension for SQLIte not available/enabled. Search functionality unavailable.')
+        except sqlite3.OperationalError as excep:
+            if str(excep) == 'no such module: fts5':
+                warnings.warn('FTS5 extension for SQLIte not available/enabled. Search functionality unavailable.')
+            else:
+                raise excep
         self.write_db_path_to_file()
 
 
@@ -151,7 +155,7 @@ def merge_browsers_history(app_path, merged_db_name):
     all_browsers_info = browser_data.prep_browsers_info()
     write_combi_db = DatabaseMergeOrchestrator(app_path=app_path, db_name=merged_db_name, browser_info=all_browsers_info)
     write_combi_db.orchestrate_db_merge()
-# build_search_table('combined_db_fx_cr.sqlite', ['id', 'url', 'title', 'last_visit_time'])
+
 
 def usb_merge():
     app_path = ('~', 'USB')

@@ -27,18 +27,16 @@ def fts5_installed(cls):
 
     return True
 
-def check_fts5():
+def check_fts5_installed():
     with sqlite3.connect(':memory:') as con:
         cur = con.cursor()
         cur.execute('pragma compile_options;')
         available_pragmas = cur.fetchall()
-
-    print(available_pragmas)
-
     if ('ENABLE_FTS5',) in available_pragmas:
         return True
     else:
         return False
+
 
 def _make_sql_statement(word_query: Optional[Text],
                         date_start: Union[int, None],
@@ -113,4 +111,4 @@ def search(db_path: PathInfo,
 
 
 if __name__ == '__main__':
-    check_fts5()
+    check_fts5_installed()
