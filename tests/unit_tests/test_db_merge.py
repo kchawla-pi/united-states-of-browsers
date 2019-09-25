@@ -11,6 +11,7 @@ from united_states_of_browsers.db_merge.db_merge import (
     DatabaseMergeOrchestrator,
     )
 from united_states_of_browsers.db_merge.db_search import check_fts5_installed
+from united_states_of_browsers.db_merge.helpers import get_warnings_text
 
 
 def _make_data_for_tests(tests_root):
@@ -238,14 +239,15 @@ def test_db_merge_with_fts5(tests_root):
                     reason='FTS5 avaliable, test inappropriate.')
 def test_db_merge_without_fts5(tests_root):
     browser_info = _make_data_for_tests(tests_root)
-    expected_warning = UserWarning(
+    expected_warning_text = (
             'FTS5 extension for SQLIte not available/enabled. '
             'Search functionality unavailable.'
             )
     with tempfile.TemporaryDirectory() as tmp_dir:
         with warnings.catch_warnings(record=True) as raised_warnings:
             tables = _core_code_for_testing_db_merge(tmp_dir, browser_info)
-            assert expected_warning in raised_warnings
+            warnings_text = get_warnings_text(raised_warnings)
+            assert expected_warning_text in warnings_text
 
 
 if __name__ == '__main__':

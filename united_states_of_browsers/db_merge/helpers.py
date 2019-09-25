@@ -37,3 +37,10 @@ def errors_display(error_msgs: List) -> List:
             print(error_msg_)
     print()
 
+
+def get_warnings_text(warnings_recorded: Iterable[Warning]) -> List[Text]:
+    """ Extracts the text of warning.
+    :param warnings_recorded: List of Warnings
+    :return: List of text of each warning.
+    """
+    return [str(warning_) for warning_ in warnings_recorded]
