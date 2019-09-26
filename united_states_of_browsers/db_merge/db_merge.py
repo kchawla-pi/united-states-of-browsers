@@ -108,7 +108,7 @@ class DatabaseMergeOrchestrator:
         """
         search_table_fields_str = ", ".join(browser_data.search_table_fields)
         create_virtual_query = f'CREATE VIRTUAL TABLE IF NOT EXISTS search_table USING fts5({search_table_fields_str})'
-        read_query = 'SELECT * FROM history WHERE title IS NOT NULL'
+        read_query = 'SELECT * FROM history' # WHERE title IS NOT NULL'
         insert_virtual_query = f'INSERT INTO search_table {read_query}'
         with sqlite3.connect(str(self.output_db)) as connection:
             cursor = connection.cursor()

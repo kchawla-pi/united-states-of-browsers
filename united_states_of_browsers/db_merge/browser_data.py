@@ -88,9 +88,11 @@ def _linux_browser_info(parent_dir):
 
 history_table_fieldnames = ['id', 'url', 'title', 'visit_count', 'last_visit', 'last_visit_readable', 'browser',
                             'profile', 'file', 'tablename']
-search_table_fields = ['rec_id', 'id', 'url', 'title', 'visit_count', 'last_visit', 'last_visit_readable', 'browser',
-                       'profile', 'file',
-                       'tablename']
+search_table_fields = ['rec_id', 'id',
+					   'url', 'title',
+					   'visit_count', 'last_visit',
+					   'last_visit_readable',
+					   'browser', 'profile', 'file', 'tablename']
 
 
 if __name__ == '__main__':
