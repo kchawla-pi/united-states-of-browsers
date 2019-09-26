@@ -5,28 +5,6 @@ from united_states_of_browsers.db_merge import helpers
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def fts5_installed(cls):
-    FTS5_MIN_VERSION = 1
-    if sqlite3.sqlite_version_info[:3] < FTS5_MIN_VERSION:
-        return False
-
-    # Test in-memory DB to determine if the FTS5 extension is installed.
-    tmp_db = sqlite3.connect(':memory:')
-    try:
-        tmp_db.execute('CREATE VIRTUAL TABLE fts5test USING fts5 (data);')
-    except:
-        try:
-            sqlite3.enable_load_extension(True)
-            sqlite3.load_extension('fts5')
-        except:
-            return False
-        else:
-            cls._meta.database.load_extension('fts5')
-    finally:
-        tmp_db.close()
-
-    return True
-
 def check_fts5_installed():
     with sqlite3.connect(':memory:') as con:
         cur = con.cursor()

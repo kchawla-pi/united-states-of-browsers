@@ -1,11 +1,18 @@
 import tempfile
 
+import pytest
+
 from tests.unit_tests.test_db_merge import _make_data_for_tests
 from united_states_of_browsers.db_merge.db_merge import \
     DatabaseMergeOrchestrator
-from united_states_of_browsers.db_merge.db_search import search
-from united_states_of_browsers.db_merge.table import Table
+from united_states_of_browsers.db_merge.db_search import (check_fts5_installed,
+                                                          search,
+                                                          )
 
+
+pytestmark = pytest.mark.skipif(not check_fts5_installed(),
+                                reason='FTS5 not available. Search disabled',
+                                )
 
 def test_search_with_keywords(tests_root):
     browser_info = _make_data_for_tests(tests_root)
