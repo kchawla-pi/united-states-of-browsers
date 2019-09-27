@@ -89,16 +89,48 @@ def test_search_dates_till_now(tests_root):
                                                 )
         combined_db.orchestrate_db_merge()
 
-        rec_id_ranges = (10, 20), (29, 39)
-        expected_search_results_rec_ids = [list(range(*rec_id_range_))
-                                           for rec_id_range_ in rec_id_ranges
-                                           ]
-        expected_search_results_rec_ids = [*expected_search_results_rec_ids[0],
-                                           *expected_search_results_rec_ids[1],
-                                           ]
+        expected_search_results_rec_ids = [*range(10, 20), * range(29, 39)]
         actual_search_results_rec_ids = sorted([row['rec_id']
                                                 for row in
                                                 search(combined_db.output_db,)
+                                                ])
+        assert expected_search_results_rec_ids == actual_search_results_rec_ids
+
+
+def test_search_date_start(tests_root):
+    browser_info = _make_data_for_tests(tests_root)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=browser_info,
+                                                )
+        combined_db.orchestrate_db_merge()
+
+        expected_search_results_rec_ids = []
+        actual_search_results_rec_ids = sorted([row['rec_id']
+                                                for row in
+                                                search(combined_db.output_db,
+                                                       date_start='2388-09-01',
+                                                       )
+                                                ])
+        assert expected_search_results_rec_ids == actual_search_results_rec_ids
+
+
+def test_search_date_stop(tests_root):
+    browser_info = _make_data_for_tests(tests_root)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=browser_info,
+                                                )
+        combined_db.orchestrate_db_merge()
+
+        expected_search_results_rec_ids = [*range(10, 20), *range(29, 39)]
+        actual_search_results_rec_ids = sorted([row['rec_id']
+                                                for row in
+                                                search(combined_db.output_db,
+                                                       date_stop='2019-09-04',
+                                                       )
                                                 ])
         assert expected_search_results_rec_ids == actual_search_results_rec_ids
 
