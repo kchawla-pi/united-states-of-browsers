@@ -1,10 +1,5 @@
-import tempfile
-
 import pytest
 
-from tests.unit_tests.test_db_merge import _make_data_for_tests
-from united_states_of_browsers.db_merge.db_merge import \
-    DatabaseMergeOrchestrator
 from united_states_of_browsers.db_merge.db_search import (check_fts5_installed,
                                                           search,
                                                           )
@@ -13,16 +8,6 @@ from united_states_of_browsers.db_merge.db_search import (check_fts5_installed,
 pytestmark = pytest.mark.skipif(not check_fts5_installed(),
                                 reason='FTS5 not available. Search disabled',
                                 )
-
-def make_searchable_db(tests_root):
-    browser_info = _make_data_for_tests(tests_root)
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                                db_name='test_combi_db',
-                                                browser_info=browser_info,
-                                                )
-        combined_db.orchestrate_db_merge()
-        yield combined_db
 
 
 def test_search_with_keywords_and_dates(searchable_db_path):
@@ -97,11 +82,3 @@ def test_search_date_stop(searchable_db_path):
                                                    )
                                             ])
     assert expected_search_results_rec_ids == actual_search_results_rec_ids
-
-
-if __name__ == '__main__':
-    tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-    # test_search_with_keywords(tests_root)
-    # test_search_dates_specified(tests_root)
-    # test_search_dates_keywords(tests_root)
-    # test_search_dates_till_now(tests_root)

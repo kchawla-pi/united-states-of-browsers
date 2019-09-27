@@ -84,7 +84,3 @@ def search(db_path: PathInfo,
     sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
     search_results = _run_search(db_path, sql_query, query_bindings)
     return search_results
-
-
-if __name__ == '__main__':
-    check_fts5_installed()
