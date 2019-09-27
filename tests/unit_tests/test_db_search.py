@@ -14,7 +14,7 @@ pytestmark = pytest.mark.skipif(not check_fts5_installed(),
                                 reason='FTS5 not available. Search disabled',
                                 )
 
-def test_search_with_keywords(tests_root):
+def test_search_with_keywords_and_dates(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     with tempfile.TemporaryDirectory() as tmp_dir:
         combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
@@ -29,6 +29,8 @@ def test_search_with_keywords(tests_root):
                 row['rec_id']
                 for row in search(combined_db.output_db,
                                   word_query=search_keyword_,
+                                  date_start='2019-01-01',
+                                  date_stop='2388-12-31',
                                   )
                 ])
         expected_search_results_rec_ids = {'circleci': [50, 51],
@@ -58,7 +60,7 @@ def test_search_dates_specified(tests_root):
         assert expected_search_results_rec_ids == actual_search_results_rec_ids
 
 
-def test_search_dates_keywords(tests_root):
+def test_search_keywords(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     with tempfile.TemporaryDirectory() as tmp_dir:
         combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
@@ -67,14 +69,12 @@ def test_search_dates_keywords(tests_root):
                                                 )
         combined_db.orchestrate_db_merge()
 
-        expected_search_results_rec_ids = [39, 40, 41]
+        expected_search_results_rec_ids = [13, 31]
         actual_search_results_rec_ids = sorted([row['rec_id']
                                                 for row in
                                                 search(
                                                     combined_db.output_db,
-                                                        word_query='github',
-                                                    date_start='2388-09-01',
-                                                    date_stop='2388-09-30',
+                                                        word_query='start page',
                                                     )
                                                 ])
         assert expected_search_results_rec_ids == actual_search_results_rec_ids
