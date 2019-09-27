@@ -250,14 +250,3 @@ def test_db_merge_without_fts5(tests_root):
         msg = str(expected_warning)
         assert msg in warnings_contents
         assert repr(warnings_contents[msg]) == repr(UserWarning)
-
-
-if __name__ == '__main__':
-    tests_root = '/home/kshitij/workspace/united-states-of-browsers/tests'
-    # combined_db = _make_data_for_tests(tests_root)
-    # test_find_installed_browsers(tests_root)
-    # test_make_records_yielder(tests_root)
-    # test_rename_existing_db()
-    # test_write_records()
-    # test_write_db_path_to_file()
-    # test_db_merge(tests_root)

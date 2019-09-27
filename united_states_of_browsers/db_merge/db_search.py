@@ -5,28 +5,6 @@ from united_states_of_browsers.db_merge import helpers
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def fts5_installed(cls):
-    FTS5_MIN_VERSION = 1
-    if sqlite3.sqlite_version_info[:3] < FTS5_MIN_VERSION:
-        return False
-
-    # Test in-memory DB to determine if the FTS5 extension is installed.
-    tmp_db = sqlite3.connect(':memory:')
-    try:
-        tmp_db.execute('CREATE VIRTUAL TABLE fts5test USING fts5 (data);')
-    except:
-        try:
-            sqlite3.enable_load_extension(True)
-            sqlite3.load_extension('fts5')
-        except:
-            return False
-        else:
-            cls._meta.database.load_extension('fts5')
-    finally:
-        tmp_db.close()
-
-    return True
-
 def check_fts5_installed():
     with sqlite3.connect(':memory:') as con:
         cur = con.cursor()
@@ -47,22 +25,20 @@ def _make_sql_statement(word_query: Optional[Text],
         Optional: word_query, date_start and date_stop.
     """
     if not word_query:
-        sql_query = ('SELECT * FROM search_table'
-                     ' WHERE rec_id IN'
-                     ' (SELECT rec_id'
-                     ' FROM search_table'
-                     ' WHERE last_visit BETWEEN ? AND ?)'
-                     )
+        sql_query = (
+            ' SELECT *'
+            ' FROM search_table'
+            ' WHERE last_visit BETWEEN ? AND ?'
+        )
         query_bindings = [date_start, date_stop]
     else:
-        sql_query = ('SELECT * FROM search_table'
-                     ' WHERE rec_id IN'
-                     ' (SELECT rec_id'
-                     ' FROM search_table'
-                     ' WHERE search_table'
-                     ' MATCH ? ORDER BY bm25(search_table, 0, 0, 7, 9, 10, 0, 0, 0, 0)) AND last_visit BETWEEN ? AND ?'
-                     )
-        query_bindings = [word_query, date_start, date_stop]
+        sql_query = (
+                ' SELECT * FROM search_table'
+                ' WHERE last_visit BETWEEN ? AND ?'
+                ' AND search_table'
+                ' MATCH ? ORDER BY bm25(search_table, 0, 0, 7, 9, 0, 0, 0, 0, 0)'
+        )
+        query_bindings = [date_start, date_stop, word_query, ]
     return sql_query, query_bindings
 
 
@@ -77,7 +53,7 @@ def _run_search(db_ref: PathInfo, sql_query: Text, query_bindings: Iterable[Text
     try:
         query_results = db_ref.execute(sql_query, query_bindings)
     except AttributeError:
-        with sqlite3.connect(db_ref) as sink_conn:
+        with sqlite3.connect(str(db_ref)) as sink_conn:
             sink_conn.row_factory = sqlite3.Row
             query_results = sink_conn.execute(sql_query, query_bindings)
     return query_results
@@ -108,7 +84,3 @@ def search(db_path: PathInfo,
     sql_query, query_bindings = _make_sql_statement(word_query, date_start, date_stop)
     search_results = _run_search(db_path, sql_query, query_bindings)
     return search_results
-
-
-if __name__ == '__main__':
-    check_fts5_installed()

@@ -11,6 +11,12 @@ from flask.helpers import get_root_path
 def tests_root():
     return get_root_path('tests')
 
+
+@pytest.fixture(scope='session')
+def searchable_db_path():
+    return str(Path(get_root_path('tests'), 'AppData', 'searchable_db'))
+
+
 @pytest.fixture(autouse=True)
 def create_mozilla_data(tmpdir):
     db_path = str(Path(tmpdir, 'test_mozilla.sqlite'))

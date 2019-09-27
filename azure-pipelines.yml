@@ -37,11 +37,8 @@ jobs:
         python -m pytest --pyargs tests -n 2 --cov-report=xml --cov=united_states_of_browsers --cov-append
       displayName: 'pytest'
 
-#    - script: bash <(curl https://codecov.io/bash) -t '$(CODECOV_TOKEN)'
-#      displayName: 'codecov'
-
     - script: |
-        codecov --token=$env:CODECOV_TOKEN
+        codecov -f coverage.xml --token=$(CODECOV_TOKEN)
       displayName: 'codecov'
 
   - job: 'TestLinux'
