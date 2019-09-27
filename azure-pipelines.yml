@@ -38,7 +38,7 @@ jobs:
       displayName: 'pytest'
 
     - script: |
-        codecov --token=$env:CODECOV_TOKEN -f coverage.xml
+        codecov -f coverage.xml --token=$env:CODECOV_TOKEN
       displayName: 'codecov'
 
   - job: 'TestLinux'
