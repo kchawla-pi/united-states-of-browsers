@@ -41,7 +41,7 @@ jobs:
 #      displayName: 'codecov'
 
     - script: |
-        codecov --coverage=%CODECOV_TOKEN%
+        codecov --token=%CODECOV_TOKEN%
       displayName: 'codecov'
 
   - job: 'TestLinux'
