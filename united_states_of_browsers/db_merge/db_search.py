@@ -53,7 +53,7 @@ def _run_search(db_ref: PathInfo, sql_query: Text, query_bindings: Iterable[Text
     try:
         query_results = db_ref.execute(sql_query, query_bindings)
     except AttributeError:
-        with sqlite3.connect(db_ref) as sink_conn:
+        with sqlite3.connect(str(db_ref)) as sink_conn:
             sink_conn.row_factory = sqlite3.Row
             query_results = sink_conn.execute(sql_query, query_bindings)
     return query_results
