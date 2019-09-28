@@ -15,7 +15,7 @@ def client():
     db_name = 'searchable_db'
     db_path = Path(app_root, db_name)
 
-    usb_server.app.config['DATABASE'] = db_path
+    usb_server.app.config['DATABASE'] = str(db_path)
     usb_server.app.config['TESTING'] = True
     with usb_server.app.test_client() as client:
         with usb_server.app.app_context():
