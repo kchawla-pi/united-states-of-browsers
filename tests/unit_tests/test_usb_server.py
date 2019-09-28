@@ -11,7 +11,7 @@ from united_states_of_browsers.usb_server import usb_server
 def client(test_db):
     tests_root = flask.helpers.get_root_path('tests')
     app_root = Path(tests_root, 'AppData')
-    db_name = 'test_usb_db.sqlite'
+    db_name = 'usb_db.sqlite'
     db_path = Path(app_root, db_name)
 
     usb_server.app.config['DATABASE'] = db_path

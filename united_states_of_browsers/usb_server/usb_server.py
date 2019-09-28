@@ -16,7 +16,10 @@ app.config.from_object(__name__)
 def get_app__db_path():
     app_root_path_parts = Path(app.root_path).parts
     root_idx = Path(app.root_path).parts.index('united_states_of_browsers')
-    app_db_path = Path('~', '.USB', 'AppData', 'merged_db_path.txt').expanduser().read_text()
+    try:
+        app_db_path = Path('~', '.USB', 'AppData', 'merged_db_path.txt').expanduser().read_text()
+    except FileNotFoundError:
+        app_db_path = Path('~', '.USB', 'usb_db.sqlite')
     return app_db_path
 
 app.config.update(dict(
