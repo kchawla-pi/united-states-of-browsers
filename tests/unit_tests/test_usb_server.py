@@ -14,11 +14,11 @@ def client():
     db_name = 'test_usb_db.sqlite'
     db_path = Path(app_root, db_name)
 
-    merge_browsers_history(app_root, db_name)
     usb_server.app.config['DATABASE'] = db_path
     usb_server.app.config['TESTING'] = True
     with usb_server.app.test_client() as client:
         with usb_server.app.app_context():
+            merge_browsers_history(app_root, db_name)
             usb_server.connect_db()
         yield client
 
