@@ -1,16 +1,20 @@
-import tempfile
 from pathlib import Path
 
 import pytest
 import flask
 
+from united_states_of_browsers.db_merge.db_merge import merge_browsers_history
 from united_states_of_browsers.usb_server import usb_server
 
 
 @pytest.fixture()
 def client():
     tests_root = flask.helpers.get_root_path('tests')
-    db_path = Path(tests_root, 'AppData', 'searchable_db')
+    app_root = Path(tests_root, 'AppData')
+    db_name = 'test_usb_db.sqlite'
+    db_path = Path(app_root, db_name)
+
+    merge_browsers_history(app_root, db_name)
     usb_server.app.config['DATABASE'] = db_path
     usb_server.app.config['TESTING'] = True
     with usb_server.app.test_client() as client:
