@@ -8,7 +8,7 @@ from united_states_of_browsers.usb_server import usb_server
 
 
 @pytest.fixture()
-def client():
+def client(test_db):
     tests_root = flask.helpers.get_root_path('tests')
     app_root = Path(tests_root, 'AppData')
     db_name = 'test_usb_db.sqlite'

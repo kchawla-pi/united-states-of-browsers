@@ -13,12 +13,14 @@ from united_states_of_browsers.db_merge import db_search
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-app_root_path_parts = Path(app.root_path).parts
-root_idx = Path(app.root_path).parts.index('united_states_of_browsers')
-app_db_path = Path('~', '.USB', 'AppData', 'merged_db_path.txt').expanduser().read_text()
+def get_app__db_path():
+    app_root_path_parts = Path(app.root_path).parts
+    root_idx = Path(app.root_path).parts.index('united_states_of_browsers')
+    app_db_path = Path('~', '.USB', 'AppData', 'merged_db_path.txt').expanduser().read_text()
+    return app_db_path
 
 app.config.update(dict(
-        DATABASE=app_db_path,
+        DATABASE=get_app__db_path(),
         SECRET_KEY='development key',
         USERNAME='admin',
         PASSWORD='default',
