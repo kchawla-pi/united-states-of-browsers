@@ -121,7 +121,7 @@ class DatabaseMergeOrchestrator:
         to a text file in the specified output_dir,
         by default: <UserDir>/AppData/merged_db_path.txt
         """
-        output_dir = output_dir if output_dir else Path(__file__).parents[1]
+        output_dir = output_dir if output_dir else Path('~', '.USB').expanduser()
         db_path_store_dir = Path(output_dir, 'AppData')
         db_path_store_dir.mkdir(parents=True, exist_ok=True)
         db_path_store = db_path_store_dir.joinpath('merged_db_path.txt')
@@ -158,7 +158,7 @@ def merge_browsers_history(app_path, merged_db_name):
 
 
 def usb_merge():
-    app_path = ('~', 'USB')
+    app_path = ('~', '.USB')
     merged_db_name = 'usb_db.sqlite'
     merge_browsers_history(app_path , merged_db_name)
 

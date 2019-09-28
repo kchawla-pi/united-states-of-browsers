@@ -15,8 +15,7 @@ app.config.from_object(__name__)
 
 app_root_path_parts = Path(app.root_path).parts
 root_idx = Path(app.root_path).parts.index('united_states_of_browsers')
-app_root_path_parts = Path(*app_root_path_parts[:root_idx + 1])
-app_db_path = app_root_path_parts.joinpath('AppData', 'merged_db_path.txt').read_text()
+app_db_path = Path('~', '.USB', 'AppData', 'merged_db_path.txt').expanduser().read_text()
 
 app.config.update(dict(
         DATABASE=app_db_path,
