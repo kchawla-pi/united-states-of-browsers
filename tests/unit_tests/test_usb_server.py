@@ -23,7 +23,7 @@ def client():
         yield client
 
 
-@pytest.mark.skipif(not check_fts5_installed())
+@pytest.mark.skipif(not check_fts5_installed(), reason='FTS5 not installed')
 def test_show_entries(client):
     rv = client.get('/')
     assert rv.data
