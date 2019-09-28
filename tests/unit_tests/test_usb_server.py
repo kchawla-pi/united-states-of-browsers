@@ -7,6 +7,14 @@ from united_states_of_browsers.db_merge.db_merge import merge_browsers_history
 from united_states_of_browsers.usb_server import usb_server
 
 
+@pytest.fixture(scope='session', autouse=True)
+def test_db():
+    tests_root = flask.helpers.get_root_path('tests')
+    app_root = Path(tests_root, 'AppData')
+    db_name = 'test_usb_db.sqlite'
+    merge_browsers_history(app_root, db_name)
+
+
 @pytest.fixture()
 def client():
     tests_root = flask.helpers.get_root_path('tests')
@@ -18,7 +26,6 @@ def client():
     usb_server.app.config['TESTING'] = True
     with usb_server.app.test_client() as client:
         with usb_server.app.app_context():
-            merge_browsers_history(app_root, db_name)
             usb_server.connect_db()
         yield client
 
