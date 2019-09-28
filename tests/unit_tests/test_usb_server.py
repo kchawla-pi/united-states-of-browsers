@@ -1,9 +1,8 @@
 from pathlib import Path
 
-import pytest
 import flask
+import pytest
 
-from united_states_of_browsers.db_merge.db_merge import merge_browsers_history
 from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 from united_states_of_browsers.usb_server import usb_server
 
@@ -29,8 +28,11 @@ def test_show_entries(client):
     assert rv.data
 
 
-# def test_search(client):
-#     search_args = {flask.request.args["query"]: 'circleci'}
-#     # flask.request.args["date-start"] =
-#     rv = client.post('/search', data=search_args, follow_redirects=True)
-#     assert rv.data
+@pytest.mark.skipif(not check_fts5_installed(), reason='FTS5 not installed')
+def test_search(client):
+    search_args = {'query': 'circleci',
+                   'date-from': '2388-07-01',
+                   'date-to': '2388-09-29',
+                   }
+    rv = client.post('/search', data=search_args, follow_redirects=True)
+    assert rv.data

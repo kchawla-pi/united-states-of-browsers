@@ -2,6 +2,9 @@
 import sqlite3
 
 from pathlib import Path
+
+import werkzeug
+
 from flask import (Flask,
                    g,
                    render_template,
@@ -55,12 +58,19 @@ def show_entries():
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     db = get_db()
-    search_results = db_search.search(db,
-                                      request.args["query"],
-                                      request.args["date-from"],
-                                      request.args["date-to"]
-                                      )
-    
+    try:
+        search_results = db_search.search(db,
+                                          request.args["query"],
+                                          request.args["date-from"],
+                                          request.args["date-to"]
+                                          )
+    except werkzeug.exceptions.BadRequestKeyError:
+        search_results = db_search.search(db,
+                                          request.form["query"],
+                                          request.form["date-from"],
+                                          request.form["date-to"]
+                                          )
+
     return render_template('main.html', entries=search_results)
 # return search_results
 
