@@ -4,6 +4,7 @@ import pytest
 import flask
 
 from united_states_of_browsers.db_merge.db_merge import merge_browsers_history
+from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 from united_states_of_browsers.usb_server import usb_server
 
 
@@ -22,6 +23,7 @@ def client(test_db):
         yield client
 
 
+@pytest.mark.skipif(not check_fts5_installed())
 def test_show_entries(client):
     rv = client.get('/')
     assert rv.data
