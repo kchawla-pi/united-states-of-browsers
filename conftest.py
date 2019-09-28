@@ -78,14 +78,3 @@ def create_fake_non_db_file(tmpdir):
 def create_invalid_filepath(tmpdir):
     invalid_filepath = Path(tmpdir, 'invalid_filepath')
     return str(invalid_filepath)
-
-
-@pytest.mark.skipif(not check_fts5_installed())
-@pytest.fixture(scope='session', autouse=True)
-def test_db():
-    tests_root = flask.helpers.get_root_path('tests')
-    app_root = Path(tests_root, 'AppData')
-    db_name = 'test_usb_db.sqlite'
-    merge_browsers_history(app_root, db_name)
-
-
