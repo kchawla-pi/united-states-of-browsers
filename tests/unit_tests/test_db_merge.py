@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
@@ -250,3 +251,21 @@ def test_db_merge_without_fts5(tests_root):
         msg = str(expected_warning)
         assert msg in warnings_contents
         assert repr(warnings_contents[msg]) == repr(UserWarning)
+
+
+def test_prep_browser_info():
+    all_browsers_info = browser_data.prep_browsers_info()
+    browser_particulars = {'os': [], 'browsers': []}
+    for browser_info in all_browsers_info:
+        browser_particulars['os'].append(browser_info.os)
+        browser_particulars['browsers'].append(browser_info.browser)
+    browser_particulars['os'].sort()
+    browser_particulars['browsers'].sort()
+    if os.name == 'nt':
+        supported_browsers = ['firefox', 'chrome', 'opera', 'vivaldi']
+    elif os.name == 'posix':
+        supported_browsers = ['firefox', 'chrome']
+    supported_browsers.sort()
+    assert browser_particulars['browsers'] == supported_browsers
+    assert set(browser_particulars['os']) == {os.name}
+
