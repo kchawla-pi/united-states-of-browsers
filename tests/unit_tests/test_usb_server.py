@@ -26,6 +26,8 @@ def client():
 def test_show_entries(client):
     rv = client.get('/')
     assert rv.data
+    assert b'tessa' in rv.data
+    assert b'getpocket' in rv.data
 
 
 @pytest.mark.skipif(not check_fts5_installed(), reason='FTS5 not installed')
@@ -36,3 +38,5 @@ def test_search(client):
                    }
     rv = client.post('/search', data=search_args, follow_redirects=True)
     assert rv.data
+    assert b'circleci.com' in rv.data
+
