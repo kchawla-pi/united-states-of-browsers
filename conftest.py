@@ -2,13 +2,9 @@ import sqlite3
 
 from pathlib import Path
 
-import flask
 import pytest
 
 from flask.helpers import get_root_path
-
-from united_states_of_browsers.db_merge.db_merge import merge_browsers_history
-from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 
 
 @pytest.fixture(scope='session')
