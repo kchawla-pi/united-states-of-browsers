@@ -223,12 +223,14 @@ def test_write_records_improper_table_name():
                                                 )
         combined_db.browser_yielder = [{},{}]
         tablename = 'junk _table'
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as excep:
             combined_db.write_records(
                     tablename=tablename,
                     primary_key_name='rec_num',
                     fieldnames=['field1', 'field2'],
                     )
+        assert str(excep.value) == ("Table name cannot have spaces. "
+                                    "You provided 'junk _table'")
 
 
 def test_write_db_path_to_file():
