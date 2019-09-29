@@ -1,1 +1,0 @@
-File to test the exception when the Table.connect() method tries to open a non-sqlite target.
