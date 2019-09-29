@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
@@ -131,6 +132,7 @@ def test_make_records_yielder(tests_root):
 def test_rename_existing_db():
     with tempfile.TemporaryDirectory() as tmp_dir:
         combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                # case when path == [dirnames]
                                                 db_name='test_combi_db',
                                                 browser_info=None,
                                                 )
@@ -141,6 +143,30 @@ def test_rename_existing_db():
         combined_db.rename_existing_db()
         assert not combined_db.output_db.exists()
         assert renamed_db_path.exists()
+        # case when previous db file exists
+        combined_db.rename_existing_db()
+
+
+def test_rename_existing_db_delete_existing_backup():
+    # case when previous db file backup exists
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=[tmp_dir, ''],
+                                                # case when path == [dirnames]
+                                                db_name='test_combi_db',
+                                                browser_info=None,
+                                                )
+        renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
+        combined_db.output_db.write_text('junk')
+        renamed_db_path.write_text('1')
+        assert combined_db.output_db.exists()
+        assert renamed_db_path.exists()
+        assert os.path.getsize(renamed_db_path) == 1
+        assert os.path.getsize(combined_db.output_db) == 4
+
+        combined_db.rename_existing_db()
+        assert not combined_db.output_db.exists()
+        assert renamed_db_path.exists()
+        assert os.path.getsize(renamed_db_path) == 4
 
 
 def test_write_records():
@@ -187,6 +213,24 @@ def test_write_records():
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         _test_write_record_(tmp_dir)
+
+
+def test_write_records_improper_table_name():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=None,
+                                                )
+        combined_db.browser_yielder = [{},{}]
+        tablename = 'junk _table'
+        with pytest.raises(ValueError) as excep:
+            combined_db.write_records(
+                    tablename=tablename,
+                    primary_key_name='rec_num',
+                    fieldnames=['field1', 'field2'],
+                    )
+        assert str(excep.value) == ("Table name cannot have spaces. "
+                                    "You provided 'junk _table'")
 
 
 def test_write_db_path_to_file():
@@ -250,3 +294,21 @@ def test_db_merge_without_fts5(tests_root):
         msg = str(expected_warning)
         assert msg in warnings_contents
         assert repr(warnings_contents[msg]) == repr(UserWarning)
+
+
+def test_prep_browser_info():
+    all_browsers_info = browser_data.prep_browsers_info()
+    browser_particulars = {'os': [], 'browsers': []}
+    for browser_info in all_browsers_info:
+        browser_particulars['os'].append(browser_info.os)
+        browser_particulars['browsers'].append(browser_info.browser)
+    browser_particulars['os'].sort()
+    browser_particulars['browsers'].sort()
+    if os.name == 'nt':
+        supported_browsers = ['firefox', 'chrome', 'opera', 'vivaldi']
+    elif os.name == 'posix':
+        supported_browsers = ['firefox', 'chrome']
+    supported_browsers.sort()
+    assert browser_particulars['browsers'] == supported_browsers
+    assert set(browser_particulars['os']) == {os.name}
+

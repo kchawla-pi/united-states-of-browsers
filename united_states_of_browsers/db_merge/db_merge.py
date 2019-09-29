@@ -151,17 +151,17 @@ class DatabaseMergeOrchestrator:
         self.write_db_path_to_file()
 
 
-def merge_browsers_history(app_path, merged_db_name):
+def merge_browsers_history(app_path, merged_db_name):  # pragma: no cover
     all_browsers_info = browser_data.prep_browsers_info()
     write_combi_db = DatabaseMergeOrchestrator(app_path=app_path, db_name=merged_db_name, browser_info=all_browsers_info)
     write_combi_db.orchestrate_db_merge()
 
 
-def usb_merge():
+def usb_merge():  # pragma: no cover
     app_path = ('~', '.USB')
     merged_db_name = 'usb_db.sqlite'
     merge_browsers_history(app_path , merged_db_name)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     usb_merge()
