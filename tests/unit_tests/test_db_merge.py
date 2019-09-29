@@ -131,11 +131,13 @@ def test_make_records_yielder(tests_root):
 
 def test_rename_existing_db():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+        combined_db = DatabaseMergeOrchestrator(app_path=[tmp_dir, ''],
+                                                # case when path == [dirnames]
                                                 db_name='test_combi_db',
                                                 browser_info=None,
                                                 )
         renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
+        renamed_db_path.touch()  # case when previous db file exists
         combined_db.output_db.write_text('junk')
         assert combined_db.output_db.exists()
         assert not renamed_db_path.exists()

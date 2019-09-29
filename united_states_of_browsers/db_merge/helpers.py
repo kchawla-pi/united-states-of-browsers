@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Dict, Iterable, List, Sequence, Text, Union, Tuple, Mapping
+from typing import Dict, Iterable, List, Sequence, Text, Union, Mapping
 
 
 def make_queries(tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]) -> Dict:
@@ -19,7 +18,10 @@ def query_sanitizer(query: str, allowed_chars: Union[str, Iterable]='_') -> str:
     Returns a string.
     """
     allowed_chars = set(allowed_chars)
-    return ''.join([char for char in query if char.isalnum() or char in allowed_chars])  #, '?', '(', ')', ','}])
+    return ''.join([char
+                    for char in query
+                    if char.isalnum()
+                    or char in allowed_chars])  #, '?', '(', ')', ','}])
 
 
 def check_records_unique_with_field(records, field):
