@@ -137,13 +137,14 @@ def test_rename_existing_db():
                                                 browser_info=None,
                                                 )
         renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
-        renamed_db_path.touch()  # case when previous db file exists
         combined_db.output_db.write_text('junk')
         assert combined_db.output_db.exists()
         assert not renamed_db_path.exists()
         combined_db.rename_existing_db()
         assert not combined_db.output_db.exists()
         assert renamed_db_path.exists()
+        # case when previous db file exists
+        combined_db.rename_existing_db()
 
 
 def test_write_records():
