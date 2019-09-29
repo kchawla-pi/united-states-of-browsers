@@ -1,0 +1,4 @@
+[run]
+omit = './united_states_of_browsers/run_usb.py'
+[report]
+omit = './united_states_of_browsers/run_usb.py'
