@@ -215,6 +215,22 @@ def test_write_records():
         _test_write_record_(tmp_dir)
 
 
+def test_write_records_improper_table_name():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
+                                                db_name='test_combi_db',
+                                                browser_info=None,
+                                                )
+        combined_db.browser_yielder = [{},{}]
+        tablename = 'junk _table'
+        with pytest.raises(ValueError):
+            combined_db.write_records(
+                    tablename=tablename,
+                    primary_key_name='rec_num',
+                    fieldnames=['field1', 'field2'],
+                    )
+
+
 def test_write_db_path_to_file():
     test_db_name = 'test_combi_db'
     with tempfile.TemporaryDirectory() as tmp_dir:
