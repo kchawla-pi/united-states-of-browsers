@@ -148,7 +148,7 @@ def test_rename_existing_db():
 
 
 def test_rename_existing_db_delete_existing_backup():
-    # case when previous db file exists
+    # case when previous db file backup exists
     with tempfile.TemporaryDirectory() as tmp_dir:
         combined_db = DatabaseMergeOrchestrator(app_path=[tmp_dir, ''],
                                                 # case when path == [dirnames]
