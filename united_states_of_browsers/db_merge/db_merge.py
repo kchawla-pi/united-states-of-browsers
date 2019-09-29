@@ -163,5 +163,5 @@ def usb_merge():
     merge_browsers_history(app_path , merged_db_name)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # prgama: no cover
     usb_merge()

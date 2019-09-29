@@ -3,6 +3,7 @@ import subprocess
 
 from pathlib import Path
 
+
 def make_paths():
     venv_python_path = Path(__file__).absolute().parents[1]
     venv_subdir, exe_ext = ('bin', '') if os.name == 'posix' else ('Scripts', '.exe')
