@@ -131,7 +131,7 @@ def test_make_records_yielder(tests_root):
 
 def test_rename_existing_db():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=[tmp_dir, ''],
+        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
                                                 # case when path == [dirnames]
                                                 db_name='test_combi_db',
                                                 browser_info=None,
@@ -145,6 +145,28 @@ def test_rename_existing_db():
         assert renamed_db_path.exists()
         # case when previous db file exists
         combined_db.rename_existing_db()
+
+
+def test_rename_existing_db_delete_existing_backup():
+    # case when previous db file exists
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        combined_db = DatabaseMergeOrchestrator(app_path=[tmp_dir, ''],
+                                                # case when path == [dirnames]
+                                                db_name='test_combi_db',
+                                                browser_info=None,
+                                                )
+        renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
+        combined_db.output_db.write_text('junk')
+        renamed_db_path.write_text('1')
+        assert combined_db.output_db.exists()
+        assert renamed_db_path.exists()
+        assert os.path.getsize(renamed_db_path) == 1
+        assert os.path.getsize(combined_db.output_db) == 4
+
+        combined_db.rename_existing_db()
+        assert not combined_db.output_db.exists()
+        assert renamed_db_path.exists()
+        assert os.path.getsize(renamed_db_path) == 4
 
 
 def test_write_records():
