@@ -12,6 +12,7 @@ h1 {
     }
 
 #search-section {
+    background: white;
     position: sticky;
     z-index: 1;
     top: 0px;
