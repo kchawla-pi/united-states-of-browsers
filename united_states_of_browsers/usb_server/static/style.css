@@ -11,13 +11,19 @@ h1 {
     alignment: center;
     }
 
+#search-section {
+    position: sticky;
+    z-index: 1;
+    top: 0px;
+}
+
 .date {
     margin-left: 7%;
     alignment: center;
     }
 
 .table {
-    max-height: 460px;
+    /*max-height: 460px;*/
     max-width: 96%;
     overflow-x: hidden;
     display: block;

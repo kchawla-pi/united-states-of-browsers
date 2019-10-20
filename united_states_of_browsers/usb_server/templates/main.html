@@ -18,6 +18,7 @@
 <div class="container-fluid">
 
     <h1 class="text-right"> <a id="app-name" href="/">United States of Browsers </a> </h1>
+    <div id="search-section">
     <form action="{{ url_for('search') }}" method="GET">
         <input id="search-box" type="text" name="query" placeholder="Enter search query here">
         <button class="btn btn-primary" type="submit">Search Browser History</button>
@@ -31,6 +32,7 @@
             <input type="date" id="date-to" name="date-to">
         </div>
     </form>
+    </div>
 
     <table class="table htable table-responsive-s table-striped table-hover table-sm">
         <caption>Web history across all local browsers and profiles.</caption>
