@@ -16,7 +16,14 @@ from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def make_paths(app_path: PathInfo, db_name: Text):
+def make_paths(app_path: [PathInfo, List[Text]],
+               db_name: Text,
+               ) -> Tuple[PathInfo, PathInfo]:
+    """ Creates paths for app & final databse file
+    :param app_path: Path to directory where app data will be stored
+    :param db_name: Name of the database file
+    :return: app_path, output_db
+    """
     try:
         app_path = Path(app_path).expanduser()
     except TypeError:
@@ -26,9 +33,10 @@ def make_paths(app_path: PathInfo, db_name: Text):
     return app_path, output_db
 
 
-def find_installed_browsers(browser_info: BrowserData):
+def find_installed_browsers(browser_info: BrowserData) -> BrowserData:
     """
-    Checks if the default browser paths exist on the system to determine if they are installed.
+    Checks if the default browser paths exist on the system to determine
+    if they are installed.
     """
     installed_browsers_data = [browser_datum
                                for browser_datum in browser_info
@@ -39,13 +47,13 @@ def find_installed_browsers(browser_info: BrowserData):
     return installed_browsers_data
 
 
-def make_records_yielders(browsers_data: BrowserData, app_path: PathInfo):
-    """
-    Creates a Browser object for each discovered browser, initializes it with necessary info,
-    accesses the specified tables and fields from those Browser objects,
-    and creates a generator which will yield records from those tables and fields.
-    The generator is stored in:
-            DatabaseMergeOrchestrator_obj.browser_yielder
+def make_records_yielders(browsers_data: BrowserData,
+                          app_path: PathInfo,
+                          ) -> List[Generator]:
+    """ Creates a list of generators, each yielding the records for each discovered browser.
+    :param browsers_data: NamedTuple of discovered browsers, from find_installed_browsers().
+    :param app_path: Path to dir where all app info is stored
+    :return: List of generators yielding records for each browser.
     """
     browser_yielder = []
     for browser_datum in browsers_data:
@@ -61,31 +69,40 @@ def make_records_yielders(browsers_data: BrowserData, app_path: PathInfo):
                 fieldnames=fields_list,
                 copies_subpath=app_path,
         )
-
         browser_yielder.append(each_browser_records_yielder)
     return browser_yielder
 
 
-def rename_existing_db(output_db: PathInfo):
+def rename_existing_db(output_db: PathInfo) -> Optional[PathInfo]:
     """
     If the merged history sqlite database file already exists,
     renames it to prevent it being overwritten by a new database file.
+    :param output_db: Full path to the final databse file.
+    :returns: Path to previous version of database or None
     """
     previous_db_path = output_db.with_name('_previous_' + output_db.name)
 
     try:
         output_db.rename(previous_db_path)
     except FileNotFoundError:
-        pass
+        return None
     except FileExistsError:
         previous_db_path.unlink()
         output_db.rename(previous_db_path)
+        return previous_db_path
+
     
 
-def write_records(records_yielders: List[Generator], output_db: PathInfo,
-                  tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]):
+def write_records(records_yielders: List[Generator],
+                  output_db: PathInfo,
+                  tablename: Text,
+                  primary_key_name: Text,
+                  fieldnames: Sequence[Text],
+                  ) -> None:
     """
     Creates a new sqlite database file with te specified table name, primary key name and list of field names.
+    :param records_yielders: List of generators yielding each browser's records.
+    :param output_db: Full path to the final databse file.
     :param tablename: Name of the new table.
     :param primary_key_name: Set the name of the primary key field. Must be one of the fieldnames passed in.
     :param fieldnames: List of fieldnames in the new table.
@@ -103,10 +120,11 @@ def write_records(records_yielders: List[Generator], output_db: PathInfo,
         cursor.executemany(queries['insert'], records_yielder)
 
 
-def build_search_table(output_db: PathInfo):
+def build_search_table(output_db: PathInfo) -> None:
     """
     Builds a virtual search table in the newly created sqlite database file.
     Search table uses fts5 extension of sqlite.
+    :param output_db: Full path to the final databse file.
     """
     search_table_fields_str = ", ".join(browser_data.search_table_fields)
     create_virtual_query = f'CREATE VIRTUAL TABLE IF NOT EXISTS search_table USING fts5({search_table_fields_str})'
@@ -119,11 +137,15 @@ def build_search_table(output_db: PathInfo):
     
 
 def write_db_path_to_file(output_db: PathInfo,
-                          output_dir: Optional[PathInfo]=None):
+                          output_dir: Optional[PathInfo]=None,
+                          ) -> PathInfo:
     """
     Writes the complete path to the newly created sqlite database
     to a text file in the specified output_dir,
     by default: <UserDir>/AppData/merged_db_path.txt
+    :param output_db: Full path to the final databse file.
+    :param output_dir: Dir where the merged_db_path.txt file is created.
+    :return:Path to merged_db_path.txt
     """
     output_dir = output_dir if output_dir else Path('~', '.USB').expanduser()
     db_path_store_dir = Path(output_dir, 'AppData')
@@ -131,12 +153,18 @@ def write_db_path_to_file(output_db: PathInfo,
     db_path_store = db_path_store_dir.joinpath('merged_db_path.txt')
     with open(db_path_store, 'w') as file_obj:
         file_obj.write(f'{output_db.as_posix()}')
+    return db_path_store
 
 
-def orchestrate_db_merge(app_path: PathInfo, db_name: Text,
-                         browser_info: BrowserData):
+def orchestrate_db_merge(app_path: PathInfo,
+                         db_name: Text,
+                         browser_info: BrowserData) -> PathInfo:
     """
     Builds the combined database and its search table.
+    :param app_path: Path to directory where app data will be stored
+    :param db_name: Name of the database file
+    :param browsers_data: NamedTuple of discovered browsers, from find_installed_browsers().
+    :return: Full path to final databse file.
     """
     app_path, output_db = make_paths(app_path, db_name)
     installed_browsers_data = find_installed_browsers(
