@@ -1,6 +1,10 @@
+* {
+    font-family: sans-serif;
+}
+
 h1 {
     color: red ;
-    font-family: Roboto, sans-serif;
+    /*font-family: Roboto, sans-serif;*/
     font-size: 12px;
     }
 #app-name {color: inherit;}
@@ -30,6 +34,10 @@ h1 {
     display: block;
     margin-left: 4%;
     }
+th {
+    position: sticky;
+    top: 5px;
+}
 
 td {
     max-width: 420px;
@@ -47,6 +55,14 @@ td {
     white-space: normal;
     }
 
+
+tr:nth-child(even) {
+    background-color: lightgray;
+}
+
+tr:hover {
+    background-color: yellow;
+}
 
 
 
