@@ -10,6 +10,12 @@ from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
     DatabaseMergeOrchestrator,
+    orchestrate_db_merge,
+    write_db_path_to_file,
+    write_records,
+    rename_existing_db,
+    make_records_yielders,
+    find_installed_browsers
     )
 from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 from united_states_of_browsers.db_merge.helpers import get_warnings_text
@@ -61,7 +67,7 @@ def test_find_installed_browsers(tests_root):
                                             browser_info=browser_info,
                                             )
     assert combined_db.installed_browsers_data is None
-    combined_db.find_installed_browsers()
+    find_installed_browsers(combined_db)
     assert len(combined_db.installed_browsers_data) == 2
     assert combined_db.installed_browsers_data[0].path == Path(
             tests_root,
@@ -79,8 +85,8 @@ def test_make_records_yielder(tests_root):
                                             db_name='test_combi_db',
                                             browser_info=browser_info,
                                             )
-    combined_db.find_installed_browsers()
-    combined_db.make_records_yielders()
+    find_installed_browsers(combined_db)
+    make_records_yielders(combined_db)
     combi_records = [browser_records
                       for browser_records_yielder in combined_db.browser_yielder
                       for browser_records in browser_records_yielder
@@ -140,11 +146,11 @@ def test_rename_existing_db():
         combined_db.output_db.write_text('junk')
         assert combined_db.output_db.exists()
         assert not renamed_db_path.exists()
-        combined_db.rename_existing_db()
+        rename_existing_db(combined_db)
         assert not combined_db.output_db.exists()
         assert renamed_db_path.exists()
         # case when previous db file exists
-        combined_db.rename_existing_db()
+        rename_existing_db(combined_db)
 
 
 def test_rename_existing_db_delete_existing_backup():
@@ -163,7 +169,7 @@ def test_rename_existing_db_delete_existing_backup():
         assert os.path.getsize(renamed_db_path) == 1
         assert os.path.getsize(combined_db.output_db) == 4
 
-        combined_db.rename_existing_db()
+        rename_existing_db(combined_db)
         assert not combined_db.output_db.exists()
         assert renamed_db_path.exists()
         assert os.path.getsize(renamed_db_path) == 4
@@ -195,11 +201,11 @@ def test_write_records():
                                                 )
         combined_db.browser_yielder = mock_records_generator
         tablename = 'junk_table'
-        combined_db.write_records(
-                tablename=tablename,
-                primary_key_name='rec_num',
-                fieldnames=['field1', 'field2'],
-                )
+        write_records(combined_db,
+                      tablename=tablename,
+                      primary_key_name='rec_num',
+                      fieldnames=['field1', 'field2'],
+                      )
 
         with sqlite3.connect(str(combined_db.output_db)) as conn:
             conn.row_factory = sqlite3.Row
@@ -224,11 +230,11 @@ def test_write_records_improper_table_name():
         combined_db.browser_yielder = [{},{}]
         tablename = 'junk _table'
         with pytest.raises(ValueError) as excep:
-            combined_db.write_records(
-                    tablename=tablename,
-                    primary_key_name='rec_num',
-                    fieldnames=['field1', 'field2'],
-                    )
+            write_records(combined_db,
+                          tablename=tablename,
+                          primary_key_name='rec_num',
+                          fieldnames=['field1', 'field2'],
+                          )
         assert str(excep.value) == ("Table name cannot have spaces. "
                                     "You provided 'junk _table'")
 
@@ -240,7 +246,7 @@ def test_write_db_path_to_file():
                                                 db_name= test_db_name,
                                                 browser_info=None,
                                                 )
-        combined_db.write_db_path_to_file(output_dir=tmp_dir)
+        write_db_path_to_file(combined_db, output_dir=tmp_dir)
         expected_output_path = Path(tmp_dir, 'AppData', 'merged_db_path.txt')
         assert expected_output_path.exists()
         actual_text = expected_output_path.read_text()
@@ -257,7 +263,7 @@ def _core_code_for_testing_db_merge(tmp_dir, browser_info):
                                             db_name='test_combi_db',
                                             browser_info=browser_info,
                                             )
-    combined_db.orchestrate_db_merge()
+    orchestrate_db_merge(combined_db)
     with sqlite3.connect(str(combined_db.output_db)) as conn:
         cur = conn.cursor()
         cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
