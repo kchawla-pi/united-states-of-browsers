@@ -16,7 +16,7 @@ from united_states_of_browsers.db_merge.helpers import make_queries
 from united_states_of_browsers.db_merge.imported_annotations import *
 
 
-def make_paths(app_path, db_name):
+def make_paths(app_path: PathLike, db_name: Text):
     try:
         app_path = Path(app_path).expanduser()
     except TypeError:
@@ -26,7 +26,7 @@ def make_paths(app_path, db_name):
     return app_path, output_db
 
 
-def find_installed_browsers(browser_info):
+def find_installed_browsers(browser_info: BrowserData):
     """
     Checks if the default browser paths exist on the system to determine if they are installed.
     """
@@ -39,7 +39,7 @@ def find_installed_browsers(browser_info):
     return installed_browsers_data
 
 
-def make_records_yielders(browsers_data, app_path):
+def make_records_yielders(browsers_data: BrowserData, app_path: PathLike):
     """
     Creates a Browser object for each discovered browser, initializes it with necessary info,
     accesses the specified tables and fields from those Browser objects,
@@ -66,7 +66,7 @@ def make_records_yielders(browsers_data, app_path):
     return browser_yielder
 
 
-def rename_existing_db(output_db):
+def rename_existing_db(output_db: PathLike):
     """
     If the merged history sqlite database file already exists,
     renames it to prevent it being overwritten by a new database file.
@@ -82,7 +82,8 @@ def rename_existing_db(output_db):
         output_db.rename(previous_db_path)
     
 
-def write_records(records_yielders, output_db, tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]):
+def write_records(records_yielders: List[Generator], output_db: PathLike,
+                  tablename: Text, primary_key_name: Text, fieldnames: Sequence[Text]):
     """
     Creates a new sqlite database file with te specified table name, primary key name and list of field names.
     :param tablename: Name of the new table.
@@ -102,7 +103,7 @@ def write_records(records_yielders, output_db, tablename: Text, primary_key_name
         cursor.executemany(queries['insert'], records_yielder)
 
 
-def build_search_table(output_db):
+def build_search_table(output_db: PathLike):
     """
     Builds a virtual search table in the newly created sqlite database file.
     Search table uses fts5 extension of sqlite.
@@ -117,7 +118,8 @@ def build_search_table(output_db):
         cursor.execute(insert_virtual_query)
     
 
-def write_db_path_to_file(output_db, output_dir=None):
+def write_db_path_to_file(output_db: PathLike,
+                          output_dir: Optional[PathLike]=None):
     """
     Writes the complete path to the newly created sqlite database
     to a text file in the specified output_dir,
@@ -131,7 +133,8 @@ def write_db_path_to_file(output_db, output_dir=None):
         file_obj.write(f'{output_db.as_posix()}')
 
 
-def orchestrate_db_merge(app_path, db_name, browser_info):
+def orchestrate_db_merge(app_path: PathLike, db_name: Text,
+                         browser_info: BrowserData):
     """
     Builds the combined database and its search table.
     """
@@ -165,7 +168,7 @@ def orchestrate_db_merge(app_path, db_name, browser_info):
     return output_db
 
 
-def merge_browsers_history(app_path, merged_db_name):  # pragma: no cover
+def merge_browsers_history(app_path: PathLike, merged_db_name: Text):  # pragma: no cover
     all_browsers_info = browser_data.prep_browsers_info()
     orchestrate_db_merge(app_path=app_path, db_name=merged_db_name, browser_info=all_browsers_info)
 
