@@ -9,13 +9,13 @@ import pytest
 from united_states_of_browsers.db_merge import browser_data
 from united_states_of_browsers.db_merge.db_merge import (
     BrowserData,
-    DatabaseMergeOrchestrator,
     orchestrate_db_merge,
     write_db_path_to_file,
     write_records,
     rename_existing_db,
     make_records_yielders,
-    find_installed_browsers
+    find_installed_browsers,
+    make_paths
     )
 from united_states_of_browsers.db_merge.db_search import check_fts5_installed
 from united_states_of_browsers.db_merge.helpers import get_warnings_text
@@ -60,14 +60,14 @@ def _make_data_for_tests(tests_root):
     return browser_info
 
 
-def test_find_installed_browsers(tests_root):
+def xtest_find_installed_browsers(tests_root):
     browser_info = _make_data_for_tests(tests_root)
     combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
                                             db_name='test_combi_db',
-                                            browser_info=browser_info,
+
                                             )
     assert combined_db.installed_browsers_data is None
-    find_installed_browsers(combined_db)
+    combined_db.installed_browsers_data  = find_installed_browsers(browser_info=browser_info)
     assert len(combined_db.installed_browsers_data) == 2
     assert combined_db.installed_browsers_data[0].path == Path(
             tests_root,
@@ -81,14 +81,13 @@ def test_find_installed_browsers(tests_root):
 
 def test_make_records_yielder(tests_root):
     browser_info = _make_data_for_tests(tests_root)
-    combined_db = DatabaseMergeOrchestrator(app_path=tests_root,
-                                            db_name='test_combi_db',
-                                            browser_info=browser_info,
-                                            )
-    find_installed_browsers(combined_db)
-    make_records_yielders(combined_db)
+    installed_browsers_data = find_installed_browsers(browser_info=browser_info,)
+    browser_yielder = make_records_yielders(
+            browsers_data=installed_browsers_data,
+            app_path=tests_root,
+            )
     combi_records = [browser_records
-                      for browser_records_yielder in combined_db.browser_yielder
+                      for browser_records_yielder in browser_yielder
                       for browser_records in browser_records_yielder
                       ]
     browser_names = []
@@ -137,42 +136,39 @@ def test_make_records_yielder(tests_root):
 
 def test_rename_existing_db():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                                # case when path == [dirnames]
-                                                db_name='test_combi_db',
-                                                browser_info=None,
-                                                )
-        renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
-        combined_db.output_db.write_text('junk')
-        assert combined_db.output_db.exists()
-        assert not renamed_db_path.exists()
-        rename_existing_db(combined_db)
-        assert not combined_db.output_db.exists()
-        assert renamed_db_path.exists()
+        app_path, output_db = make_paths(app_path=tmp_dir,
+                                         db_name='test_combi_db',
+                                         )
+        expected_renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
+        output_db.write_text('junk')
+        assert output_db.exists()
+        assert not expected_renamed_db_path.exists()
+        rename_existing_db(output_db=output_db)
+        assert not output_db.exists()
+        assert expected_renamed_db_path.exists()
         # case when previous db file exists
-        rename_existing_db(combined_db)
+        rename_existing_db(output_db=output_db)
 
 
 def test_rename_existing_db_delete_existing_backup():
     # case when previous db file backup exists
     with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=[tmp_dir, ''],
-                                                # case when path == [dirnames]
-                                                db_name='test_combi_db',
-                                                browser_info=None,
-                                                )
-        renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
-        combined_db.output_db.write_text('junk')
-        renamed_db_path.write_text('1')
-        assert combined_db.output_db.exists()
-        assert renamed_db_path.exists()
-        assert os.path.getsize(renamed_db_path) == 1
-        assert os.path.getsize(combined_db.output_db) == 4
+        app_path, output_db = make_paths(app_path=[tmp_dir, ''],
+                                         # case when path == [dirnames]
+                                         db_name='test_combi_db',
+                                         )
+        expected_renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
+        output_db.write_text('junk')
+        expected_renamed_db_path.write_text('1')
+        assert output_db.exists()
+        assert expected_renamed_db_path.exists()
+        assert os.path.getsize(expected_renamed_db_path) == 1
+        assert os.path.getsize(output_db) == 4
 
-        rename_existing_db(combined_db)
-        assert not combined_db.output_db.exists()
-        assert renamed_db_path.exists()
-        assert os.path.getsize(renamed_db_path) == 4
+        rename_existing_db(output_db=output_db)
+        assert not output_db.exists()
+        assert expected_renamed_db_path.exists()
+        assert os.path.getsize(expected_renamed_db_path) == 4
 
 
 def test_write_records():
@@ -195,19 +191,18 @@ def test_write_records():
         so clean up on Windows does not glitch
         due to PermissionError with open file handles.
         """
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                                db_name='test_combi_db',
-                                                browser_info=None,
-                                                )
-        combined_db.browser_yielder = mock_records_generator
+        app_path, output_db = make_paths(app_path=tmp_dir,
+                                         db_name='test_combi_db',
+                                         )
         tablename = 'junk_table'
-        write_records(combined_db,
+        write_records(records_yielders=mock_records_generator,
+                      output_db=output_db,
                       tablename=tablename,
                       primary_key_name='rec_num',
                       fieldnames=['field1', 'field2'],
                       )
 
-        with sqlite3.connect(str(combined_db.output_db)) as conn:
+        with sqlite3.connect(str(output_db)) as conn:
             conn.row_factory = sqlite3.Row
             cur = conn.cursor()
             query_results = cur.execute(f'SELECT * FROM {tablename}')
@@ -223,14 +218,14 @@ def test_write_records():
 
 def test_write_records_improper_table_name():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                                db_name='test_combi_db',
-                                                browser_info=None,
-                                                )
-        combined_db.browser_yielder = [{},{}]
+        app_path, output_db = make_paths(app_path=tmp_dir,
+                                         db_name='test_combi_db',
+                                         )
+        browser_yielder = [{},{}]
         tablename = 'junk _table'
         with pytest.raises(ValueError) as excep:
-            write_records(combined_db,
+            write_records(records_yielders=browser_yielder,
+                          output_db=output_db,
                           tablename=tablename,
                           primary_key_name='rec_num',
                           fieldnames=['field1', 'field2'],
@@ -242,11 +237,10 @@ def test_write_records_improper_table_name():
 def test_write_db_path_to_file():
     test_db_name = 'test_combi_db'
     with tempfile.TemporaryDirectory() as tmp_dir:
-        combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                                db_name= test_db_name,
-                                                browser_info=None,
-                                                )
-        write_db_path_to_file(combined_db, output_dir=tmp_dir)
+        app_path, output_db = make_paths(app_path=tmp_dir,
+                                         db_name='test_combi_db',
+                                         )
+        write_db_path_to_file(output_db=output_db, output_dir=tmp_dir)
         expected_output_path = Path(tmp_dir, 'AppData', 'merged_db_path.txt')
         assert expected_output_path.exists()
         actual_text = expected_output_path.read_text()
@@ -259,12 +253,11 @@ def _core_code_for_testing_db_merge(tmp_dir, browser_info):
     so clean up on Windows does not glitch
     due to PermissionError with open file handles.
     """
-    combined_db = DatabaseMergeOrchestrator(app_path=tmp_dir,
-                                            db_name='test_combi_db',
-                                            browser_info=browser_info,
-                                            )
-    orchestrate_db_merge(combined_db)
-    with sqlite3.connect(str(combined_db.output_db)) as conn:
+    output_db = orchestrate_db_merge(app_path=tmp_dir,
+                                     db_name='test_combi_db',
+                                     browser_info=browser_info,
+                                     )
+    with sqlite3.connect(str(output_db)) as conn:
         cur = conn.cursor()
         cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
         res = cur.fetchall()
