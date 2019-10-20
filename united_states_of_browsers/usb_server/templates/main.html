@@ -6,10 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, inital-scale=1, shrink-to-fit=yes">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"/>
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
 
 </head>
@@ -18,6 +14,7 @@
 <div class="container-fluid">
 
     <h1 class="text-right"> <a id="app-name" href="/">United States of Browsers </a> </h1>
+    <div id="search-section">
     <form action="{{ url_for('search') }}" method="GET">
         <input id="search-box" type="text" name="query" placeholder="Enter search query here">
         <button class="btn btn-primary" type="submit">Search Browser History</button>
@@ -31,6 +28,7 @@
             <input type="date" id="date-to" name="date-to">
         </div>
     </form>
+    </div>
 
     <table class="table htable table-responsive-s table-striped table-hover table-sm">
         <caption>Web history across all local browsers and profiles.</caption>
