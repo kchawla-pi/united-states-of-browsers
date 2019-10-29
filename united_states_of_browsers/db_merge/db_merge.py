@@ -4,6 +4,7 @@ Main file of the United States of Browsers
 To create a merged database, run:
 	$python db_merge.py
 """
+import json
 import os
 import sqlite3
 import warnings
@@ -30,7 +31,8 @@ def make_paths(app_path: [PathInfo, List[Text]],
         app_path = Path(*app_path).expanduser()
     app_path.mkdir(parents=True, exist_ok=True)
     output_db = app_path.joinpath(db_name)
-    return app_path, output_db
+    config_file = Path(app_path, 'AppData', 'usb_config.json').expanduser()
+    return app_path, output_db, config_file
 
 
 def find_installed_browsers(browser_info: BrowserData) -> BrowserData:
@@ -156,6 +158,26 @@ def write_db_path_to_file(output_db: PathInfo,
     return db_path_store
 
 
+def browser_info_to_json(browsers_info, config_file):
+    browsers_info_dict = [browser_info_._asdict() for browser_info_ in
+                          browsers_info]
+    with open(config_file, 'w') as f:
+        json.dump(browsers_info_dict, f, default=str, indent='\t', )
+
+
+def json_to_browser_info(config_file):
+    with open (config_file) as f:
+        browser_info = json.load(f)
+
+    for browser_datum in browser_info:
+        browser_datum['path'] = Path(browser_datum['path'])
+
+    browser_info = [BrowserData(**browser_datum)
+                    for browser_datum in browser_info
+                    ]
+    return browser_info
+
+
 def orchestrate_db_merge(app_path: PathInfo,
                          db_name: Text,
                          browser_info: BrowserData) -> PathInfo:
@@ -166,10 +188,19 @@ def orchestrate_db_merge(app_path: PathInfo,
     :param browsers_data: NamedTuple of discovered browsers, from find_installed_browsers().
     :return: Full path to final databse file.
     """
-    app_path, output_db = make_paths(app_path, db_name)
-    installed_browsers_data = find_installed_browsers(
-            browser_info=browser_info
-            )
+    app_path, output_db, config_filepath = make_paths(app_path, db_name)
+    try:
+        installed_browsers_data = json_to_browser_info(config_filepath)
+    except FileNotFoundError:
+        print('Searching for browsers...')
+        installed_browsers_data = find_installed_browsers(
+                browser_info=browser_info
+                )
+        browser_info_to_json(browsers_info=installed_browsers_data,
+                             config_file=config_filepath,
+                             )
+    else:
+        print('Reading existing configuration....')
     browser_records_yielder = make_records_yielders(
             browsers_data=installed_browsers_data,
             app_path=app_path,

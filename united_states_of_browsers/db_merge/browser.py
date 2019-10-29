@@ -33,7 +33,7 @@ def make_browser_records_yielder(browser: Text,
     :return: Generator of records
     """
     paths = make_browser_paths(browser, profile_root, profiles)
-    for profile_name, profile_path in paths.items():
+    for (browser_name, profile_name), profile_path in paths.items():
         filepath = Path(profile_path, filename)
         profile_name = Path(profile_path).name
         table_obj = Table(table=tablename,
@@ -121,6 +121,7 @@ def make_browser_paths(browser: Text, profile_root: PathInfo, profiles: Iterable
     """
     make_path_chooser = {'firefox': _make_firefox_profile_paths, 'chrome': _make_chrome_profile_paths,
                          'opera': _make_chrome_profile_paths, 'vivaldi': _make_chrome_profile_paths,
+                         'chromium': _make_chrome_profile_paths,
                          }
     try:
         profilepaths = make_path_chooser[browser](browser, profile_root, profiles)
