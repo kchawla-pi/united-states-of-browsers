@@ -136,9 +136,10 @@ def test_make_records_yielder(tests_root):
 
 def test_rename_existing_db():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        app_path, output_db = make_paths(app_path=tmp_dir,
-                                         db_name='test_combi_db',
-                                         )
+        app_path, output_db, config_filepath = make_paths(
+                app_path=tmp_dir,
+                db_name='test_combi_db',
+                )
         expected_renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
         output_db.write_text('junk')
         assert output_db.exists()
@@ -153,10 +154,10 @@ def test_rename_existing_db():
 def test_rename_existing_db_delete_existing_backup():
     # case when previous db file backup exists
     with tempfile.TemporaryDirectory() as tmp_dir:
-        app_path, output_db = make_paths(app_path=[tmp_dir, ''],
-                                         # case when path == [dirnames]
-                                         db_name='test_combi_db',
-                                         )
+        app_path, output_db, config_file = make_paths(app_path=[tmp_dir, ''],
+                                                  # case when path == [dirnames]
+                                                      db_name='test_combi_db',
+                                                      )
         expected_renamed_db_path = Path(tmp_dir, '_previous_test_combi_db')
         output_db.write_text('junk')
         expected_renamed_db_path.write_text('1')
@@ -191,9 +192,9 @@ def test_write_records():
         so clean up on Windows does not glitch
         due to PermissionError with open file handles.
         """
-        app_path, output_db = make_paths(app_path=tmp_dir,
-                                         db_name='test_combi_db',
-                                         )
+        app_path, output_db, config_file = make_paths(app_path=tmp_dir,
+                                                      db_name='test_combi_db',
+                                                      )
         tablename = 'junk_table'
         write_records(records_yielders=mock_records_generator,
                       output_db=output_db,
@@ -218,9 +219,10 @@ def test_write_records():
 
 def test_write_records_improper_table_name():
     with tempfile.TemporaryDirectory() as tmp_dir:
-        app_path, output_db = make_paths(app_path=tmp_dir,
-                                         db_name='test_combi_db',
-                                         )
+        app_path, output_db, config_file = make_paths(
+                app_path=tmp_dir,
+                db_name='test_combi_db',
+                )
         browser_yielder = [{},{}]
         tablename = 'junk _table'
         with pytest.raises(ValueError) as excep:
@@ -237,9 +239,9 @@ def test_write_records_improper_table_name():
 def test_write_db_path_to_file():
     test_db_name = 'test_combi_db'
     with tempfile.TemporaryDirectory() as tmp_dir:
-        app_path, output_db = make_paths(app_path=tmp_dir,
-                                         db_name='test_combi_db',
-                                         )
+        app_path, output_db, config_file = make_paths(app_path=tmp_dir,
+                                                      db_name='test_combi_db',
+                                                      )
         write_db_path_to_file(output_db=output_db, output_dir=tmp_dir)
         expected_output_path = Path(tmp_dir, 'AppData', 'merged_db_path.txt')
         assert expected_output_path.exists()

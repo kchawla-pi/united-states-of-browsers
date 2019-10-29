@@ -19,20 +19,20 @@ from united_states_of_browsers.db_merge.imported_annotations import *
 
 def make_paths(app_path: [PathInfo, List[Text]],
                db_name: Text,
-               ) -> Tuple[PathInfo, PathInfo]:
+               ) -> Tuple[PathInfo, PathInfo, PathInfo]:
     """ Creates paths for app & final databse file
     :param app_path: Path to directory where app data will be stored
     :param db_name: Name of the database file
-    :return: app_path, output_db
+    :return: app_path, output_db_path, config_file_path
     """
     try:
         app_path = Path(app_path).expanduser()
     except TypeError:
         app_path = Path(*app_path).expanduser()
-    app_path.mkdir(parents=True, exist_ok=True)
-    output_db = app_path.joinpath(db_name)
-    config_file = Path(app_path, 'AppData', 'usb_config.json').expanduser()
-    return app_path, output_db, config_file
+    output_db_path = app_path.joinpath(db_name)
+    config_file_dirpath = Path(app_path, 'AppData')
+    config_file_path = Path(config_file_dirpath, 'usb_config.json')
+    return app_path, output_db_path, config_file_path
 
 
 def find_installed_browsers(browser_info: BrowserData) -> BrowserData:
@@ -189,6 +189,7 @@ def orchestrate_db_merge(app_path: PathInfo,
     :return: Full path to final databse file.
     """
     app_path, output_db, config_filepath = make_paths(app_path, db_name)
+    config_filepath.parent.mkdir(parents=True, exist_ok=True)
     try:
         installed_browsers_data = json_to_browser_info(config_filepath)
     except FileNotFoundError:
