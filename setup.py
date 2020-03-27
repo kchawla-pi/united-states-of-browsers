@@ -1,5 +1,7 @@
 import setuptools
 
+from pathlib import Path
+
 
 setuptools.setup(
         name='usb',
@@ -13,7 +15,8 @@ setuptools.setup(
         author='kchawla-pi',
         author_email='kc.insight.pi@gmail.com',
         description='Manage and search browser histories across multiple browsers and browser profiles.',
-        long_description=open('README.md').read(),
+        long_description_content_type="text/markdown",
+        long_description=Path('README.md').read_text(),
         keywords='browser history',
         url='https://github.com/kchawla-pi/united-states-of-browsers',
         )
