@@ -7,6 +7,8 @@
 # United States of Browsers
 ##### A project to combine and organize history and bookmarks across multiple browsers and browser profiles.
 
+**EARLY DEV BUILD. NOT INTENDED FOR WIDESPREAD USE. USE AT YOUR OWN RISK.**
+
 *The wiki has more info about the project's philosophy.*
 
 I use multiple browsers and multiple browser profiles. This scatters my history, bookmarks across multiple interfaces. 
