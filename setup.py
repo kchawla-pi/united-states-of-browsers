@@ -5,7 +5,7 @@ from pathlib import Path
 
 setuptools.setup(
         name='usb',
-        version='0.83.0dev0',
+        version='0.0.83dev0',
         packages=['tests',
                   'united_states_of_browsers',
                   'united_states_of_browsers.db_merge',
