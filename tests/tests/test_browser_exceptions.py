@@ -60,7 +60,9 @@ def test_firefox_two_proflies_one_invalid(tests_root):
     profile_names = ['test_profile1_JUNK', 'test_profile2']
     file_name = 'places.sqlite'
     expected_browser_paths = {
-        'test_profile2': Path(profile_rootpath, 'z786c76dv78.test_profile2')
+        ('firefox','test_profile2'): str(Path(profile_rootpath,
+                                              'z786c76dv78.test_profile2')
+                                         )
         }
     actual_browser_paths = make_browser_paths(browser=browser_name,
                                               profile_root=profile_rootpath,
@@ -161,7 +163,9 @@ def test_chrome_two_proflies_one_invalid(tests_root):
     profile_names = ['Profile 1 JUNK', 'Profile 2']
     file_name = 'History'
     expected_browser_paths = {
-        'Profile 2': Path(profile_rootpath, 'Profile 2')
+        ('chrome', 'Profile 2'): str(Path(profile_rootpath,
+                                          'Profile 2')
+                                     )
         }
     actual_browser_paths = make_browser_paths(browser=browser_name,
                                               profile_root=profile_rootpath,
