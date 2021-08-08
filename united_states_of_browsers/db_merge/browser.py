@@ -33,7 +33,7 @@ def make_browser_records_yielder(browser: Text,
     :return: Generator of records
     """
     paths = make_browser_paths(browser, profile_root, profiles)
-    for profile_name, profile_path in paths.items():
+    for (browser_name, profile_name), profile_path in paths.items():
         filepath = Path(profile_path, filename)
         profile_name = Path(profile_path).name
         table_obj = Table(table=tablename,
@@ -60,7 +60,7 @@ def make_browser_records_yielder(browser: Text,
                 yield record
 
 
-def _make_firefox_profile_paths(profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
+def _make_firefox_profile_paths(browser: Text, profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
     """
     Makes a dict of profile names and paths for Chrome broser.
 
@@ -74,18 +74,18 @@ def _make_firefox_profile_paths(profile_root: PathInfo, profiles: Iterable[Text]
 
     get_profile_name = lambda dir_entry: str(dir_entry).split(sep='.', maxsplit=1)[1]
     if profiles:
-        profilepaths = {profile: entry for entry in profile_root.iterdir()
+        profilepaths = {(browser, profile): entry for entry in profile_root.iterdir()
                              for profile in profiles
                              if '.' in entry.name and entry.is_dir() and entry.name.endswith(profile)
                              }
     else:
-        profilepaths = {get_profile_name(entry): entry
+        profilepaths = {(browser, get_profile_name(entry)): entry
                              for entry in profile_root.iterdir()
                              if '.' in entry.name and entry.is_dir()}
     return profilepaths
 
 
-def _make_chrome_profile_paths(profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
+def _make_chrome_profile_paths(browser: Text, profile_root: PathInfo, profiles: Iterable[Text]) -> Mapping[Text, PathInfo]:
     """
     Makes a dict of profile names and paths for Chrome broser.
 
@@ -97,12 +97,12 @@ def _make_chrome_profile_paths(profile_root: PathInfo, profiles: Iterable[Text])
     :return: Dict of profile names and corresponding path.
     """
     if profiles:
-        profilepaths = {entry.name: entry
+        profilepaths = {(browser, entry.name): entry
                              for profile_name in profiles
                              for entry in profile_root.iterdir()
                              if entry.name.endswith(profile_name)}
     else:
-        profilepaths = {entry.name: entry for entry in profile_root.iterdir()
+        profilepaths = {(browser, entry.name): entry for entry in profile_root.iterdir()
                              if entry.name.startswith('Profile') or entry.name == 'Default'}
     return profilepaths
 
@@ -121,12 +121,17 @@ def make_browser_paths(browser: Text, profile_root: PathInfo, profiles: Iterable
     """
     make_path_chooser = {'firefox': _make_firefox_profile_paths, 'chrome': _make_chrome_profile_paths,
                          'opera': _make_chrome_profile_paths, 'vivaldi': _make_chrome_profile_paths,
+                         'chromium': _make_chrome_profile_paths,
                          }
     try:
-        profilepaths = make_path_chooser[browser](profile_root, profiles)
+        profilepaths = make_path_chooser[browser](browser, profile_root, profiles)
     except FileNotFoundError as excep:
         invalid_path = exceptions_handling.invalid_path_in_tree(excep.filename)
         # print(f'In {excep.filename},\npath {invalid_path} does not exist.\nMoving on...')
         raise excep
     else:
+        profilepaths = {browser_profile: str(profile_path)
+                        for browser_profile, profile_path
+                        in profilepaths.items()
+                        }
         return profilepaths
