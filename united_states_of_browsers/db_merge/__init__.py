@@ -1,2 +1,1 @@
-from .custom_exceptions import (DatabaseLockedError, TableAccessError
-                                )
+from .custom_exceptions import DatabaseLockedError, TableAccessError
