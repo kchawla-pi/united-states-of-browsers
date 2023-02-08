@@ -17,7 +17,7 @@ jobs:
           python.version: '3.7'
         Python310:
           python.version: '3.10'
-        Python311:
+        Python3111:
           python.version: '3.11'
 
     steps:
@@ -52,7 +52,7 @@ jobs:
           python.version: '3.7'
         Python310:
           python.version: '3.10'
-        Python311:
+        Python3111:
           python.version: '3.11'
 
     steps:
