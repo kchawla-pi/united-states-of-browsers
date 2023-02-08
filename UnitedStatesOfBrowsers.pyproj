@@ -131,10 +131,10 @@
   <ItemGroup>
     <Interpreter Include="venv\">
       <Id>UnitedStatesOfBrowsers</Id>
-      <Description>venv (Python 3.6 (64-bit))</Description>
+      <Description>venv (Python 3.9.16 (64-bit))</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <Version>3.6</Version>
+      <Version>3.9.16</Version>
       <Architecture>X64</Architecture>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
     </Interpreter>
