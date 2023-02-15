@@ -6,4 +6,4 @@ Jinja2==2.11.3
 MarkupSafe==1.1
 pytz==2017.3
 tzlocal==1.4
-Werkzeug==0.15.3
+Werkzeug==2.2.3
